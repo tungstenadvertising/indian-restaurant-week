@@ -281,7 +281,10 @@ async function initializeMap() {
 
     // Load restaurant data from JSON
     try {
-        const response = await fetch('/src/data/restaurants.json');
+        // Use different paths for development vs production
+        const isDev = import.meta.env.DEV;
+        const dataPath = isDev ? 'src/data/restaurants.json' : 'data/restaurants.json';
+        const response = await fetch(dataPath);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -725,7 +728,9 @@ class ChefPopup {
         // Update chef image
         const chefImage = document.getElementById('chef-popup-image');
         if (chefImage && chefData.popup && chefData.popup.chefImage) {
-            chefImage.src = `/src/images/${chefData.popup.chefImage}`;
+            const isDev = import.meta.env.DEV;
+            const imagePath = isDev ? `/src/images/${chefData.popup.chefImage}` : `/assets/images/${convertToWebP(chefData.popup.chefImage)}`;
+            chefImage.src = imagePath;
             chefImage.alt = chefData.chef;
         }
 
@@ -785,9 +790,11 @@ class ChefPopup {
             chefData.popup.sliderImages.forEach((imageName, index) => {
                 const slide = document.createElement('div');
                 slide.className = 'swiper-slide';
+                const isDev = import.meta.env.DEV;
+                const imagePath = isDev ? `/src/images/${imageName}` : `/assets/images/${convertToWebP(imageName)}`;
                 slide.innerHTML = `
                     <img
-                        src="/src/images/${imageName}"
+                        src="${imagePath}"
                         alt="${chefData.chef} - Image ${index + 1}"
                         loading="lazy" fetchpriority="low" decoding="async"
                         class="object-cover rounded-full border-4 border-irw-amber"
@@ -1038,6 +1045,28 @@ class ChefPopup {
 
         return tl;
     }
+
+}
+
+// Helper function to convert image extensions to WebP for production
+function convertToWebP(filename) {
+    if (!filename) return filename;
+
+    // Get the file extension
+    const lastDotIndex = filename.lastIndexOf('.');
+    if (lastDotIndex === -1) return filename;
+
+    const nameWithoutExt = filename.substring(0, lastDotIndex);
+    const extension = filename.substring(lastDotIndex + 1).toLowerCase();
+
+    // Convert common image formats to WebP, keep SVG as-is
+    if (extension === 'svg') {
+        return filename; // Keep SVG files unchanged
+    } else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
+        return `${nameWithoutExt}.webp`;
+    }
+
+    return filename; // Return original if not a recognized format
 }
 
 // Function to populate chefs list dynamically
@@ -1067,17 +1096,24 @@ function populateChefsList() {
         chefElement.setAttribute('data-chef', restaurant.id);
 
         // Create different layouts for left vs right alignment
+        const isDev = import.meta.env.DEV;
+        const imageBasePath = isDev ? '/src/images' : '/assets/images';
+
+        // Convert image extensions for production
+        const chefImagePath = isDev ? restaurant.chefImage : convertToWebP(restaurant.chefImage);
+        const chefBgImagePath = isDev ? restaurant.chefBackgroundImage : convertToWebP(restaurant.chefBackgroundImage);
+
         chefElement.innerHTML = `
                 <div class="relative flex-none">
                     <div class="chef-image-container m-auto relative z-0 cursor-pointer" data-chef="${restaurant.id}">
                         <div class="chef-bg-circle rounded-full relative">
-                            <img src="/src/images/${restaurant.chefImage}" alt="${restaurant.chef}" class="chef-image absolute z-10 bottom-0 inset-x-0 m-auto" loading="lazy" fetchpriority="low" decoding="async">
-                            <img src="/src/images/${restaurant.chefBackgroundImage}" alt="${restaurant.chef} Background" class="chef-image-bg object-cover rounded-full w-full h-full relative z-0" loading="lazy" fetchpriority="low" decoding="async">
+                            <img src="${imageBasePath}/${chefImagePath}" alt="${restaurant.chef}" class="chef-image absolute z-10 bottom-0 inset-x-0 m-auto" loading="lazy" fetchpriority="low" decoding="async">
+                            <img src="${imageBasePath}/${chefBgImagePath}" alt="${restaurant.chef} Background" class="chef-image-bg object-cover rounded-full w-full h-full relative z-0" loading="lazy" fetchpriority="low" decoding="async">
                         </div>
                     </div>
                     <div class="chef-name-container relative grid place-items-center -mt-10 z-10 cursor-pointer" data-chef="${restaurant.id}">
                         <span class="chef-name absolute m-auto font-bold text-white text-lg md:text-xl">${restaurant.chef}</span>
-                        <img src="/src/images/chefNameShape.svg" alt="Chef Name Shape Background" class="chef-name-shape" loading="lazy" fetchpriority="low" decoding="async">
+                        <img src="${imageBasePath}/chefNameShape.svg" alt="Chef Name Shape Background" class="chef-name-shape" loading="lazy" fetchpriority="low" decoding="async">
                     </div>
                 </div>
                 <div class="@container w-full hef-excerpt-container mt-2 md:mt-0 px-4 text-center ${textAlignmentClass} flex-1">
