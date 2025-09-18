@@ -1,0 +1,429 @@
+@import "tailwindcss";
+
+/* Custom Font Family */
+@layer base {
+  html {
+    font-family: var(--font-sans);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: #1c1c1c;
+  }
+}
+
+@theme {
+  --font-sans: 'Ysabeau', sans-serif;
+
+  --color-irw-amber: #E78824;
+  --color-irw-orange: #FF7A39;
+  --color-irw-red: #C0372C;
+  --color-irw-sand: #FDEFDA;
+  --color-irw-yellow: #FCB870;
+
+
+  /* Custom Easing Functions */
+  --ease-power2-in-out: cubic-bezier(0.888, -0.1, 0.465, 1);
+}
+
+/* Font Smoothing */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+
+.irw-title {
+  font-size: clamp(37px, 5vw, 65px);
+  line-height: 1;
+}
+.content-wrapper {
+  line-height: 1.5;
+}
+
+.texture {
+    background-image: url('/src/images/texture.png');
+    background-size: 30%;
+    background-position: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+
+#location {
+  margin-top: calc(-1 * (100vw / 1440 * 164));
+}
+.location-list-item {
+  line-height: 1.337;
+  @media (max-width: 768px) {
+    line-height: 1.2;
+  }
+  opacity: 0;
+  transform: translateX(-30px);
+  cursor: pointer;
+  transition: all 0.3s ease-out;
+  transform-origin: left center;
+  &:hover, &.hover-scale {
+    scale: 1.1;
+  }
+}
+.location-list-item-name {
+  font-size: clamp(19px, 2.5vw, 25px);
+  transition: all 0.4s ease-out;
+}
+
+.location-list-item-address {
+    font-size: clamp(14px, 2vw, 18px);
+    transition: all 0.4s ease-out;
+}
+
+
+
+  .location-list-item.active .location-list-item-name,
+  .location-list-item.active .location-list-item-address {
+    color: #fff;
+  }
+
+
+
+/* Mapbox canvas height fix */
+#map {
+  position: relative;
+}
+
+#map .mapboxgl-canvas-container {
+  height: 100% !important;
+}
+
+#map .mapboxgl-canvas {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+/* Interactive Restaurant List Styles */
+
+
+/* Map marker active state */
+.restaurant-marker.active {
+  transform: scale(1.2);
+  z-index: 1000;
+}
+
+/* GSAP Animation Initial States */
+.restaurant-marker {
+  color:var(--color-irw-red);
+  .restaurant-marker-svg {
+    transition: all 0.3s ease-in-out;
+    filter: brightness(1);
+    transform-origin: center bottom;
+  }
+}
+
+.restaurant-marker:hover {
+  svg {
+    filter:backdrop-blur(10px) brightness(1.5) saturate(1.2);
+    scale: 1.5;
+  }
+}
+.mapboxgl-canvas-container:has(.restaurant-marker:hover, .restaurant-marker.hover-scale) .restaurant-marker:not(:hover, .active, .hover-scale) {
+  svg {
+    filter: saturate(0.7);
+    opacity: 0.9;
+  }
+}
+
+.restaurant-marker.hover-scale, .restaurant-marker.active {
+  svg {
+    filter: backdrop-blur(10px);
+    scale: 1.5;
+  }
+}
+
+
+
+
+/* Ensure footer overlaps with location-bottom */
+#footer {
+    max-height: 500px;
+    margin-top: calc(-1 * (100vw / 1440 * 164));
+    position: relative;
+    z-index: 1;
+}
+
+
+
+
+/* Chef Popup Styles */
+
+.chef-popup-decor-footer {
+  filter: drop-shadow(19px 10px 5px #65360021);
+
+}
+.chef-popup-overlay {
+  backdrop-filter: blur(10px);
+  transition: opacity 0.5s ease-in-out;
+  opacity: 1;
+  scale: 1;
+}
+#chef-popup.hidden .chef-popup-overlay {
+  opacity: 0;
+  scale: 0.9;
+}
+.chef-popup-container {
+  max-height: 90vh;
+  overflow-y: auto;
+  /* GSAP will handle animations, no CSS animations needed */
+}
+
+
+
+.chef-popup-name {
+  background: linear-gradient(135deg, #C0372C, #E78824);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.chef-popup-story p {
+  margin-bottom: 1rem;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.chef-popup-story p:last-child {
+  margin-bottom: 0;
+}
+
+
+
+
+@media (max-width: 480px) {
+  .chef-popup-container {
+    margin: 2rem auto;
+    max-width: calc(100vw - 2rem);
+  }
+}
+
+/* Accessibility Improvements */
+.chef-popup-overlay:focus-within {
+  outline: none;
+}
+
+.chef-popup-container:focus {
+  outline: 2px solid #FFA73C;
+  outline-offset: 2px;
+}
+
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .chef-popup-container {
+    border: 2px solid #000;
+  }
+
+  .chef-popup-name {
+    color: #000;
+    -webkit-text-fill-color: #000;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .chef-popup-container,
+  .chef-popup-portrait img {
+    transition: none;
+  }
+
+  .chef-popup-container {
+    animation: none;
+  }
+}
+
+#chefs-title .irw-title {
+  letter-spacing: clamp(-2px, -0.4vw, 0px);
+}
+#chefs-title .meet-chefs-title-shape {
+  width: auto;
+  min-width: 40px;
+  height: 30px;
+}
+
+
+
+
+/* Chef Image Styles */
+.chef-image-container {
+  /* shape-outside: url('/src/images/chef-shape.svg');
+  shape-margin: 30px; */
+  transition: transform 0.5s ease;
+  width: 300px;
+  aspect-ratio: 1/1;
+  .chef:hover & {
+    transform: scale(1.02);
+  }
+  @media (max-width: 1024px) {
+    width: 200px;
+
+  }
+  @media (max-width: 768px) {
+    width: 250px;
+  }
+  @media (max-width: 480px) {
+    width: 200px;
+  }
+}
+
+
+
+
+#chefs-list {
+  .chef:not(:first-child) {
+    @media (width >= 1024px) {
+      margin-top: -50px;
+    }
+  }
+}
+
+/* GSAP Animation Initial States for Chefs */
+.chef {
+  opacity: 0;
+  transform: translateY(50px);
+}
+
+.chef-bg-circle {
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  --size: 100%;
+  width: var(--size);
+  height: var(--size);
+  border: clamp(1.5px, 0.3vw, 2.35px) solid #FFA73C;
+  background-color: #FFC886;
+  padding: clamp(2.5px, 1.5vw, 5px);
+  z-index: 1;
+
+  transition: .5s ease-in-out;
+
+  .chef-image {
+    width: clamp(85%, 27vw, 100%);
+    transition: .5s ease-in-out;
+    max-width: 100%;
+    max-height: 90%;
+    object-fit: contain;
+  }
+  .chef-image-bg {
+    border: clamp(6.5px, 1.5vw, 10px) solid #FFA73C;
+    transition: scale 3.5s ease-in-out, filter 1s ease-in-out;
+    .chef:hover & {
+      filter: brightness(1.3);
+      scale: 1.05;
+    }
+  }
+}
+
+/* Chef Popup Swiper Carousel Styles */
+
+
+.chef-popup-swiper {
+  width: 100%;
+  height: 200px;
+  padding: 0 2rem;
+}
+
+.chef-popup-swiper .swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  overflow: hidden;
+  transition: 0.3s ease;
+  width: 200px;
+  height: 200px;
+}
+
+.chef-popup-swiper .swiper-slide:hover {
+  img {
+    scale: 1.01;
+    filter: saturate(1.2) brightness(1.2);
+  }
+}
+
+.chef-popup-swiper .swiper-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  transition: 0.3s ease;
+}
+
+/* Cards effect specific styles */
+.chef-popup-swiper.swiper-effect-cards .swiper-slide {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+}
+.swiper-3d .swiper-slide-shadow {
+  border-radius: 50% !important;
+}
+.chef-popup-swiper.swiper-effect-cards .swiper-slide-active {
+  z-index: 2;
+  scale: 1.5;
+  img {
+    scale: 1.5;
+  }
+}
+
+.chef-popup-swiper.swiper-effect-cards .swiper-slide-next,
+.chef-popup-swiper.swiper-effect-cards .swiper-slide-prev {
+  z-index: 1;
+}
+
+/* Navigation Buttons */
+.chef-popup-swiper-button-next,
+.chef-popup-swiper-button-prev {
+  margin-top: -20px !important;
+  transition: all 0.3s ease;
+  color: #1e1e1e !important;
+}
+
+.chef-popup-swiper-button-next:hover,
+.chef-popup-swiper-button-prev:hover {
+  transform: scale(1.1);
+}
+
+.chef-popup-swiper-button-next:after,
+.chef-popup-swiper-button-prev:after {
+  font-size: 46px !important;
+  font-weight: 900;
+}
+
+.chef-popup-swiper-button-next {
+  right: clamp(10px, 1dvw, 30%) !important;
+}
+
+.chef-popup-swiper-button-prev {
+  left: clamp(10px, 1dvw, 30%) !important;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+
+
+  .chef-popup-swiper-button-next,
+  .chef-popup-swiper-button-prev {
+    width: 45px !important;
+    height: 45px !important;
+    margin-top: -17.5px !important;
+  }
+
+  .chef-popup-swiper-button-next:after,
+  .chef-popup-swiper-button-prev:after {
+    font-size: 34px !important;
+  }
+}
+
