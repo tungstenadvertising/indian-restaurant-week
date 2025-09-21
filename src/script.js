@@ -727,9 +727,9 @@ class ChefPopup {
     populatePopup(chefData) {
         // Update chef image
         const chefImage = document.getElementById('chef-popup-image');
-        if (chefImage && chefData.popup && chefData.popup.chefImage) {
+        if (chefImage && chefData.images && chefData.images.popup) {
             const isDev = import.meta.env.DEV;
-            const imagePath = isDev ? `/src/images/${chefData.popup.chefImage}` : `/assets/images/${convertToWebP(chefData.popup.chefImage)}`;
+            const imagePath = isDev ? `/src/images/${chefData.images.popup}` : `/assets/images/${convertToWebP(chefData.images.popup)}`;
             chefImage.src = imagePath;
             chefImage.alt = chefData.chef;
         }
@@ -761,9 +761,11 @@ class ChefPopup {
         // Update chef story (use chefBio from popup object)
         const storyElement = document.getElementById('chef-popup-story');
         if (storyElement) {
-            const storyContent = chefData.popup && chefData.popup.chefBio ? chefData.popup.chefBio : 'No biography available.';
-            console.log('Chef bio content:', storyContent);
-            storyElement.innerHTML = storyContent;
+            const rawStoryContent = chefData.popup && chefData.popup.chefBio ? chefData.popup.chefBio : 'No biography available.';
+            const formattedStoryContent = formatChefStory(rawStoryContent);
+            console.log('Chef bio content (raw):', rawStoryContent);
+            console.log('Chef bio content (formatted):', formattedStoryContent);
+            storyElement.innerHTML = formattedStoryContent;
         } else {
             console.error('Story element not found');
         }
@@ -785,16 +787,16 @@ class ChefPopup {
         swiperWrapper.innerHTML = '';
 
         // Check if chef has slider images
-        if (chefData.popup && chefData.popup.sliderImages && chefData.popup.sliderImages.length > 0) {
+        if (chefData.images && chefData.images.slides && chefData.images.slides.length > 0) {
             // Create slides for each image
-            chefData.popup.sliderImages.forEach((imageName, index) => {
+            chefData.images.slides.forEach((imagePath, index) => {
                 const slide = document.createElement('div');
                 slide.className = 'swiper-slide';
                 const isDev = import.meta.env.DEV;
-                const imagePath = isDev ? `/src/images/${imageName}` : `/assets/images/${convertToWebP(imageName)}`;
+                const fullImagePath = isDev ? `/src/images/${imagePath}` : `/assets/images/${convertToWebP(imagePath)}`;
                 slide.innerHTML = `
                     <img
-                        src="${imagePath}"
+                        src="${fullImagePath}"
                         alt="${chefData.chef} - Image ${index + 1}"
                         loading="lazy" fetchpriority="low" decoding="async"
                         class="object-cover rounded-full border-4 border-irw-amber"
@@ -1069,6 +1071,27 @@ function convertToWebP(filename) {
     return filename; // Return original if not a recognized format
 }
 
+// Helper function to format chef story content by wrapping each sentence in paragraphs
+function formatChefStory(content) {
+    if (!content) return 'No biography available.';
+
+    // If content already contains HTML tags, preserve them completely
+    if (content.includes('<')) {
+        return content; // Return as-is if HTML is already present
+    } else {
+        // For plain text content, split into sentences and wrap each in a paragraph
+        const sentences = content
+            .split(/(?<=[.!?])\s+/)
+            .filter(sentence => sentence.trim().length > 0)
+            .map(sentence => sentence.trim());
+
+        if (sentences.length === 0) return 'No biography available.';
+
+        // Wrap each sentence in its own paragraph
+        return sentences.map(sentence => `<p>${sentence}</p>`).join('');
+    }
+}
+
 // Function to populate chefs list dynamically
 function populateChefsList() {
     const chefsList = document.getElementById('chefs-list');
@@ -1083,7 +1106,7 @@ function populateChefsList() {
     // Create chef elements for each restaurant
     restaurants.forEach((restaurant, index) => {
         // Check if chef image data exists
-        if (!restaurant.chefImage || !restaurant.chefBackgroundImage) {
+        if (!restaurant.images || !restaurant.images.profile || !restaurant.images.background) {
             console.warn(`Missing image data for chef: ${restaurant.chef}`);
             return;
         }
@@ -1100,8 +1123,8 @@ function populateChefsList() {
         const imageBasePath = isDev ? '/src/images' : '/assets/images';
 
         // Convert image extensions for production
-        const chefImagePath = isDev ? restaurant.chefImage : convertToWebP(restaurant.chefImage);
-        const chefBgImagePath = isDev ? restaurant.chefBackgroundImage : convertToWebP(restaurant.chefBackgroundImage);
+        const chefImagePath = isDev ? restaurant.images.profile : convertToWebP(restaurant.images.profile);
+        const chefBgImagePath = isDev ? restaurant.images.background : convertToWebP(restaurant.images.background);
 
         chefElement.innerHTML = `
                 <div class="relative flex-none">
@@ -1113,7 +1136,7 @@ function populateChefsList() {
                     </div>
                     <div class="chef-name-container relative grid place-items-center -mt-10 z-10 cursor-pointer" data-chef="${restaurant.id}">
                         <span class="chef-name absolute m-auto font-bold text-white text-lg md:text-xl">${restaurant.chef}</span>
-                        <img src="${imageBasePath}/chefNameShape.svg" alt="Chef Name Shape Background" class="chef-name-shape" loading="lazy" fetchpriority="low" decoding="async">
+                        <img src="${imageBasePath}/ui/chefNameShape.svg" alt="Chef Name Shape Background" class="chef-name-shape" loading="lazy" fetchpriority="low" decoding="async">
                     </div>
                 </div>
                 <div class="@container w-full hef-excerpt-container mt-2 md:mt-0 px-4 text-center ${textAlignmentClass} flex-1">
@@ -1132,6 +1155,758 @@ function populateChefsList() {
     setupChefsAnimations();
 }
 
+// Restaurant Carousel System
+class RestaurantCarousel {
+    constructor() {
+        this.restaurants = [];
+        this.currentIndex = 0;
+        this.rotationInterval = null;
+        this.rotationSpeed = 5000; // 5 seconds
+        this.carouselContainer = null;
+        this.logoSprite = null;
+        this.centralLogo = null;
+        this.restaurantItems = [];
+        this.totalRotation = 0; // Track total rotation for continuous loop
+
+        this.init();
+    }
+
+    async init() {
+        // Wait for restaurants data to be loaded
+        await this.waitForRestaurantsData();
+
+        if (this.restaurants.length > 0) {
+            this.createCarousel();
+            this.startRotation();
+            this.addEventListeners();
+        }
+    }
+
+    async waitForRestaurantsData() {
+        return new Promise((resolve) => {
+            const checkData = () => {
+                if (typeof restaurants !== 'undefined' && restaurants.length > 0) {
+                    this.restaurants = restaurants;
+                    resolve();
+                } else {
+                    setTimeout(checkData, 100);
+                }
+            };
+            checkData();
+        });
+    }
+
+    createCarousel() {
+        this.carouselContainer = document.getElementById('carousel-container');
+        this.logoDisplay = document.getElementById('logo-display');
+        this.centralLogo = document.getElementById('central-logo');
+
+        if (!this.carouselContainer || !this.logoDisplay) {
+            console.error('Carousel elements not found');
+            return;
+        }
+
+        // Clear existing content
+        this.carouselContainer.innerHTML = '';
+
+        // Create restaurant items in circular positions
+        this.restaurants.forEach((restaurant, index) => {
+            const item = this.createRestaurantItem(restaurant, index);
+            this.carouselContainer.appendChild(item);
+            this.restaurantItems.push(item);
+        });
+
+        // Set initial active state and position
+        this.rotateToRestaurant(0);
+    }
+
+    createRestaurantItem(restaurant, index) {
+        const item = document.createElement('div');
+        item.className = 'restaurant-item';
+        item.setAttribute('data-restaurant-id', restaurant.id);
+        item.setAttribute('data-index', index);
+
+        // Calculate circular position with responsive radius
+        const angle = (index * 60) - 90; // Start from top (12 o'clock position)
+        const radius = this.getCarouselRadius(); // Get radius from CSS variable
+        const x = Math.cos(angle * Math.PI / 180) * radius;
+        const y = Math.sin(angle * Math.PI / 180) * radius;
+
+        // Position the item
+        item.style.left = `calc(50% + ${x}px)`;
+        item.style.top = `calc(50% + ${y}px)`;
+        item.style.transform = 'translate(-50%, -50%)';
+
+        // Add restaurant dish image
+        const img = document.createElement('img');
+        const isDev = import.meta.env.DEV;
+
+        // Use the dish image for carousel display
+        const imageSource = this.getDishImagePath(restaurant.id);
+        const imagePath = isDev ? imageSource : convertToWebP(imageSource);
+        img.src = imagePath;
+        img.alt = restaurant.name;
+        img.loading = 'lazy';
+
+        // Add error handling for images
+        img.onerror = () => {
+            console.warn(`Failed to load image for ${restaurant.name}: ${imagePath}`);
+            // Could set a fallback image here
+        };
+
+        item.appendChild(img);
+
+        // Add click event
+        item.addEventListener('click', () => {
+            this.rotateToRestaurant(index);
+            this.resetRotation();
+
+            // Show dish popup
+            if (window.dishPopup) {
+                window.dishPopup.showPopup(restaurant.id);
+            }
+        });
+
+        return item;
+    }
+
+    setActiveRestaurant(index) {
+        // Remove active class from all items
+        this.restaurantItems.forEach((item, i) => {
+            item.classList.remove('active');
+            if (i === index) {
+                item.classList.add('active');
+            }
+        });
+
+        // Update central logo
+        this.updateCentralLogo(this.restaurants[index]);
+
+        // Console log notification
+        const restaurant = this.restaurants[index];
+        console.log(`🔄 Carousel Rotation: ${restaurant.name} - ${restaurant.chef}`);
+
+        this.currentIndex = index;
+    }
+
+    updateCentralLogo(restaurant) {
+        if (!this.logoDisplay) return;
+
+        // Add subtle fade effect when changing logos
+        gsap.to(this.logoDisplay, {
+            opacity: 0,
+            filter: 'blur(10px)',
+            duration: .6,
+            ease: "power2.inOut"
+        })
+
+        setTimeout(() => {
+            // Get the logo path for this restaurant
+            const logoPath = this.getLogoPath(restaurant.id);
+            const isDev = import.meta.env.DEV;
+            const fullLogoPath = isDev ? logoPath : convertToWebP(logoPath);
+
+            // Update the background image
+            this.logoDisplay.style.backgroundImage = `url('${fullLogoPath}')`;
+            this.logoDisplay.style.backgroundSize = 'contain';
+            this.logoDisplay.style.backgroundRepeat = 'no-repeat';
+            this.logoDisplay.style.backgroundPosition = 'center';
+
+            // Fade back in
+            gsap.to(this.logoDisplay, {
+                opacity: 1,
+                filter: 'blur(0px)',
+                duration:.6,
+                ease: "power2.inOut"
+            })
+        }, 150);
+    }
+
+    getChefFolder(restaurantId) {
+        // Map restaurant IDs to chef folder names
+        const chefFolderMap = {
+            'ashish_rooh': 'ashish-tiwari',
+            'pujan_tiya': 'pujan-sarkar',
+            'thomas_bombay_brasserie': 'thomas-george',
+            'shibiraj_amber_india': 'shibiraj-saha',
+            'ranjan_new_delhi': 'ranjan-dey',
+            'srijith_copra': 'srijith-gopinathan'
+        };
+
+        return chefFolderMap[restaurantId] || 'ashish-tiwari';
+    }
+
+    getLogoPath(restaurantId) {
+        const chefFolder = this.getChefFolder(restaurantId);
+        return `/src/images/chefs/${chefFolder}/logo.png`;
+    }
+
+    getDishImagePath(restaurantId) {
+        const chefFolder = this.getChefFolder(restaurantId);
+        return `/src/images/chefs/${chefFolder}/dish.png`;
+    }
+
+    startRotation() {
+        // Clear any existing interval first
+        if (this.rotationInterval) {
+            clearInterval(this.rotationInterval);
+            this.rotationInterval = null;
+        }
+
+        // Start new rotation interval
+        this.rotationInterval = setInterval(() => {
+            this.nextRestaurant();
+        }, this.rotationSpeed);
+
+        console.log('🔄 Carousel rotation started');
+    }
+
+    nextRestaurant() {
+        // Increment total rotation by 60 degrees for continuous loop
+        this.totalRotation -= 60; // Negative for counter-clockwise rotation
+
+        // Update current index for active restaurant tracking
+        this.currentIndex = (this.currentIndex + 1) % this.restaurants.length;
+
+        // Apply continuous rotation
+        this.carouselContainer.style.transform = `rotate(${this.totalRotation}deg)`;
+
+        // Update counter-rotation for all items to keep images upright
+        this.updateCounterRotation();
+
+        // Update the active restaurant and logo
+        this.setActiveRestaurant(this.currentIndex);
+    }
+
+    rotateToRestaurant(index) {
+        // Calculate the rotation angle to bring the selected restaurant to the top
+        const rotationAngle = -index * 60; // Negative for counter-clockwise rotation
+
+        // Update total rotation to maintain continuous loop
+        this.totalRotation = rotationAngle;
+
+        // Apply the rotation to the carousel container
+        this.carouselContainer.style.transform = `rotate(${this.totalRotation}deg)`;
+
+        // Update counter-rotation for all items to keep images upright
+        this.updateCounterRotation();
+
+        // Update the active restaurant and logo
+        this.setActiveRestaurant(index);
+    }
+
+    resetRotation() {
+        if (this.rotationInterval) {
+            clearInterval(this.rotationInterval);
+            this.rotationInterval = null;
+        }
+
+        // Start rotation after a small delay to prevent conflicts
+        setTimeout(() => {
+            this.startRotation();
+        }, 100);
+    }
+
+    addEventListeners() {
+        // Pause rotation on hover
+        this.carouselContainer.addEventListener('mouseenter', () => {
+            if (this.rotationInterval) {
+                clearInterval(this.rotationInterval);
+                this.rotationInterval = null;
+                console.log('⏸️ Carousel rotation paused (hover)');
+            }
+        });
+
+        // Resume rotation on mouse leave
+        this.carouselContainer.addEventListener('mouseleave', () => {
+            this.startRotation();
+        });
+
+        // Pause rotation when page is not visible
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                if (this.rotationInterval) {
+                    clearInterval(this.rotationInterval);
+                }
+            } else {
+                this.startRotation();
+            }
+        });
+
+        // Handle window resize for responsive positioning
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                this.repositionItems();
+            }, 250);
+        });
+
+        // Watch for CSS variable changes
+        this.observeCSSVariables();
+    }
+
+    updateCounterRotation() {
+        // Update counter-rotation for all items to keep images upright
+        this.restaurantItems.forEach((item, index) => {
+            // Only apply counter-rotation if there's actual rotation
+            if (this.totalRotation !== 0) {
+                const counterRotation = -this.totalRotation;
+                item.style.transform = `translate(-50%, -50%) rotate(${counterRotation}deg)`;
+            } else {
+                // No rotation, keep images in natural position
+                item.style.transform = 'translate(-50%, -50%)';
+            }
+        });
+    }
+
+    getCarouselRadius() {
+        // Get the radius value from CSS variable
+        const carouselElement = document.getElementById('restaurant-carousel');
+        if (carouselElement) {
+            const radiusValue = getComputedStyle(carouselElement).getPropertyValue('--carousel-radius');
+            // Convert from CSS value (e.g., "150px") to number
+            return parseInt(radiusValue.replace('px', '')) || 150;
+        }
+        return 150; // Fallback value
+    }
+
+    observeCSSVariables() {
+        // Create a MutationObserver to watch for CSS variable changes
+        const carouselElement = document.getElementById('restaurant-carousel');
+        if (!carouselElement) return;
+
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' &&
+                    (mutation.attributeName === 'style' || mutation.attributeName === 'class')) {
+                    // CSS variables might have changed, reposition items
+                    this.repositionItems();
+                }
+            });
+        });
+
+        observer.observe(carouselElement, {
+            attributes: true,
+            attributeFilter: ['style', 'class']
+        });
+
+        // Also watch for changes in the document's style sheets
+        const styleObserver = new MutationObserver(() => {
+            this.repositionItems();
+        });
+
+        styleObserver.observe(document.head, {
+            childList: true,
+            subtree: true
+        });
+    }
+
+    repositionItems() {
+        // Reposition all items based on current window size
+        this.restaurantItems.forEach((item, index) => {
+            const angle = (index * 60) - 90; // Original positioning
+            const radius = this.getCarouselRadius();
+            const x = Math.cos(angle * Math.PI / 180) * radius;
+            const y = Math.sin(angle * Math.PI / 180) * radius;
+
+            item.style.left = `calc(50% + ${x}px)`;
+            item.style.top = `calc(50% + ${y}px)`;
+
+            // Apply counter-rotation to keep images upright
+            if (this.totalRotation !== 0) {
+                const counterRotation = -this.totalRotation;
+                item.style.transform = `translate(-50%, -50%) rotate(${counterRotation}deg)`;
+            } else {
+                item.style.transform = 'translate(-50%, -50%)';
+            }
+        });
+    }
+
+    pause() {
+        if (this.rotationInterval) {
+            clearInterval(this.rotationInterval);
+            this.rotationInterval = null;
+            console.log('⏸️ Carousel rotation paused (manual)');
+        } else {
+            console.log('ℹ️ Carousel is already paused');
+        }
+    }
+
+    resume() {
+        if (!this.rotationInterval) {
+            this.startRotation();
+        } else {
+            console.log('ℹ️ Carousel is already running');
+        }
+    }
+
+    updateSize() {
+        // Manually trigger repositioning (useful for testing)
+        console.log('🔄 Manually updating carousel size...');
+        this.repositionItems();
+        console.log('✅ Carousel size updated');
+    }
+
+    destroy() {
+        if (this.rotationInterval) {
+            clearInterval(this.rotationInterval);
+        }
+    }
+}
+
+// Dish Popup System
+class DishPopup {
+    constructor() {
+        this.popup = document.getElementById('dish-popup');
+        this.closeBtn = document.getElementById('dish-popup-close');
+        this.overlay = document.querySelector('.dish-popup-overlay');
+        this.currentRestaurant = null;
+        this.currentPriceIndex = 0;
+
+        this.init();
+    }
+
+    init() {
+        // Close popup events
+        this.closeBtn.addEventListener('click', () => this.hidePopup());
+        this.overlay.addEventListener('click', (e) => {
+            if (e.target === this.overlay) {
+                this.hidePopup();
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (this.popup && !this.popup.classList.contains('hidden')) {
+                if (e.key === 'Escape') {
+                    this.hidePopup();
+                }
+            }
+        });
+
+        // Price toggler events
+        this.setupPriceTogglers();
+    }
+
+    setupPriceTogglers() {
+        const priceTogglers = document.querySelectorAll('.price-toggler');
+        priceTogglers.forEach((toggler, index) => {
+            toggler.addEventListener('click', () => {
+                this.switchPriceOption(index);
+            });
+        });
+    }
+
+    async showPopup(restaurantId) {
+        try {
+            console.log('showDishPopup called with restaurantId:', restaurantId);
+
+            // Find restaurant data
+            const restaurantData = restaurants.find(restaurant => restaurant.id === restaurantId);
+            if (!restaurantData) {
+                console.error('Restaurant not found:', restaurantId);
+                return;
+            }
+
+            console.log('Found restaurant data:', restaurantData);
+
+            this.currentRestaurant = restaurantData;
+            this.currentPriceIndex = 0; // Reset to first price option
+            this.populatePopup(restaurantData);
+
+            // Show popup with GSAP animation
+            this.popup.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+
+            // Animate popup appearance with GSAP
+            this.animatePopupShow();
+
+        } catch (error) {
+            console.error('Error showing dish popup:', error);
+        }
+    }
+
+    populatePopup(restaurantData) {
+        // Update restaurant logo
+        const logoElement = document.getElementById('dish-popup-logo');
+        if (logoElement && restaurantData.images && restaurantData.images.logo) {
+            const isDev = import.meta.env.DEV;
+            const logoPath = isDev ? `/src/images/${restaurantData.images.logo}` : `/assets/images/${convertToWebP(restaurantData.images.logo)}`;
+            logoElement.src = logoPath;
+            logoElement.alt = restaurantData.name;
+        }
+
+        // Update chef name and restaurant
+        const chefNameElement = document.getElementById('dish-popup-chef');
+        const restaurantNameElement = document.getElementById('dish-popup-restaurant');
+        const locationElement = document.getElementById('dish-popup-location');
+
+        if (chefNameElement) {
+            chefNameElement.textContent = restaurantData.chef;
+        }
+        if (restaurantNameElement) {
+            restaurantNameElement.textContent = restaurantData.name;
+        }
+        if (locationElement) {
+            // Extract location from address (last part after comma)
+            const addressParts = restaurantData.address.split(',');
+            locationElement.textContent = addressParts[addressParts.length - 1].trim();
+        }
+
+        // Update special menu name
+        const menuNameElement = document.getElementById('dish-popup-menu-name');
+        if (menuNameElement) {
+            // For now, use a placeholder - this will be customized per restaurant
+            menuNameElement.textContent = restaurantData.popup?.menuName || 'Special Diwali Menu';
+        }
+
+        // Update menu image
+        const menuImageElement = document.getElementById('dish-popup-menu-image');
+        if (menuImageElement && restaurantData.images && restaurantData.images.dish) {
+            const isDev = import.meta.env.DEV;
+            const imagePath = isDev ? `/src/images/${restaurantData.images.dish}` : `/assets/images/${convertToWebP(restaurantData.images.dish)}`;
+            menuImageElement.src = imagePath;
+            menuImageElement.alt = `${restaurantData.name} - Special Menu`;
+        }
+
+        // Update price options
+        this.updatePriceOptions(restaurantData);
+
+        // Update menu content
+        this.updateMenuContent(restaurantData);
+
+        // Update reservation link
+        const reservationBtn = document.getElementById('dish-popup-reservation');
+        if (reservationBtn && restaurantData.reservation) {
+            reservationBtn.href = restaurantData.reservation;
+            reservationBtn.target = '_blank';
+        } else if (reservationBtn && restaurantData.website) {
+            // Fallback to website if no reservation link
+            reservationBtn.href = restaurantData.website;
+            reservationBtn.target = '_blank';
+        }
+    }
+
+    updatePriceOptions(restaurantData) {
+        const priceContainer = document.getElementById('dish-popup-prices');
+        if (!priceContainer) return;
+
+        // For now, create placeholder price options
+        // This will be customized based on actual restaurant data
+        const prices = restaurantData.popup?.prices || ['75$', '95$'];
+
+        priceContainer.innerHTML = '';
+
+        prices.forEach((price, index) => {
+            const priceBtn = document.createElement('button');
+            priceBtn.className = `price-toggler px-6 py-3 rounded-full font-bold text-white transition-all duration-300 ${
+                index === this.currentPriceIndex
+                    ? 'bg-irw-red scale-110'
+                    : 'bg-irw-amber hover:bg-irw-orange'
+            }`;
+            priceBtn.textContent = price;
+            priceBtn.setAttribute('data-price-index', index);
+            priceContainer.appendChild(priceBtn);
+        });
+
+        // Re-setup event listeners for new buttons
+        this.setupPriceTogglers();
+    }
+
+    switchPriceOption(priceIndex) {
+        this.currentPriceIndex = priceIndex;
+
+        // Update button states
+        const priceButtons = document.querySelectorAll('.price-toggler');
+        priceButtons.forEach((btn, index) => {
+            if (index === priceIndex) {
+                btn.classList.remove('bg-irw-amber', 'hover:bg-irw-orange');
+                btn.classList.add('bg-irw-red', 'scale-110');
+            } else {
+                btn.classList.remove('bg-irw-red', 'scale-110');
+                btn.classList.add('bg-irw-amber', 'hover:bg-irw-orange');
+            }
+        });
+
+        // Update menu content based on price selection
+        this.updateMenuContent(this.currentRestaurant);
+    }
+
+    updateMenuContent(restaurantData) {
+        const menuContent = document.getElementById('dish-popup-menu-content');
+        if (!menuContent) return;
+
+        // For now, create placeholder content
+        // This will be customized based on actual restaurant data and price selection
+        const menuOptions = restaurantData.popup?.menuOptions || [
+            {
+                price: '75$',
+                content: `
+                    <div class="space-y-4">
+                        <h4 class="font-bold text-lg text-irw-red">Appetizers</h4>
+                        <p>Traditional Indian appetizers with modern presentation</p>
+
+                        <h4 class="font-bold text-lg text-irw-red">Main Course</h4>
+                        <p>Signature dishes showcasing the chef's expertise</p>
+
+                        <h4 class="font-bold text-lg text-irw-red">Dessert</h4>
+                        <p>Sweet ending to your culinary journey</p>
+                    </div>
+                `
+            },
+            {
+                price: '95$',
+                content: `
+                    <div class="space-y-4">
+                        <h4 class="font-bold text-lg text-irw-red">Premium Appetizers</h4>
+                        <p>Elevated traditional appetizers with premium ingredients</p>
+
+                        <h4 class="font-bold text-lg text-irw-red">Signature Main Course</h4>
+                        <p>Chef's special creations with luxury ingredients</p>
+
+                        <h4 class="font-bold text-lg text-irw-red">Artisanal Dessert</h4>
+                        <p>Handcrafted dessert to complete your experience</p>
+                    </div>
+                `
+            }
+        ];
+
+        const currentOption = menuOptions[this.currentPriceIndex] || menuOptions[0];
+        menuContent.innerHTML = currentOption.content;
+    }
+
+    hidePopup() {
+        // Animate popup hide with GSAP
+        this.animatePopupHide(() => {
+            // Hide the popup after animation completes
+            this.popup.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        });
+    }
+
+    animatePopupShow() {
+        const popupContainer = this.popup.querySelector('.dish-popup-container');
+        const overlay = this.popup.querySelector('.dish-popup-overlay');
+        const header = this.popup.querySelector('.dish-popup-header');
+        const content = this.popup.querySelector('.dish-popup-content');
+        const closeBtn = this.popup.querySelector('#dish-popup-close');
+
+        // Check for reduced motion preference
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (prefersReducedMotion) {
+            // Simple fade-in for reduced motion
+            gsap.set([overlay, popupContainer, header, content, closeBtn], {
+                opacity: 1,
+                scale: 1,
+                y: 0
+            });
+            return gsap.timeline();
+        }
+
+        // Set initial states
+        gsap.set(popupContainer, {
+            opacity: 0,
+            scale: 0.8,
+            y: 50
+        });
+
+        gsap.set(overlay, {
+            opacity: 0,
+            backdropFilter: 'blur(0px)'
+        });
+
+        gsap.set([header, content, closeBtn], {
+            opacity: 0,
+            y: 20
+        });
+
+        // Create timeline for smooth orchestrated animation
+        const tl = gsap.timeline({
+            ease: "power2.out"
+        });
+
+        // Animate overlay first
+        tl.to(overlay, {
+            opacity: 1,
+            backdropFilter: 'blur(10px)',
+            duration: 0.4,
+            ease: "power2.out"
+        })
+        // Animate popup container
+        .to(popupContainer, {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 0.6,
+            ease: "back.out(1.2)"
+        }, "-=0.1")
+        // Animate content elements
+        .to([header, content, closeBtn], {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            stagger: 0.1,
+            ease: "power2.out"
+        }, "-=0.2");
+
+        return tl;
+    }
+
+    animatePopupHide(callback) {
+        const popupContainer = this.popup.querySelector('.dish-popup-container');
+        const overlay = this.popup.querySelector('.dish-popup-overlay');
+        const header = this.popup.querySelector('.dish-popup-header');
+        const content = this.popup.querySelector('.dish-popup-content');
+        const closeBtn = this.popup.querySelector('#dish-popup-close');
+
+        // Check for reduced motion preference
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (prefersReducedMotion) {
+            // Simple fade-out for reduced motion
+            gsap.set([popupContainer, overlay, header, content, closeBtn], {
+                opacity: 0
+            });
+            callback();
+            return gsap.timeline();
+        }
+
+        // Create timeline for smooth exit animation
+        const tl = gsap.timeline({
+            ease: "power2.in",
+            onComplete: callback
+        });
+
+        // Animate content elements out first
+        tl.to([header, content, closeBtn], {
+            opacity: 0,
+            y: -20,
+            duration: 0.3,
+            stagger: 0.05,
+            ease: "power2.in"
+        })
+        // Animate popup container
+        .to(popupContainer, {
+            opacity: 0,
+            scale: 0.9,
+            y: 30,
+            duration: 0.4,
+            ease: "power2.in"
+        }, "-=0.1")
+        // Animate overlay out
+        .to(overlay, {
+            opacity: 0,
+            backdropFilter: 'blur(0px)',
+            duration: 0.3,
+            ease: "power2.in"
+        }, "-=0.2");
+
+        return tl;
+    }
+}
+
 // Initialize chef popup system when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM loaded, initializing chef popup system...');
@@ -1148,6 +1923,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             console.log('Initializing ChefPopup...');
             new ChefPopup();
+
+            console.log('Initializing DishPopup...');
+            window.dishPopup = new DishPopup();
+
+            console.log('Initializing RestaurantCarousel...');
+            window.restaurantCarousel = new RestaurantCarousel();
         } else {
             console.error('Restaurants data not available for chef popup initialization');
         }
