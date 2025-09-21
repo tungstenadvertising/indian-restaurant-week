@@ -1241,16 +1241,23 @@ class RestaurantCarousel {
         const img = document.createElement('img');
         const isDev = import.meta.env.DEV;
 
-        // Use the dish image for carousel display
-        const imageSource = this.getDishImagePath(restaurant.id);
-        const imagePath = isDev ? imageSource : convertToWebP(imageSource);
-        img.src = imagePath;
+        // Use the dish image from restaurant data
+        let imageSource;
+        if (restaurant.images && restaurant.images.dish) {
+            imageSource = isDev ? `/src/images/${restaurant.images.dish}` : `/assets/images/${convertToWebP(restaurant.images.dish)}`;
+        } else {
+            // Fallback to the old method if no dish image in data
+            imageSource = this.getDishImagePath(restaurant.id);
+            imageSource = isDev ? imageSource : convertToWebP(imageSource);
+        }
+
+        img.src = imageSource;
         img.alt = restaurant.name;
         img.loading = 'lazy';
 
         // Add error handling for images
         img.onerror = () => {
-            console.warn(`Failed to load image for ${restaurant.name}: ${imagePath}`);
+            console.warn(`Failed to load image for ${restaurant.name}: ${imageSource}`);
             // Could set a fallback image here
         };
 
@@ -1302,12 +1309,19 @@ class RestaurantCarousel {
 
         setTimeout(() => {
             // Get the logo path for this restaurant
-            const logoPath = this.getLogoPath(restaurant.id);
+            let logoPath;
             const isDev = import.meta.env.DEV;
-            const fullLogoPath = isDev ? logoPath : convertToWebP(logoPath);
+
+            if (restaurant.images && restaurant.images.logo) {
+                logoPath = isDev ? `/src/images/${restaurant.images.logo}` : `/assets/images/${convertToWebP(restaurant.images.logo)}`;
+            } else {
+                // Fallback to the old method if no logo in data
+                logoPath = this.getLogoPath(restaurant.id);
+                logoPath = isDev ? logoPath : convertToWebP(logoPath);
+            }
 
             // Update the background image
-            this.logoDisplay.style.backgroundImage = `url('${fullLogoPath}')`;
+            this.logoDisplay.style.backgroundImage = `url('${logoPath}')`;
             this.logoDisplay.style.backgroundSize = 'contain';
             this.logoDisplay.style.backgroundRepeat = 'no-repeat';
             this.logoDisplay.style.backgroundPosition = 'center';
