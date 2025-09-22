@@ -6,6 +6,7 @@
       "chef": "Chef Ashish Tiwari",
       "title": "Modern Indian Gastronomy Expert",
       "address": "333 Brannan Street Suite #150, San Francisco, CA 94107",
+      "area": "South Beach",
       "coordinates": [-122.3969, 37.7849],
       "phone": "(415) 525-7777",
       "reservation": "https://www.opentable.com/r/rooh-san-francisco",
@@ -14,8 +15,14 @@
       "specialties": ["Creative Cocktails", "Inventive Courses", "Theatrical Presentations"],
       "images": {
         "profile": "chefs/ashish-tiwari/profile.png",
-        "background": "chefs/ashish-tiwari/background.png",
-        "popup": "chefs/ashish-tiwari/popup.jpg",
+        "profile-background": "chefs/ashish-tiwari/profile-background.png",
+        "chef-popup-header": "chefs/ashish-tiwari/chef-popup-header.jpg",
+        "restaurant-popup-header": {
+          "headerStyle": {
+            "background": "linear-gradient(180deg, #1E2A78 42.89%, #384EDE 61.11%, #384EDE 74.02%), linear-gradient(0deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.28))",
+            "height": "380px"
+          }
+        },
         "logo": "chefs/ashish-tiwari/logo.png",
         "dish": "chefs/ashish-tiwari/dish.png",
         "slides": [
@@ -29,18 +36,12 @@
         "chefTitleColor": "#1F4426",
         "restaurantTitleColor": "#E6C4A0",
         "chefBio": "Chef Ashish Tiwari leads the culinary vision at ROOH San Francisco, where he serves as Head Chef of one of the Bay Area's most celebrated modern Indian restaurants. With over a decade of experience across luxury hospitality brands in India, the Middle East, and the U.S., Chef Tiwari brings a refined global perspective to Indian cuisine. His culinary philosophy is rooted in authenticity, artistry, and evolution—making him a driving force behind ROOH's success and a standout figure in the modern Indian culinary movement <br><br> At ROOH, he is known for: <ul class='list-disc list-inside'><li> Innovative menu development that blends traditional Indian flavors with modern techniques and seasonal California produce</li><li> Kitchen leadership across a highperforming team, ensuring consistency, creativity, and excellence in execution</li><li> Elevating guest experience through visually stunning plating and bold, balanced flavor profiles</li><li> Operational oversight, contributing to ROOHs continued recognition in the Michelin Guide and its reputation as a destination for progressive Indian dining</li></ul>",
-        "menuName": "The ROOH Table",
-        "prices": ["75$", "95$"],
-        "menuOptions": [
-          {
-            "price": "75$",
-            "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Amuse Bouche</h4><p>Enchilada Bites - Enchilada tart topped with desi guacamole and a trio of zesty sauces.</p><h4 class='font-bold text-lg text-irw-red'>Course One (Vegetarian)</h4><p>Aloo Tikki Benedict - Spiced potato cakes topped with tempered vermicelli and Spinach & lime mousse.</p><h4 class='font-bold text-lg text-irw-red'>Course Two</h4><p>Coastal Balchao - Fiery Goan-style prawns, Naan wafer. (Non-Vegetarian)</p><h4 class='font-bold text-lg text-irw-red'>Dessert</h4><p>Tandoori Korma Chops - Lamb Chops glazed in korma Sauce, masala aloo, dosa crisp. (Non-Vegetarian)</p></div>"
-          },
-          {
-            "price": "95$",
-            "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Premium Amuse Bouche</h4><p>Elevated Enchilada Bites with premium ingredients and artisanal presentation.</p><h4 class='font-bold text-lg text-irw-red'>Signature Course One</h4><p>Luxury Aloo Tikki Benedict with premium spices and seasonal ingredients.</p><h4 class='font-bold text-lg text-irw-red'>Premium Course Two</h4><p>Artisanal Coastal Balchao with premium seafood and house-made accompaniments.</p><h4 class='font-bold text-lg text-irw-red'>Artisanal Dessert</h4><p>Chef's special Tandoori Korma Chops with luxury ingredients and modern presentation.</p></div>"
-          }
-        ]
+        "menu": {
+          "menuName": "The ROOH Table",
+          "menuNameColor": "#192364",
+          "menuImage": "chefs/ashish-tiwari/menu-image.jpg",
+          "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Amuse Bouche</h4><p>Enchilada Bites – Enchilada tart topped with desi guacamole and a trio of zesty sauces</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course One (Vegetarian)</h4><p>Aloo Tikki Benedict – Spiced potato cakes topped with tempered vermicelli and Spinach & lime mousse</p><p><strong>OR</strong></p><p>Tofu Koliwada – Crispy Tofu with curry leaf-tomato pachdi, podi masala, and pickled chili</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course One (Non-Vegetarian)</h4><p>Coastal Balchao – Fiery Goan-style prawns, Naan wafer</p><p><strong>OR</strong></p><p>Tandoori Korma Chops – lamb Chops glazed in korma Sauce, masala aloo, dosa crisp</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course Two (Vegetarian)</h4><p>Quinoa & Spinach Kofta Curry – Soft koftas in a rich gravy, paired with paneer roulade</p><p><strong>OR</strong></p><p>Lentil Cake – Steamed lentil cakes, tangy yogurt sauce</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course Two (Non-Vegetarian)</h4><p>Butter Chicken – char-grilled chicken, Classic creamy smoked tomato curry</p><p><strong>OR</strong></p><p>Rangoon Shrimp Curry – Butter-tossed shrimp, peanut butter salan, bonito flakes</p><p><strong>Sides:</strong> Saffron rice, Rooh dal, and assorted Indian breads</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Dessert</h4><p>Kheer Cheesecake – A fusion of creamy cheesecake and traditional Indian rice pudding</p></div>"
+        }
       }
     },
     {
@@ -49,6 +50,7 @@
       "chef": "Chef Pujan Sarkar",
       "title": "Progressive Indian Cuisine Expert",
       "address": "3213 Scott Street, San Francisco, CA 94123",
+      "area": "Marina",
       "coordinates": [-122.4350, 37.8001],
       "phone": "(415) 775-1111",
       "reservation": "https://www.opentable.com/r/tiya-san-francisco",
@@ -57,8 +59,9 @@
       "specialties": ["Bold Coastal Flavors", "Contemporary Twists", "Seaside Family Meals"],
       "images": {
         "profile": "chefs/pujan-sarkar/profile.png",
-        "background": "chefs/pujan-sarkar/background.png",
-        "popup": "chefs/pujan-sarkar/popup.jpg",
+        "profile-background": "chefs/pujan-sarkar/profile-background.png",
+        "chef-popup-header": "chefs/pujan-sarkar/chef-popup-header.jpg",
+        "restaurant-popup-header": "chefs/pujan-sarkar/restaurant-popup-header.jpg",
         "logo": "chefs/pujan-sarkar/logo.png",
         "dish": "chefs/pujan-sarkar/dish.png",
         "slides": [
@@ -74,7 +77,13 @@
       "popup": {
         "chefTitleColor": "#18230A",
         "restaurantTitleColor": "#B2B377",
-        "chefBio": "I was born and raised in Kolkata, in a humble farming family. My roots are deep in the soil - quite literally. As a child, I would often run errands for my mother, like picking fresh carrots or tomatoes straight from our farm. Those moments of connecting with the land gave me immense joy, but they also planted a deeper understanding in me-that harvesting a crop is not the end; it's just the beginning of a much larger vision. That vision shaped my path in life. I always loved cooking for family and friends during gatherings and special occasions. After completing my education in Kolkata, I set out on a new journey-to the Culinary Academy of India in Hyderabad, under the guidance of my mentor and brother, Chef Sujan. Stepping into that academy opened a whole new world for me. I learned not just how to cook, but how to create. I began to understand that a dish is more than just food-it's a reflection of who you are, a story you tell through flavors and techniques. After graduation, my journey took me across the world. I joined the Princess Cruise Line in the United States, boarding in Los Angeles."
+        "chefBio": "I was born and raised in Kolkata, in a humble farming family. My roots are deep in the soil - quite literally. As a child, I would often run errands for my mother, like picking fresh carrots or tomatoes straight from our farm. Those moments of connecting with the land gave me immense joy, but they also planted a deeper understanding in me-that harvesting a crop is not the end; it's just the beginning of a much larger vision. That vision shaped my path in life. I always loved cooking for family and friends during gatherings and special occasions. After completing my education in Kolkata, I set out on a new journey-to the Culinary Academy of India in Hyderabad, under the guidance of my mentor and brother, Chef Sujan. Stepping into that academy opened a whole new world for me. I learned not just how to cook, but how to create. I began to understand that a dish is more than just food-it's a reflection of who you are, a story you tell through flavors and techniques. After graduation, my journey took me across the world. I joined the Princess Cruise Line in the United States, boarding in Los Angeles.",
+        "menu": {
+          "menuName": "Special Diwali Menu",
+          "menuNameColor": "#18230A",
+          "menuImage": "chefs/pujan-sarkar/menu-image.jpg",
+          "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Canapés</h4><p>Pani Puri - Passion Fruit Water, Mango, Yuzu gel, Micro flower</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course 1</h4><p><strong>PULLED JACKFRUIT TACO A LA PLANCHA</strong></p><p>Green Tomatillo Pachadi, Pickled Onion, Cheese, Lime</p><p><strong>OR</strong></p><p><strong>LAMB KEEMA</strong></p><p>Potato Textures, Peas, Masala Babka</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course 2</h4><p><strong>TANDOORI CHICKEN FARCHA</strong></p><p>Smoked Makhni Espuma, Murgh Malai Kofta, Baby Radish Achar</p><p><strong>OR</strong></p><p><strong>PANEER SANDWICH</strong></p><p>Korma Sauce, Bellpepper Jam, Ginger</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Accompaniments To Share</h4><p>Saffron Pulao</p><p>Black Dairy Dal / Garlic/Plain Naan</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course 3 - Dessert</h4><p><strong>CHOCOLATE MURMURA PAVE</strong></p><p>fudge caramel, black rice papad, milk ice cream</p></div>"
+        }
       }
     },
     {
@@ -83,6 +92,7 @@
       "chef": "Chef Thomas George",
       "title": "Heritage North Indian Master",
       "address": "340 Stockton Street, San Francisco, CA 94108",
+      "area": "Union Square",
       "coordinates": [-122.4068, 37.7901],
       "phone": "(415) 362-0400",
       "reservation": "https://www.opentable.com/r/bombay-brasserie-san-francisco",
@@ -91,8 +101,9 @@
       "specialties": ["Heritage Dishes", "Slow-Cooked Flavors", "Traditional Techniques"],
       "images": {
         "profile": "chefs/thomas-george/profile.png",
-        "background": "chefs/thomas-george/background.png",
-        "popup": "chefs/thomas-george/popup.jpg",
+        "profile-background": "chefs/thomas-george/profile-background.png",
+        "chef-popup-header": "chefs/thomas-george/chef-popup-header.jpg",
+        "restaurant-popup-header": "chefs/thomas-george/restaurant-popup-header.jpg",
         "logo": "chefs/thomas-george/logo.png",
         "dish": "chefs/thomas-george/dish.png",
         "slides": [
@@ -105,7 +116,13 @@
       "popup": {
         "chefTitleColor": "#21454A",
         "restaurantTitleColor": "#CC9F53",
-        "chefBio": "Chef Thomas G. Palamootil brings over 25 years of distinguished culinary expertise, honed through his extensive career with the Taj Group of Hotels, one of the world's most iconic names in hospitality. A native of Kerala, India's renowned spice capital, Chef Thomas's earliest influences came from traditional home kitchens where spices, freshest catch, and seasonal ingredients shaped everyday cooking. Inspired by these roots, he pursued formal culinary education and began his professional journey with Taj Hotels in 2001. Over the years, Chef Thomas has held key culinary positions with Taj across Kochi, Chennai, Bangalore, and Mumbai working alongside some of India's most respected chefs while mastering a wide spectrum of regional cuisines. He has worked with some of the leading restaurants with Taj hotels and even being part of international delegations. A defining milestone in his career was his role in the launch of Bombay Brasserie at Taj Campton Place, San Francisco, where he successfully introduced authentic Indian. "
+        "chefBio": "Chef Thomas G. Palamootil brings over 25 years of distinguished culinary expertise, honed through his extensive career with the Taj Group of Hotels, one of the world's most iconic names in hospitality. A native of Kerala, India's renowned spice capital, Chef Thomas's earliest influences came from traditional home kitchens where spices, freshest catch, and seasonal ingredients shaped everyday cooking. Inspired by these roots, he pursued formal culinary education and began his professional journey with Taj Hotels in 2001. Over the years, Chef Thomas has held key culinary positions with Taj across Kochi, Chennai, Bangalore, and Mumbai working alongside some of India's most respected chefs while mastering a wide spectrum of regional cuisines. He has worked with some of the leading restaurants with Taj hotels and even being part of international delegations. A defining milestone in his career was his role in the launch of Bombay Brasserie at Taj Campton Place, San Francisco, where he successfully introduced authentic Indian. ",
+        "menu": {
+          "menuName": "Utsava — Festive Celebrations",
+          "menuNameColor": "#21454A",
+          "menuImage": "chefs/thomas-george/menu-image.jpg",
+          "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Appetizers</h4><p>Kairi panna, roasted cumin, green mango and mint</p><p>Kachori, spiced lentils, avocado, tamarind and mint chutney</p><p>Dokhla sandwich, sun dried tomato and chilly</p><p>Saffron falooda, dry fruits</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Nadru Galoti</h4><p>Lotus root and artichoke, flaky saffron bread, spiced cherry sauce</p><p><strong>OR</strong></p><h4 class='font-bold text-lg text-irw-red'>Lamb Galoti</h4><p>Ground lamb kebab, spiced cherry sauce, ghee smoke, flaky saffron bread</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Intermezzo</h4><p>Watermelon sorbet, Black salt, blossoms</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Shahi Malai Potli</h4><p>Morels, Lasooni kale, pomegranate, lentil crumble</p><p><strong>OR</strong></p><h4 class='font-bold text-lg text-irw-red'>Tandoori Chicken, Makhani</h4><p>Cornish hen, tomato makhani</p><p><strong>Served with:</strong> Chilgoza pilaf, cheese garlic naan, Dal makhani</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Dessert</h4><p>Kulfi - Saffron Kulfi, raspberry coulis</p><p>Friandise - hand rolled Indian mithai</p></div>"
+        }
       }
     },
     {
@@ -114,6 +131,7 @@
       "chef": "Chef Shibiraj Saha",
       "title": "Contemporary Indian Specialist",
       "address": "25 Yerba Buena Ln, San Francisco, CA 94103",
+      "area": "Downtown",
       "coordinates": [-122.4014, 37.7849],
       "phone": "(415) 777-0500",
       "reservation": "https://www.opentable.com/r/amber-india-san-francisco",
@@ -122,8 +140,9 @@
       "specialties": ["Luxe Classics", "Heirloom Recipes", "Luxury Ingredients"],
       "images": {
         "profile": "chefs/shibiraj-saha/profile.png",
-        "background": "chefs/shibiraj-saha/background.png",
-        "popup": "chefs/shibiraj-saha/popup.jpg",
+        "profile-background": "chefs/shibiraj-saha/profile-background.png",
+        "chef-popup-header": "chefs/shibiraj-saha/chef-popup-header.jpg",
+        "restaurant-popup-header": "chefs/shibiraj-saha/restaurant-popup-header.jpg",
         "logo": "chefs/shibiraj-saha/logo.png",
         "dish": "chefs/shibiraj-saha/dish.png",
         "slides": [
@@ -136,7 +155,13 @@
       "popup": {
         "chefTitleColor": "#BF961C",
         "restaurantTitleColor": "#143439",
-        "chefBio": "Hailing from Kolkata, India, Chef Shibiraj is currently heading the culinary team at Amber India SF. He honed his talent by working at top hotel chains in different parts of India. In his long career he has received numerous culinary awards. We are excited to see what new directions Amber India SF will go toward under his leadership."
+        "chefBio": "Hailing from Kolkata, India, Chef Shibiraj is currently heading the culinary team at Amber India SF. He honed his talent by working at top hotel chains in different parts of India. In his long career he has received numerous culinary awards. We are excited to see what new directions Amber India SF will go toward under his leadership.",
+        "menu": {
+          "menuName": "Chef Curated Special Diwali Menu",
+          "menuNameColor": "#143439",
+          "menuImage": "chefs/shibiraj-saha/menu-image.jpg",
+          "content": "<p>Discover contemporary Indian cuisine with a luxe twist on classics at Amber India.</p><p>Our menu features polished and refined dishes that bring forward heirloom recipes and celebratory dishes with luxury ingredients, creating an unforgettable dining experience.</p>"
+        }
       }
     },
     {
@@ -145,6 +170,7 @@
       "chef": "Chef Ranjan Dey",
       "title": "Legacy Institution Master",
       "address": "160 Ellis St, San Francisco, CA 94102",
+      "area": "Downtown",
       "coordinates": [-122.4068, 37.7849],
       "phone": "(415) 397-8470",
       "reservation": "https://www.opentable.com/booking/restref/availability?rid=7547&correlationId=c1526d2b-851d-4b0c-bcfd-54c42da766a0",
@@ -153,8 +179,9 @@
       "specialties": ["Heirloom Recipes", "Ceremonial Dishes", "Modern Fine Dining"],
       "images": {
         "profile": "chefs/ranjan-dey/profile.png",
-        "background": "chefs/ranjan-dey/background.png",
-        "popup": "chefs/ranjan-dey/popup.jpg",
+        "profile-background": "chefs/ranjan-dey/profile-background.png",
+        "chef-popup-header": "chefs/ranjan-dey/chef-popup-header.jpg",
+        "restaurant-popup-header": "chefs/ranjan-dey/restaurant-popup-header.jpg",
         "logo": "chefs/ranjan-dey/logo.png",
         "dish": "chefs/ranjan-dey/dish.png",
         "slides": [
@@ -167,7 +194,13 @@
       "popup": {
         "chefTitleColor": "#C0372C",
         "restaurantTitleColor": "#FFA73C",
-        "chefBio": "In Calcutta, where Chef Ranjan grew up, Diwali is celebrated as 'Kali Pujo,' a celebration of light overcoming darkness. Drawing on that rich heritage, Chef Ranjan crafted a special, never-before menu to bring you the joy of Diwali, as he first knew it, now reimagined for San Francisco's tables. This is the Calcutta that he has known and loved. A joyful city of lantern-lit streets, and layered flavors. Today, he calls San Francisco his home, and New Delhi Restaurant is his life's work. This 37-year old restaurant is set in a 110-year-old Beaux-Arts ballroom, evoking a Maharaja's banquet hall, and honored by the City and County of San Francisco as a rare Legacy Business. Chef Ranjan has made it his mission to bridge cultures through the art of food. Come dine here during Indian Restaurant Week, and if you happen to catch him on the floor, he has an anecdote to tell you. Every plate carries his personal story."
+        "chefBio": "In Calcutta, where Chef Ranjan grew up, Diwali is celebrated as 'Kali Pujo,' a celebration of light overcoming darkness. Drawing on that rich heritage, Chef Ranjan crafted a special, never-before menu to bring you the joy of Diwali, as he first knew it, now reimagined for San Francisco's tables. This is the Calcutta that he has known and loved. A joyful city of lantern-lit streets, and layered flavors. Today, he calls San Francisco his home, and New Delhi Restaurant is his life's work. This 37-year old restaurant is set in a 110-year-old Beaux-Arts ballroom, evoking a Maharaja's banquet hall, and honored by the City and County of San Francisco as a rare Legacy Business. Chef Ranjan has made it his mission to bridge cultures through the art of food. Come dine here during Indian Restaurant Week, and if you happen to catch him on the floor, he has an anecdote to tell you. Every plate carries his personal story.",
+        "menu": {
+          "menuName": "Kolkata-Style Kali Pujô Feast",
+          "menuNameColor": "#C0372C",
+          "menuImage": "chefs/ranjan-dey/menu-image.jpg",
+          "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Appetizer</h4><p>Alu Chat Croustade</p><p>Harra Keebab</p><p>Bengali Piyaju</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Mains</h4><p><strong>Bengali Fish Curry</strong> - Salmon with potatoes, eggplant, seasoned with Bengali five-spice blend</p><p><strong>Bengali Kosha Mangsho</strong> - Lamb curry delicacy from Kolkata cooked in mustard oil with potatoes</p><p><strong>Alu Phulkopi</strong> - Cauliflower & Potatoes seasoned with onion seeds served with Basmati Saffron Rice and Luchi (Poori)</p><p>Tomato Chutney</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Dessert</h4><p>Bengali Roshogolla</p></div>"
+        }
       }
     },
     {
@@ -176,6 +209,7 @@
       "chef": "Chef Srijith Gopinath",
       "title": "South Indian Coastal Expert",
       "address": "1700 Fillmore St, San Francisco, CA 94115",
+      "area": "Fillmore",
       "coordinates": [-122.4330, 37.7849],
       "phone": "(415) 800-7765",
       "reservation": "https://www.opentable.com/r/copra-san-francisco",
@@ -184,8 +218,9 @@
       "specialties": ["Bright Chutneys", "Coconut-Rich Textures", "Seaside Spice Combinations"],
       "images": {
         "profile": "chefs/srijith-gopinathan/profile.png",
-        "background": "chefs/srijith-gopinathan/background.png",
-        "popup": "chefs/srijith-gopinathan/popup.jpg",
+        "profile-background": "chefs/srijith-gopinathan/profile-background.png",
+        "chef-popup-header": "chefs/srijith-gopinathan/chef-popup-header.jpg",
+        "restaurant-popup-header": "chefs/srijith-gopinathan/restaurant-popup-header.jpg",
         "logo": "chefs/srijith-gopinathan/logo.png",
         "dish": "chefs/srijith-gopinathan/dish.png",
         "slides": [
@@ -198,7 +233,13 @@
       "popup": {
         "chefTitleColor": "#1F4426",
         "restaurantTitleColor": "#E6C4A0",
-        "chefBio": "Chef Srijith Gopinath is a celebrated figure in the culinary world, particularly noted for his innovative approach to Indian cuisine. He earned two Michelin stars during his tenure at Campton Place in San Francisco, where he served as executive chef for 15 years. Originally from Kerala, India, Chef Gopinath brings a personal touch to his cooking, drawing on family recipes and childhood memories. His other ventures include co-owning Ettan in Palo Alto and Little Blue Door in Los Altos, showcasing his diverse experience in the food industry."
+        "chefBio": "Chef Srijith Gopinath is a celebrated figure in the culinary world, particularly noted for his innovative approach to Indian cuisine. He earned two Michelin stars during his tenure at Campton Place in San Francisco, where he served as executive chef for 15 years. Originally from Kerala, India, Chef Gopinath brings a personal touch to his cooking, drawing on family recipes and childhood memories. His other ventures include co-owning Ettan in Palo Alto and Little Blue Door in Los Altos, showcasing his diverse experience in the food industry.",
+        "menu": {
+          "menuName": "Diwali at Copra",
+          "menuNameColor": "#1F4426",
+          "menuImage": "chefs/srijith-gopinathan/menu-image.jpg",
+          "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Course One</h4><p>Green grape thayir vada, madras mix and mint</p><p>Brussel sprout sixty five with yoghurt, kothamalli chutney</p><p>Escarole, jicama, apple salad, masala sambaram vinaigrette and kara sev crumbs</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course Two</h4><p>Gongura palkatti korma, coconut and curry leaves with idiyappam</p><p>Kundapur lamb loin chop bydegi roast with mangalore lamb gravy and kal dosa</p><p>Travancore Valiya chemmeen curry, baby shallots, tamarind & steamed basmati rice</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course Three</h4><p>Tropical halwa, candied citrus zest, mango crystals</p></div>"
+        }
       }
     }
   ]

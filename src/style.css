@@ -568,7 +568,7 @@
 }
 
 .dish-popup-header {
-  min-height: 200px;
+  min-height: 300px;
   position: relative;
 }
 
@@ -576,18 +576,7 @@
   min-height: 400px;
 }
 
-.price-toggler {
-  transition: all 0.3s ease;
-  transform-origin: center;
-}
 
-.price-toggler:hover {
-  transform: scale(1.05);
-}
-
-.price-toggler:active {
-  transform: scale(0.95);
-}
 
 /* Responsive Design for Dish Popup */
 @media (max-width: 768px) {
@@ -596,24 +585,6 @@
     max-width: calc(100vw - 2rem);
   }
 
-  .dish-popup-header {
-    min-height: 150px;
-  }
-
-  .dish-popup-content {
-    padding: 1rem;
-  }
-
-  #dish-popup-prices {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .price-toggler {
-    width: 100%;
-    max-width: 200px;
-    margin: 0 auto;
-  }
 }
 
 @media (max-width: 480px) {
@@ -622,13 +593,6 @@
     max-width: calc(100vw - 1rem);
   }
 
-  .dish-popup-header {
-    min-height: 120px;
-  }
-
-  .dish-popup-content {
-    padding: 0.75rem;
-  }
 }
 
 /* Accessibility Improvements */
@@ -650,8 +614,7 @@
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
-  .dish-popup-container,
-  .price-toggler {
+  .dish-popup-container {
     transition: none;
   }
 

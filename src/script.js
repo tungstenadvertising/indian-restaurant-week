@@ -727,11 +727,23 @@ class ChefPopup {
     populatePopup(chefData) {
         // Update chef image
         const chefImage = document.getElementById('chef-popup-image');
-        if (chefImage && chefData.images && chefData.images.popup) {
+        if (chefImage && chefData.images && chefData.images['chef-popup-header']) {
             const isDev = import.meta.env.DEV;
-            const imagePath = isDev ? `/src/images/${chefData.images.popup}` : `/assets/images/${convertToWebP(chefData.images.popup)}`;
+            const imagePath = isDev ? `/src/images/${chefData.images['chef-popup-header']}` : `/assets/images/${convertToWebP(chefData.images['chef-popup-header'])}`;
             chefImage.src = imagePath;
             chefImage.alt = chefData.chef;
+        }
+
+        // Apply custom header styling if available
+        const header = this.popup.querySelector('.chef-popup-header');
+        if (header && chefData.popup && chefData.popup.headerStyle) {
+            const headerStyle = chefData.popup.headerStyle;
+            if (headerStyle.background) {
+                header.style.background = headerStyle.background;
+            }
+            if (headerStyle.height) {
+                header.style.height = headerStyle.height;
+            }
         }
 
         // Update chef name and restaurant with custom colors
@@ -1106,7 +1118,7 @@ function populateChefsList() {
     // Create chef elements for each restaurant
     restaurants.forEach((restaurant, index) => {
         // Check if chef image data exists
-        if (!restaurant.images || !restaurant.images.profile || !restaurant.images.background) {
+        if (!restaurant.images || !restaurant.images.profile || !restaurant.images['profile-background']) {
             console.warn(`Missing image data for chef: ${restaurant.chef}`);
             return;
         }
@@ -1124,7 +1136,7 @@ function populateChefsList() {
 
         // Convert image extensions for production
         const chefImagePath = isDev ? restaurant.images.profile : convertToWebP(restaurant.images.profile);
-        const chefBgImagePath = isDev ? restaurant.images.background : convertToWebP(restaurant.images.background);
+        const chefBgImagePath = isDev ? restaurant.images['profile-background'] : convertToWebP(restaurant.images['profile-background']);
 
         chefElement.innerHTML = `
                 <div class="relative flex-none">
@@ -1576,7 +1588,6 @@ class DishPopup {
         this.closeBtn = document.getElementById('dish-popup-close');
         this.overlay = document.querySelector('.dish-popup-overlay');
         this.currentRestaurant = null;
-        this.currentPriceIndex = 0;
 
         this.init();
     }
@@ -1600,16 +1611,6 @@ class DishPopup {
         });
 
         // Price toggler events
-        this.setupPriceTogglers();
-    }
-
-    setupPriceTogglers() {
-        const priceTogglers = document.querySelectorAll('.price-toggler');
-        priceTogglers.forEach((toggler, index) => {
-            toggler.addEventListener('click', () => {
-                this.switchPriceOption(index);
-            });
-        });
     }
 
     async showPopup(restaurantId) {
@@ -1626,7 +1627,6 @@ class DishPopup {
             console.log('Found restaurant data:', restaurantData);
 
             this.currentRestaurant = restaurantData;
-            this.currentPriceIndex = 0; // Reset to first price option
             this.populatePopup(restaurantData);
 
             // Show popup with GSAP animation
@@ -1663,29 +1663,82 @@ class DishPopup {
             restaurantNameElement.textContent = restaurantData.name;
         }
         if (locationElement) {
-            // Extract location from address (last part after comma)
-            const addressParts = restaurantData.address.split(',');
-            locationElement.textContent = addressParts[addressParts.length - 1].trim();
+            // Use area name if available, otherwise extract from address
+            locationElement.textContent = restaurantData.area || restaurantData.address.split(',')[restaurantData.address.split(',').length - 1].trim();
         }
 
         // Update special menu name
         const menuNameElement = document.getElementById('dish-popup-menu-name');
         if (menuNameElement) {
-            // For now, use a placeholder - this will be customized per restaurant
-            menuNameElement.textContent = restaurantData.popup?.menuName || 'Special Diwali Menu';
+            menuNameElement.textContent = restaurantData.popup?.menu?.menuName || 'Special Diwali Menu';
+
+            // Apply color from JSON
+            if (restaurantData.popup?.menu?.menuNameColor && restaurantData.popup.menu.menuNameColor.trim() !== '') {
+                // Remove any existing color classes that might interfere
+                menuNameElement.classList.remove('text-teal-800', 'text-gray-800', 'text-black');
+
+                // Apply the color with !important
+                menuNameElement.style.setProperty('color', restaurantData.popup.menu.menuNameColor);
+
+            } else {
+                console.log('No menuNameColor found or empty:', restaurantData.popup?.menu?.menuNameColor);
+            }
         }
 
-        // Update menu image
+        // Update dish popup header image - use restaurant-popup-header if available
+        const dishPopupHeaderImage = document.getElementById('dish-popup-header-image');
+        const dishPopupHeader = document.getElementById('dish-popup-header');
+
+        if (dishPopupHeaderImage && restaurantData.images && restaurantData.images['restaurant-popup-header']) {
+            const restaurantHeader = restaurantData.images['restaurant-popup-header'];
+
+            // Check if restaurant-popup-header is an object with headerStyle (like ROOH)
+            if (typeof restaurantHeader === 'object' && restaurantHeader.headerStyle) {
+                // Apply custom CSS styles from headerStyle to the header image container
+                const headerStyle = restaurantHeader.headerStyle;
+                if (headerStyle.background) {
+                    dishPopupHeaderImage.style.background = headerStyle.background;
+                }
+                if (headerStyle.height) {
+                    dishPopupHeaderImage.style.height = headerStyle.height;
+                }
+                // Hide the img element since we're using background styling
+                const imgElement = dishPopupHeaderImage.querySelector('img');
+                if (imgElement) {
+                    imgElement.style.display = 'none';
+                }
+            } else if (typeof restaurantHeader === 'string') {
+                // Load image for other restaurants
+                const isDev = import.meta.env.DEV;
+                const imagePath = isDev ? `/src/images/${restaurantHeader}` : `/assets/images/${convertToWebP(restaurantHeader)}`;
+
+                const imgElement = dishPopupHeaderImage.querySelector('img');
+                if (imgElement) {
+                    imgElement.src = imagePath;
+                    imgElement.alt = `${restaurantData.name} - Restaurant Header`;
+                    imgElement.style.display = 'block';
+                }
+                // Reset any background styling
+                dishPopupHeaderImage.style.background = '';
+                dishPopupHeaderImage.style.height = '';
+            }
+        }
+
+        // Update menu image - use menu image from menu structure
         const menuImageElement = document.getElementById('dish-popup-menu-image');
-        if (menuImageElement && restaurantData.images && restaurantData.images.dish) {
+        if (menuImageElement && restaurantData.popup?.menu?.menuImage) {
+            const isDev = import.meta.env.DEV;
+            const imagePath = isDev ? `/src/images/${restaurantData.popup.menu.menuImage}` : `/assets/images/${convertToWebP(restaurantData.popup.menu.menuImage)}`;
+            menuImageElement.src = imagePath;
+            menuImageElement.alt = `${restaurantData.name} - ${restaurantData.popup.menu.menuName}`;
+        } else if (menuImageElement && restaurantData.images && restaurantData.images.dish) {
+            // Fallback to dish image if menu image not available
             const isDev = import.meta.env.DEV;
             const imagePath = isDev ? `/src/images/${restaurantData.images.dish}` : `/assets/images/${convertToWebP(restaurantData.images.dish)}`;
             menuImageElement.src = imagePath;
             menuImageElement.alt = `${restaurantData.name} - Special Menu`;
         }
 
-        // Update price options
-        this.updatePriceOptions(restaurantData);
 
         // Update menu content
         this.updateMenuContent(restaurantData);
@@ -1702,92 +1755,24 @@ class DishPopup {
         }
     }
 
-    updatePriceOptions(restaurantData) {
-        const priceContainer = document.getElementById('dish-popup-prices');
-        if (!priceContainer) return;
-
-        // For now, create placeholder price options
-        // This will be customized based on actual restaurant data
-        const prices = restaurantData.popup?.prices || ['75$', '95$'];
-
-        priceContainer.innerHTML = '';
-
-        prices.forEach((price, index) => {
-            const priceBtn = document.createElement('button');
-            priceBtn.className = `price-toggler px-6 py-3 rounded-full font-bold text-white transition-all duration-300 ${
-                index === this.currentPriceIndex
-                    ? 'bg-irw-red scale-110'
-                    : 'bg-irw-amber hover:bg-irw-orange'
-            }`;
-            priceBtn.textContent = price;
-            priceBtn.setAttribute('data-price-index', index);
-            priceContainer.appendChild(priceBtn);
-        });
-
-        // Re-setup event listeners for new buttons
-        this.setupPriceTogglers();
-    }
-
-    switchPriceOption(priceIndex) {
-        this.currentPriceIndex = priceIndex;
-
-        // Update button states
-        const priceButtons = document.querySelectorAll('.price-toggler');
-        priceButtons.forEach((btn, index) => {
-            if (index === priceIndex) {
-                btn.classList.remove('bg-irw-amber', 'hover:bg-irw-orange');
-                btn.classList.add('bg-irw-red', 'scale-110');
-            } else {
-                btn.classList.remove('bg-irw-red', 'scale-110');
-                btn.classList.add('bg-irw-amber', 'hover:bg-irw-orange');
-            }
-        });
-
-        // Update menu content based on price selection
-        this.updateMenuContent(this.currentRestaurant);
-    }
 
     updateMenuContent(restaurantData) {
         const menuContent = document.getElementById('dish-popup-menu-content');
         if (!menuContent) return;
 
-        // For now, create placeholder content
-        // This will be customized based on actual restaurant data and price selection
-        const menuOptions = restaurantData.popup?.menuOptions || [
-            {
-                price: '75$',
-                content: `
-                    <div class="space-y-4">
-                        <h4 class="font-bold text-lg text-irw-red">Appetizers</h4>
-                        <p>Traditional Indian appetizers with modern presentation</p>
-
-                        <h4 class="font-bold text-lg text-irw-red">Main Course</h4>
-                        <p>Signature dishes showcasing the chef's expertise</p>
-
-                        <h4 class="font-bold text-lg text-irw-red">Dessert</h4>
-                        <p>Sweet ending to your culinary journey</p>
-                    </div>
-                `
-            },
-            {
-                price: '95$',
-                content: `
-                    <div class="space-y-4">
-                        <h4 class="font-bold text-lg text-irw-red">Premium Appetizers</h4>
-                        <p>Elevated traditional appetizers with premium ingredients</p>
-
-                        <h4 class="font-bold text-lg text-irw-red">Signature Main Course</h4>
-                        <p>Chef's special creations with luxury ingredients</p>
-
-                        <h4 class="font-bold text-lg text-irw-red">Artisanal Dessert</h4>
-                        <p>Handcrafted dessert to complete your experience</p>
-                    </div>
-                `
-            }
-        ];
-
-        const currentOption = menuOptions[this.currentPriceIndex] || menuOptions[0];
-        menuContent.innerHTML = currentOption.content;
+        // Use menu content from the new menu structure
+        if (restaurantData.popup?.menu?.content) {
+            menuContent.innerHTML = restaurantData.popup.menu.content;
+        } else {
+            // Fallback content
+            menuContent.innerHTML = `
+                <div class="space-y-4">
+                    <h4 class="font-bold text-lg text-teal-800">Special Menu</h4>
+                    <p>Experience our carefully crafted menu featuring authentic flavors and premium ingredients.</p>
+                    <p>Each dish is prepared with traditional techniques and the finest spices to bring you an unforgettable dining experience.</p>
+                </div>
+            `;
+        }
     }
 
     hidePopup() {
