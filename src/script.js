@@ -1158,6 +1158,7 @@ class RestaurantCarousel {
         this.centralLogo = null;
         this.restaurantItems = [];
         this.totalRotation = 0; // Track total rotation for continuous loop
+        this.introAnimationPlayed = false; // Track if intro animation has been played
 
         this.init();
     }
@@ -1168,7 +1169,6 @@ class RestaurantCarousel {
 
         if (this.restaurants.length > 0) {
             this.createCarousel();
-            this.startRotation();
             this.addEventListeners();
         }
     }
@@ -1217,6 +1217,11 @@ class RestaurantCarousel {
 
         // Set initial active state and position
         this.rotateToRestaurant(0);
+
+        // Start the intro animation after a short delay
+        setTimeout(() => {
+            this.playIntroAnimation();
+        }, 500);
     }
 
     createRestaurantItem(restaurant, index) {
@@ -1225,16 +1230,20 @@ class RestaurantCarousel {
         item.setAttribute('data-restaurant-id', restaurant.id);
         item.setAttribute('data-index', index);
 
-        // Calculate circular position with responsive radius
+        // Initially position all items at center (under the logo)
+        item.style.left = '50%';
+        item.style.top = '50%';
+        item.style.transform = 'translate(-50%, -50%)';
+
+        // Calculate final circular position with responsive radius
         const angle = (index * 60) - 90; // Start from top (12 o'clock position)
         const radius = this.getCarouselRadius(); // Get radius from CSS variable
-        const x = Math.cos(angle * Math.PI / 180) * radius;
-        const y = Math.sin(angle * Math.PI / 180) * radius;
+        const finalX = Math.cos(angle * Math.PI / 180) * radius;
+        const finalY = Math.sin(angle * Math.PI / 180) * radius;
 
-        // Position the item
-        item.style.left = `calc(50% + ${x}px)`;
-        item.style.top = `calc(50% + ${y}px)`;
-        item.style.transform = 'translate(-50%, -50%)';
+        // Store final position as data attributes for the intro animation
+        item.setAttribute('data-final-x', finalX);
+        item.setAttribute('data-final-y', finalY);
 
         // Add restaurant dish image
         const img = document.createElement('img');
@@ -1274,6 +1283,51 @@ class RestaurantCarousel {
         });
 
         return item;
+    }
+
+    playIntroAnimation() {
+        // Only play intro animation once
+        if (this.introAnimationPlayed) {
+            this.startRotation();
+            return;
+        }
+
+        this.introAnimationPlayed = true;
+
+        // Create a timeline for the flower opening effect
+        const tl = gsap.timeline({
+            ease: "power2.out"
+        });
+
+        // Animate each dish from center to its final position with staggered timing
+        this.restaurantItems.forEach((item, index) => {
+            const finalX = parseFloat(item.getAttribute('data-final-x'));
+            const finalY = parseFloat(item.getAttribute('data-final-y'));
+
+            // Set initial state (already at center, but ensure opacity and scale)
+            gsap.set(item, {
+                opacity: 0,
+                scale: 0.3
+            });
+
+            // Animate to final position with staggered timing
+            tl.to(item, {
+                opacity: 1,
+                scale: 1,
+                left: `calc(50% + ${finalX}px)`,
+                top: `calc(50% + ${finalY}px)`,
+                duration: 1.2,
+                ease: "back.out(1.7)",
+                delay: index * 0.15 // Stagger each dish by 0.15 seconds
+            }, 0); // Start all animations at the same time but with different delays
+        });
+
+        // After intro animation completes, start the normal rotation
+        tl.call(() => {
+            // Ensure counter-rotation is properly applied before starting rotation
+            this.updateCounterRotation();
+            this.startRotation();
+        });
     }
 
     setActiveRestaurant(index) {

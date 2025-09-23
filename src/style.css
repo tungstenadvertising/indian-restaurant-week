@@ -496,8 +496,8 @@
 
   }
   @media (width <= 420px) {
-    --carousel-radius: 100px;
-    --carousel-item-size: 90px;
+    --carousel-radius: 115px;
+    --carousel-item-size: 105px;
 
   }
 }
