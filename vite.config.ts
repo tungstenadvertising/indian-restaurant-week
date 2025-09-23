@@ -60,10 +60,10 @@ export default defineConfig({
         interlaced: false
       },
       mozjpeg: {
-        quality: 80
+        quality: 90
       },
       pngquant: {
-        quality: [0.65, 0.8],
+        quality: [0.8, 0.95],
         speed: 4
       },
       svgo: {
@@ -83,7 +83,7 @@ export default defineConfig({
       targetDir: './build/',
       imgExtensions: 'jpg,png,jpeg',
       textExtensions: 'html,css',
-      quality: 80,
+      quality: 95,
       enableLogs: true,
     })
   ],
