@@ -1765,6 +1765,9 @@ class DishPopup {
 
         // Update Reserve Table shape color dynamically
         this.updateReserveTableShapeColor(restaurantData);
+
+        // Update menu price and color dynamically
+        this.updateMenuPriceAndColor(restaurantData);
     }
 
 
@@ -1802,6 +1805,49 @@ class DishPopup {
         shapePath.setAttribute('fill', shapeColor);
 
         console.log(`Updated Reserve Table shape color for ${restaurantData.name}: ${shapeColor}`);
+    }
+
+    updateMenuPriceAndColor(restaurantData) {
+        // Find the menu price container and elements
+        const menuPriceContainer = document.getElementById('menu-price-container');
+        if (!menuPriceContainer) return;
+
+        const menuPriceElement = document.getElementById('menu-price');
+        const menuPriceShape = menuPriceContainer.querySelector('svg path');
+
+        if (!menuPriceElement || !menuPriceShape) return;
+
+        // Get the price and color from restaurant data
+        const menuPrice = restaurantData.popup?.menuPrice || 'Price';
+        const menuPriceColor = restaurantData.popup?.menuPriceColor || '#1E2A78';
+
+        // Format the price with dynamic $ signs
+        const formattedPrice = this.formatPriceWithDollarSigns(menuPrice);
+
+        // Update the price text with HTML formatting
+        menuPriceElement.innerHTML = formattedPrice;
+
+        // Update the fill color of the price shape
+        menuPriceShape.setAttribute('fill', menuPriceColor);
+
+        console.log(`Updated menu price for ${restaurantData.name}: ${formattedPrice} (original: ${menuPrice}) with color ${menuPriceColor}`);
+    }
+
+    formatPriceWithDollarSigns(priceString) {
+        // Handle different price formats
+        if (!priceString || priceString === 'Price') {
+            return 'Price';
+        }
+
+        // Check if it contains "&" for multiple prices
+        if (priceString.includes('&')) {
+            // Split by "&" and format each price
+            const prices = priceString.split('&').map(price => price.trim());
+            return prices.map(price => `<span class="price-value text-4xl -top-1 relative">${price}</span><span class="price-currency text-3xl">$</span>`).join(' & ');
+        } else {
+            // Single price - add dollar sign
+            return `<span class="price-value text-4xl -top-1 relative">${priceString}</span><span class="price-currency text-3xl">$</span>`;
+        }
     }
 
     hidePopup() {
