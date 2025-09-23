@@ -38,9 +38,9 @@
 }
 #ribbon {
   max-width: 180px;
-  translate: 0 -10%;
+  translate: 0 -13%;
   @media (width > 400px) {
-    translate: 0 -6%;
+    translate: 0 -10%;
   }
   @media (width > 768px) {
     translate: 0 -9%;
@@ -79,9 +79,9 @@
 }
 
 #candles-img {
-  width: min(50vw, 515px);
+  /* width: min(50vw, 515px); */
   shape-outside: circle(50%);
-  margin-right: -15%;
+  margin-right: -25%;
   margin-top: 0px;
   shape-margin: 20px;
   /* @media (width >= 480px) {
@@ -104,12 +104,12 @@
 }
 
 #courses-img {
-  margin-left: -15%;
-  margin-top: 0px;
-  shape-margin: 20px;
-  width: clamp(250px, 70vw, 772px);
-  shape-outside: ellipse(70% 40% at 50% 50%);
-  filter: drop-shadow(-41px 54px 30.8px #0000006B) drop-shadow(-12px 11px 16.3px #000000BF);
+  /* margin-left: -15%; */
+  /* margin-top: 0px; */
+  /* shape-margin: 20px; */
+  /* width: clamp(250px, 70vw, 772px); */
+  /* shape-outside: ellipse(70% 40% at 50% 50%); */
+  filter: drop-shadow(-41px 54px 30.8px #00000022) drop-shadow(-12px 11px 16.3px #000000dd);
 }
 
 

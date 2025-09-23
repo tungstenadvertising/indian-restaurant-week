@@ -39,7 +39,6 @@ export default defineConfig({
             resolve(srcDataDir, 'restaurants.json'),
             resolve(buildDataDir, 'restaurants.json')
           )
-          console.log('✅ Data files copied to build directory')
         }
 
         // Copy images directory for dynamic loading (without hashes)
@@ -48,7 +47,6 @@ export default defineConfig({
 
         if (existsSync(srcImagesDir)) {
           copyRecursive(srcImagesDir, buildImagesDir)
-          console.log('✅ Images copied to build directory for dynamic loading')
         }
       }
     },

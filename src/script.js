@@ -18,7 +18,6 @@ const navToggle = document.getElementById('nav-toggle');
 
     if (navToggle && mobileMenu) {
             navToggle.addEventListener('click', (e) => {
-            console.log('Burger clicked!');
             e.preventDefault();
 
             const isOpen = mobileMenu.classList.contains('translate-x-0');
@@ -26,7 +25,6 @@ const navToggle = document.getElementById('nav-toggle');
             if (isOpen) {
                 closeMobileMenu();
             } else {
-                console.log('Opening mobile menu...');
 
                 // Slide burger out of view
                 navToggle.style.transform = 'translateX(100px)';
@@ -41,10 +39,8 @@ const navToggle = document.getElementById('nav-toggle');
                     document.body.style.overflow = 'hidden';
                 }, 150);
 
-                console.log('Mobile menu opened');
             }
 
-            console.log('Mobile menu classes:', mobileMenu.className);
 
             // Add hamburger animation
             const bars = navToggle.querySelectorAll('.bar');
@@ -64,7 +60,6 @@ const navToggle = document.getElementById('nav-toggle');
 
         // Function to close mobile menu
         function closeMobileMenu() {
-            console.log('Closing mobile menu...');
             mobileMenu.classList.remove('translate-x-0');
             mobileMenu.classList.add('-translate-x-full');
 
@@ -84,7 +79,6 @@ const navToggle = document.getElementById('nav-toggle');
                 navToggle.style.opacity = '1';
             }, 150);
 
-            console.log('Mobile menu closed');
         }
 
         // Close mobile menu when clicking close button
@@ -290,7 +284,6 @@ async function initializeMap() {
         }
         const data = await response.json();
         restaurants = data.restaurants;
-        console.log('Restaurants loaded:', restaurants.length);
 
         // Add markers for each restaurant
         restaurants.forEach((restaurant, index) => {
@@ -431,7 +424,6 @@ function populateRestaurantList(restaurants) {
     document.querySelectorAll('.location-list-item').forEach(item => {
         item.addEventListener('click', (e) => {
 
-            console.log('Restaurant list item clicked:', item);
             const restaurantId = item.getAttribute('data-restaurant-id');
             highlightMarkerFromRestaurant(restaurantId);
         });
@@ -638,11 +630,8 @@ class ChefPopup {
     init() {
         // Add click event listeners to chef elements
         const chefElements = document.querySelectorAll('[data-chef]');
-        console.log('Found chef elements:', chefElements.length);
 
         chefElements.forEach((chefElement, index) => {
-            console.log(`Chef element ${index}:`, chefElement);
-            console.log(`Chef ID:`, chefElement.getAttribute('data-chef'));
 
             // Find the chef image container and name container within this chef element
             const chefImageContainer = chefElement.querySelector('.chef-image-container');
@@ -653,7 +642,6 @@ class ChefPopup {
                 chefImageContainer.addEventListener('click', (e) => {
                     e.preventDefault();
                     const chefId = chefImageContainer.getAttribute('data-chef');
-                    console.log('Chef image clicked:', chefId);
                     this.showPopup(chefId);
                 });
             }
@@ -663,7 +651,6 @@ class ChefPopup {
                 chefNameContainer.addEventListener('click', (e) => {
                     e.preventDefault();
                     const chefId = chefNameContainer.getAttribute('data-chef');
-                    console.log('Chef name clicked:', chefId);
                     this.showPopup(chefId);
                 });
             }
@@ -689,8 +676,6 @@ class ChefPopup {
 
     async showPopup(chefId) {
         try {
-            console.log('showPopup called with chefId:', chefId);
-            console.log('Available restaurants:', restaurants);
 
             // Reset slider container state first
             const sliderContainer = document.getElementById('chef-popup-slider');
@@ -702,12 +687,9 @@ class ChefPopup {
             const chefData = restaurants.find(restaurant => restaurant.id === chefId);
             if (!chefData) {
                 console.error('Chef not found:', chefId);
-                console.log('Available chef IDs:', restaurants.map(r => r.id));
                 return;
             }
 
-            console.log('Found chef data:', chefData);
-            console.log('Chef popup data:', chefData.popup);
 
             this.currentChef = chefData;
             this.populatePopup(chefData);
@@ -775,8 +757,6 @@ class ChefPopup {
         if (storyElement) {
             const rawStoryContent = chefData.popup && chefData.popup.chefBio ? chefData.popup.chefBio : 'No biography available.';
             const formattedStoryContent = formatChefStory(rawStoryContent);
-            console.log('Chef bio content (raw):', rawStoryContent);
-            console.log('Chef bio content (formatted):', formattedStoryContent);
             storyElement.innerHTML = formattedStoryContent;
         } else {
             console.error('Story element not found');
@@ -1161,7 +1141,6 @@ function populateChefsList() {
         chefsList.appendChild(chefElement);
     });
 
-    console.log(`Populated ${restaurants.length} chefs in the chefs list`);
 
     // Set up GSAP animations for chefs after they are populated
     setupChefsAnimations();
@@ -1222,7 +1201,6 @@ class RestaurantCarousel {
         this.logoDisplay.addEventListener('click', () => {
             if (this.restaurants && this.restaurants[this.currentIndex]) {
                 const currentRestaurant = this.restaurants[this.currentIndex];
-                console.log('Central logo clicked for:', currentRestaurant.name);
                 window.dishPopup.showPopup(currentRestaurant.id);
             }
         });
@@ -1312,7 +1290,6 @@ class RestaurantCarousel {
 
         // Console log notification
         const restaurant = this.restaurants[index];
-        console.log(`🔄 Carousel Rotation: ${restaurant.name} - ${restaurant.chef}`);
 
         this.currentIndex = index;
     }
@@ -1393,7 +1370,6 @@ class RestaurantCarousel {
             this.nextRestaurant();
         }, this.rotationSpeed);
 
-        console.log('🔄 Carousel rotation started');
     }
 
     nextRestaurant() {
@@ -1448,7 +1424,6 @@ class RestaurantCarousel {
             if (this.rotationInterval) {
                 clearInterval(this.rotationInterval);
                 this.rotationInterval = null;
-                console.log('⏸️ Carousel rotation paused (hover)');
             }
         });
 
@@ -1562,9 +1537,7 @@ class RestaurantCarousel {
         if (this.rotationInterval) {
             clearInterval(this.rotationInterval);
             this.rotationInterval = null;
-            console.log('⏸️ Carousel rotation paused (manual)');
         } else {
-            console.log('ℹ️ Carousel is already paused');
         }
     }
 
@@ -1572,15 +1545,12 @@ class RestaurantCarousel {
         if (!this.rotationInterval) {
             this.startRotation();
         } else {
-            console.log('ℹ️ Carousel is already running');
         }
     }
 
     updateSize() {
         // Manually trigger repositioning (useful for testing)
-        console.log('🔄 Manually updating carousel size...');
         this.repositionItems();
-        console.log('✅ Carousel size updated');
     }
 
     destroy() {
@@ -1624,7 +1594,6 @@ class DishPopup {
 
     async showPopup(restaurantId) {
         try {
-            console.log('showDishPopup called with restaurantId:', restaurantId);
 
             // Find restaurant data
             const restaurantData = restaurants.find(restaurant => restaurant.id === restaurantId);
@@ -1633,7 +1602,6 @@ class DishPopup {
                 return;
             }
 
-            console.log('Found restaurant data:', restaurantData);
 
             this.currentRestaurant = restaurantData;
             this.populatePopup(restaurantData);
@@ -1690,7 +1658,6 @@ class DishPopup {
                 menuNameElement.style.setProperty('color', restaurantData.popup.menu.menuNameColor);
 
             } else {
-                console.log('No menuNameColor found or empty:', restaurantData.popup?.menu?.menuNameColor);
             }
         }
 
@@ -1804,7 +1771,6 @@ class DishPopup {
         // Update the fill color of the shape
         shapePath.setAttribute('fill', shapeColor);
 
-        console.log(`Updated Reserve Table shape color for ${restaurantData.name}: ${shapeColor}`);
     }
 
     updateMenuPriceAndColor(restaurantData) {
@@ -1830,7 +1796,6 @@ class DishPopup {
         // Update the fill color of the price shape
         menuPriceShape.setAttribute('fill', menuPriceColor);
 
-        console.log(`Updated menu price for ${restaurantData.name}: ${formattedPrice} (original: ${menuPrice}) with color ${menuPriceColor}`);
     }
 
     formatPriceWithDollarSigns(priceString) {
@@ -1983,25 +1948,17 @@ class DishPopup {
 
 // Initialize chef popup system when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded, initializing chef popup system...');
 
     // Wait for restaurants data to be loaded
     setTimeout(() => {
-        console.log('Checking for restaurants data...');
-        console.log('typeof restaurants:', typeof restaurants);
-        console.log('restaurants length:', restaurants ? restaurants.length : 'undefined');
 
         if (typeof restaurants !== 'undefined' && restaurants.length > 0) {
-            console.log('Populating chefs list...');
             populateChefsList();
 
-            console.log('Initializing ChefPopup...');
             new ChefPopup();
 
-            console.log('Initializing DishPopup...');
             window.dishPopup = new DishPopup();
 
-            console.log('Initializing RestaurantCarousel...');
             window.restaurantCarousel = new RestaurantCarousel();
         } else {
             console.error('Restaurants data not available for chef popup initialization');
