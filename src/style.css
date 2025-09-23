@@ -549,6 +549,9 @@
 }
 
 /* Logo System */
+#logo-display {
+  position: relative;
+}
 
 
 

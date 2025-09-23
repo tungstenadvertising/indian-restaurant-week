@@ -1297,41 +1297,60 @@ class RestaurantCarousel {
     updateCentralLogo(restaurant) {
         if (!this.logoDisplay) return;
 
-        // Add subtle fade effect when changing logos
-        gsap.to(this.logoDisplay, {
-            opacity: 0,
-            filter: 'blur(10px)',
-            duration: .6,
-            ease: "power2.inOut"
-        })
+        // Get the logo path for this restaurant
+        let logoPath;
+        const isDev = import.meta.env.DEV;
 
-        setTimeout(() => {
-            // Get the logo path for this restaurant
-            let logoPath;
-            const isDev = import.meta.env.DEV;
+        if (restaurant.images && restaurant.images.logo) {
+            logoPath = isDev ? `/src/images/${restaurant.images.logo}` : `/assets/images/${convertToWebP(restaurant.images.logo)}`;
+        } else {
+            // Fallback to the old method if no logo in data
+            logoPath = this.getLogoPath(restaurant.id);
+            logoPath = isDev ? logoPath : convertToWebP(logoPath);
+        }
 
-            if (restaurant.images && restaurant.images.logo) {
-                logoPath = isDev ? `/src/images/${restaurant.images.logo}` : `/assets/images/${convertToWebP(restaurant.images.logo)}`;
-            } else {
-                // Fallback to the old method if no logo in data
-                logoPath = this.getLogoPath(restaurant.id);
-                logoPath = isDev ? logoPath : convertToWebP(logoPath);
+        // Create a smooth crossfade transition
+        // First, create a temporary overlay element for the new logo
+        const tempLogo = document.createElement('div');
+        tempLogo.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('${logoPath}');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0;
+            filter: blur(10px);
+            transform: scale(1.1);
+            z-index: 2;
+        `;
+
+        // Add the temporary logo to the display container
+        this.logoDisplay.appendChild(tempLogo);
+
+        // Crossfade animation: fade out current logo while fading in new logo
+        const tl = gsap.timeline({
+            onComplete: () => {
+                // Update the main logo background and remove temporary element
+                this.logoDisplay.style.backgroundImage = `url('${logoPath}')`;
+                this.logoDisplay.style.backgroundSize = 'contain';
+                this.logoDisplay.style.backgroundRepeat = 'no-repeat';
+                this.logoDisplay.style.backgroundPosition = 'center';
+                this.logoDisplay.removeChild(tempLogo);
             }
+        });
 
-            // Update the background image
-            this.logoDisplay.style.backgroundImage = `url('${logoPath}')`;
-            this.logoDisplay.style.backgroundSize = 'contain';
-            this.logoDisplay.style.backgroundRepeat = 'no-repeat';
-            this.logoDisplay.style.backgroundPosition = 'center';
-
-            // Fade back in
-            gsap.to(this.logoDisplay, {
-                opacity: 1,
-                filter: 'blur(0px)',
-                duration:.6,
-                ease: "power2.inOut"
-            })
-        }, 150);
+        // Fade in the new logo while keeping the old one visible
+        tl.to(tempLogo, {
+            opacity: 1,
+            scale: 1,
+            filter: 'blur(0px)',
+            duration: 0.7,
+            ease: "power2.inOut"
+        });
     }
 
     getChefFolder(restaurantId) {
@@ -1379,14 +1398,20 @@ class RestaurantCarousel {
         // Update current index for active restaurant tracking
         this.currentIndex = (this.currentIndex + 1) % this.restaurants.length;
 
-        // Apply continuous rotation
-        this.carouselContainer.style.transform = `rotate(${this.totalRotation}deg)`;
-
-        // Update counter-rotation for all items to keep images upright
-        this.updateCounterRotation();
-
-        // Update the active restaurant and logo
-        this.setActiveRestaurant(this.currentIndex);
+        // Apply smooth rotation with GSAP easing
+        gsap.to(this.carouselContainer, {
+            rotation: this.totalRotation,
+            duration: 1,
+            ease: "power2.inOut",
+            onUpdate: () => {
+                // Update counter-rotation for all items to keep images upright during animation
+                this.updateCounterRotation();
+            },
+            onComplete: () => {
+                // Update the active restaurant and logo after animation completes
+                this.setActiveRestaurant(this.currentIndex);
+            }
+        });
     }
 
     rotateToRestaurant(index) {
@@ -1396,14 +1421,20 @@ class RestaurantCarousel {
         // Update total rotation to maintain continuous loop
         this.totalRotation = rotationAngle;
 
-        // Apply the rotation to the carousel container
-        this.carouselContainer.style.transform = `rotate(${this.totalRotation}deg)`;
-
-        // Update counter-rotation for all items to keep images upright
-        this.updateCounterRotation();
-
-        // Update the active restaurant and logo
-        this.setActiveRestaurant(index);
+        // Apply smooth rotation with GSAP easing
+        gsap.to(this.carouselContainer, {
+            rotation: this.totalRotation,
+            duration: 0.8,
+            ease: "power2.inOut",
+            onUpdate: () => {
+                // Update counter-rotation for all items to keep images upright during animation
+                this.updateCounterRotation();
+            },
+            onComplete: () => {
+                // Update the active restaurant and logo after animation completes
+                this.setActiveRestaurant(index);
+            }
+        });
     }
 
     resetRotation() {
@@ -1457,11 +1488,14 @@ class RestaurantCarousel {
     }
 
     updateCounterRotation() {
+        // Get current rotation from GSAP or use totalRotation as fallback
+        const currentRotation = gsap.getProperty(this.carouselContainer, "rotation") || this.totalRotation;
+
         // Update counter-rotation for all items to keep images upright
         this.restaurantItems.forEach((item, index) => {
             // Only apply counter-rotation if there's actual rotation
-            if (this.totalRotation !== 0) {
-                const counterRotation = -this.totalRotation;
+            if (currentRotation !== 0) {
+                const counterRotation = -currentRotation;
                 item.style.transform = `translate(-50%, -50%) rotate(${counterRotation}deg)`;
             } else {
                 // No rotation, keep images in natural position
@@ -1513,6 +1547,9 @@ class RestaurantCarousel {
     }
 
     repositionItems() {
+        // Get current rotation from GSAP or use totalRotation as fallback
+        const currentRotation = gsap.getProperty(this.carouselContainer, "rotation") || this.totalRotation;
+
         // Reposition all items based on current window size
         this.restaurantItems.forEach((item, index) => {
             const angle = (index * 60) - 90; // Original positioning
@@ -1524,8 +1561,8 @@ class RestaurantCarousel {
             item.style.top = `calc(50% + ${y}px)`;
 
             // Apply counter-rotation to keep images upright
-            if (this.totalRotation !== 0) {
-                const counterRotation = -this.totalRotation;
+            if (currentRotation !== 0) {
+                const counterRotation = -currentRotation;
                 item.style.transform = `translate(-50%, -50%) rotate(${counterRotation}deg)`;
             } else {
                 item.style.transform = 'translate(-50%, -50%)';
