@@ -1762,6 +1762,9 @@ class DishPopup {
             reservationBtn.href = restaurantData.website;
             reservationBtn.target = '_blank';
         }
+
+        // Update Reserve Table shape color dynamically
+        this.updateReserveTableShapeColor(restaurantData);
     }
 
 
@@ -1782,6 +1785,23 @@ class DishPopup {
                 </div>
             `;
         }
+    }
+
+    updateReserveTableShapeColor(restaurantData) {
+        // Find the Reserve Table shape SVG path element
+        const reservationBtn = document.getElementById('dish-popup-reservation');
+        if (!reservationBtn) return;
+
+        const shapePath = reservationBtn.querySelector('svg path');
+        if (!shapePath) return;
+
+        // Get the dedicated color from restaurant data, fallback to default
+        const shapeColor = restaurantData.popup?.reserveTableShapeColor || '#1E2A78';
+
+        // Update the fill color of the shape
+        shapePath.setAttribute('fill', shapeColor);
+
+        console.log(`Updated Reserve Table shape color for ${restaurantData.name}: ${shapeColor}`);
     }
 
     hidePopup() {

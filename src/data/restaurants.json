@@ -35,6 +35,7 @@
       "popup": {
         "chefTitleColor": "#1F4426",
         "restaurantTitleColor": "#E6C4A0",
+        "reserveTableShapeColor": "#1E2A78",
         "chefBio": "Chef Ashish Tiwari leads the culinary vision at ROOH San Francisco, where he serves as Head Chef of one of the Bay Area's most celebrated modern Indian restaurants. With over a decade of experience across luxury hospitality brands in India, the Middle East, and the U.S., Chef Tiwari brings a refined global perspective to Indian cuisine. His culinary philosophy is rooted in authenticity, artistry, and evolution—making him a driving force behind ROOH's success and a standout figure in the modern Indian culinary movement <br><br> At ROOH, he is known for: <ul class='list-disc list-inside'><li> Innovative menu development that blends traditional Indian flavors with modern techniques and seasonal California produce</li><li> Kitchen leadership across a highperforming team, ensuring consistency, creativity, and excellence in execution</li><li> Elevating guest experience through visually stunning plating and bold, balanced flavor profiles</li><li> Operational oversight, contributing to ROOHs continued recognition in the Michelin Guide and its reputation as a destination for progressive Indian dining</li></ul>",
         "menu": {
           "menuName": "The ROOH Table",
@@ -77,6 +78,7 @@
       "popup": {
         "chefTitleColor": "#18230A",
         "restaurantTitleColor": "#B2B377",
+        "reserveTableShapeColor": "#18230A",
         "chefBio": "I was born and raised in Kolkata, in a humble farming family. My roots are deep in the soil - quite literally. As a child, I would often run errands for my mother, like picking fresh carrots or tomatoes straight from our farm. Those moments of connecting with the land gave me immense joy, but they also planted a deeper understanding in me-that harvesting a crop is not the end; it's just the beginning of a much larger vision. That vision shaped my path in life. I always loved cooking for family and friends during gatherings and special occasions. After completing my education in Kolkata, I set out on a new journey-to the Culinary Academy of India in Hyderabad, under the guidance of my mentor and brother, Chef Sujan. Stepping into that academy opened a whole new world for me. I learned not just how to cook, but how to create. I began to understand that a dish is more than just food-it's a reflection of who you are, a story you tell through flavors and techniques. After graduation, my journey took me across the world. I joined the Princess Cruise Line in the United States, boarding in Los Angeles.",
         "menu": {
           "menuName": "Special Diwali Menu",
@@ -116,6 +118,7 @@
       "popup": {
         "chefTitleColor": "#21454A",
         "restaurantTitleColor": "#CC9F53",
+        "reserveTableShapeColor": "#21454A",
         "chefBio": "Chef Thomas G. Palamootil brings over 25 years of distinguished culinary expertise, honed through his extensive career with the Taj Group of Hotels, one of the world's most iconic names in hospitality. A native of Kerala, India's renowned spice capital, Chef Thomas's earliest influences came from traditional home kitchens where spices, freshest catch, and seasonal ingredients shaped everyday cooking. Inspired by these roots, he pursued formal culinary education and began his professional journey with Taj Hotels in 2001. Over the years, Chef Thomas has held key culinary positions with Taj across Kochi, Chennai, Bangalore, and Mumbai working alongside some of India's most respected chefs while mastering a wide spectrum of regional cuisines. He has worked with some of the leading restaurants with Taj hotels and even being part of international delegations. A defining milestone in his career was his role in the launch of Bombay Brasserie at Taj Campton Place, San Francisco, where he successfully introduced authentic Indian. ",
         "menu": {
           "menuName": "Utsava — Festive Celebrations",
@@ -155,6 +158,7 @@
       "popup": {
         "chefTitleColor": "#BF961C",
         "restaurantTitleColor": "#143439",
+        "reserveTableShapeColor": "#E78824",
         "chefBio": "Hailing from Kolkata, India, Chef Shibiraj is currently heading the culinary team at Amber India SF. He honed his talent by working at top hotel chains in different parts of India. In his long career he has received numerous culinary awards. We are excited to see what new directions Amber India SF will go toward under his leadership.",
         "menu": {
           "menuName": "Chef Curated Special Diwali Menu",
@@ -194,6 +198,7 @@
       "popup": {
         "chefTitleColor": "#C0372C",
         "restaurantTitleColor": "#FFA73C",
+        "reserveTableShapeColor": "#E78824",
         "chefBio": "In Calcutta, where Chef Ranjan grew up, Diwali is celebrated as 'Kali Pujo,' a celebration of light overcoming darkness. Drawing on that rich heritage, Chef Ranjan crafted a special, never-before menu to bring you the joy of Diwali, as he first knew it, now reimagined for San Francisco's tables. This is the Calcutta that he has known and loved. A joyful city of lantern-lit streets, and layered flavors. Today, he calls San Francisco his home, and New Delhi Restaurant is his life's work. This 37-year old restaurant is set in a 110-year-old Beaux-Arts ballroom, evoking a Maharaja's banquet hall, and honored by the City and County of San Francisco as a rare Legacy Business. Chef Ranjan has made it his mission to bridge cultures through the art of food. Come dine here during Indian Restaurant Week, and if you happen to catch him on the floor, he has an anecdote to tell you. Every plate carries his personal story.",
         "menu": {
           "menuName": "Kolkata-Style Kali Pujô Feast",
@@ -233,6 +238,7 @@
       "popup": {
         "chefTitleColor": "#1F4426",
         "restaurantTitleColor": "#E6C4A0",
+        "reserveTableShapeColor": "#1F4426",
         "chefBio": "Chef Srijith Gopinath is a celebrated figure in the culinary world, particularly noted for his innovative approach to Indian cuisine. He earned two Michelin stars during his tenure at Campton Place in San Francisco, where he served as executive chef for 15 years. Originally from Kerala, India, Chef Gopinath brings a personal touch to his cooking, drawing on family recipes and childhood memories. His other ventures include co-owning Ettan in Palo Alto and Little Blue Door in Los Altos, showcasing his diverse experience in the food industry.",
         "menu": {
           "menuName": "Diwali at Copra",
