@@ -1147,7 +1147,7 @@ function populateChefsList() {
                         </div>
                     </div>
                     <div class="chef-name-container relative grid place-items-center -mt-10 z-10 cursor-pointer" data-chef="${restaurant.id}">
-                        <span class="chef-name absolute m-auto font-bold text-white text-lg md:text-xl">${restaurant.chef}</span>
+                        <span class="chef-name absolute font-bold text-white text-lg md:text-xl">${restaurant.chef}</span>
                         <img src="${imageBasePath}/ui/chefNameShape.svg" alt="Chef Name Shape Background" class="chef-name-shape" loading="lazy" fetchpriority="low" decoding="async">
                     </div>
                 </div>
@@ -1217,6 +1217,15 @@ class RestaurantCarousel {
             console.error('Carousel elements not found');
             return;
         }
+
+        // Add click event listener to central logo
+        this.logoDisplay.addEventListener('click', () => {
+            if (this.restaurants && this.restaurants[this.currentIndex]) {
+                const currentRestaurant = this.restaurants[this.currentIndex];
+                console.log('Central logo clicked for:', currentRestaurant.name);
+                window.dishPopup.showPopup(currentRestaurant.id);
+            }
+        });
 
         // Clear existing content
         this.carouselContainer.innerHTML = '';
