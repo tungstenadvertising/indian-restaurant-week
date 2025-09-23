@@ -12,6 +12,31 @@ gsap.registerPlugin(ScrollTrigger);
 
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
+    // Body scroll freeze utilities
+    let scrollPosition = 0;
+
+    function freezeBodyScroll() {
+        // Store current scroll position
+        scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+        // Apply styles to freeze scroll
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${scrollPosition}px`;
+        document.body.style.width = '100%';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function unfreezeBodyScroll() {
+        // Remove freeze styles
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+
+        // Restore scroll position
+        window.scrollTo(0, scrollPosition);
+    }
+
 // Mobile Navigation Toggle
 const navToggle = document.getElementById('nav-toggle');
     const mobileMenu = document.getElementById('mobile-menu');
@@ -35,8 +60,8 @@ const navToggle = document.getElementById('nav-toggle');
                     mobileMenu.classList.remove('-translate-x-full');
                     mobileMenu.classList.add('translate-x-0');
 
-                    // Disable page scrolling
-                    document.body.style.overflow = 'hidden';
+                    // Freeze body scrolling with scroll position preservation
+                    freezeBodyScroll();
                 }, 150);
 
             }
@@ -71,7 +96,7 @@ const navToggle = document.getElementById('nav-toggle');
             });
 
             // Re-enable page scrolling
-            document.body.style.overflow = 'auto';
+            unfreezeBodyScroll();
 
             // Slide burger back into view
             setTimeout(() => {
@@ -696,7 +721,7 @@ class ChefPopup {
 
             // Show popup with GSAP animation
             this.popup.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+            freezeBodyScroll();
 
             // Animate popup appearance with GSAP
             this.animatePopupShow();
@@ -845,7 +870,7 @@ class ChefPopup {
         this.animatePopupHide(() => {
             // Hide the popup after animation completes
             this.popup.classList.add('hidden');
-            document.body.style.overflow = 'auto';
+            unfreezeBodyScroll();
 
             // Then destroy Swiper instance after popup is hidden (prevents visual glitch)
             if (this.swiper) {
@@ -1699,7 +1724,7 @@ class DishPopup {
 
             // Show popup with GSAP animation
             this.popup.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+            freezeBodyScroll();
 
             // Animate popup appearance with GSAP
             this.animatePopupShow();
@@ -1911,7 +1936,7 @@ class DishPopup {
         this.animatePopupHide(() => {
             // Hide the popup after animation completes
             this.popup.classList.add('hidden');
-            document.body.style.overflow = 'auto';
+            unfreezeBodyScroll();
         });
     }
 
