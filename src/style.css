@@ -67,6 +67,7 @@
 .hero-texture {
   background-color: #501c00;
   background-image: url('/src/images/global/hero-texture.jpg');
+  background-size: 125px 172px;
 }
 
 .page-texture {
