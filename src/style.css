@@ -121,8 +121,6 @@
   @media (max-width: 768px) {
     line-height: 1.2;
   }
-  opacity: 0;
-  transform: translateX(-30px);
   cursor: pointer;
   transition: all 0.3s ease-out;
   transform-origin: left center;
@@ -175,6 +173,7 @@
 /* GSAP Animation Initial States */
 .restaurant-marker {
   color:var(--color-irw-red);
+  transition: transform 0.3s ease-out;
   .restaurant-marker-svg {
     transition: all 0.3s ease-in-out;
     filter: brightness(1);
@@ -183,6 +182,7 @@
 }
 
 .restaurant-marker:hover {
+  transform: scale(1.1);
   svg {
     filter:backdrop-blur(10px) brightness(1.5) saturate(1.2);
     scale: 1.5;
@@ -196,6 +196,7 @@
 }
 
 .restaurant-marker.hover-scale, .restaurant-marker.active {
+  transform: scale(1.1);
   svg {
     filter: backdrop-blur(10px);
     scale: 1.5;

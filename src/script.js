@@ -214,26 +214,8 @@ let restaurants = [];
 
 // Function to set up location section animations with ScrollTrigger
 function setupLocationAnimations() {
-
-
-    // Animate restaurant list items
-    const listItems = document.querySelectorAll('.location-list-item');
-    if (listItems.length > 0) {
-        gsap.to(listItems, {
-            opacity: 1,
-            x: 0,
-            duration: 0.6,
-            ease: "power2.out",
-            stagger: 0.2,
-            delay: 0.8,
-            scrollTrigger: {
-                trigger: "#location",
-                end: "bottom 20%",
-                toggleActions: "play none none none",
-                once: true
-            }
-        });
-    }
+    // GSAP entrance animation for location items has been removed
+    // Location items now appear without animation
 }
 
 // Function to set up chefs section animations with ScrollTrigger
@@ -376,16 +358,6 @@ async function initializeMap() {
                 const listItem = document.querySelector(`[data-restaurant-id="${restaurant.id}"]`);
                 if (listItem && !listItem.classList.contains('active')) {
                     listItem.classList.add('hover-scale');
-
-                    // Make other list items slightly transparent
-                    document.querySelectorAll('.location-list-item:not(.active)').forEach(item => {
-                        if (item !== listItem) {
-                            item.style.opacity = '0.6';
-                        }
-                    });
-
-                    // Reset opacity for hovered item
-                    listItem.style.opacity = '1';
                 }
             });
 
@@ -394,20 +366,12 @@ async function initializeMap() {
                 const listItem = document.querySelector(`[data-restaurant-id="${restaurant.id}"]`);
                 if (listItem) {
                     listItem.classList.remove('hover-scale');
-
-                    // Reset opacity for all list items
-                    document.querySelectorAll('.location-list-item').forEach(item => {
-                        item.style.opacity = '1';
-                    });
                 }
             });
         });
 
         // Populate restaurant list
         populateRestaurantList(restaurants);
-
-        // Set up location section animations with ScrollTrigger
-        setupLocationAnimations();
 
 
 
@@ -479,16 +443,6 @@ function highlightRestaurantFromMarker(restaurantId) {
     if (listItem) {
         listItem.classList.add('active');
     }
-
-    // Make other list items slightly transparent
-    document.querySelectorAll('.location-list-item:not(.active)').forEach(item => {
-        item.style.opacity = '0.6';
-    });
-
-    // Reset opacity for active item
-    if (listItem) {
-        listItem.style.opacity = '1';
-    }
 }
 
 // Function to highlight marker from restaurant list click
@@ -533,16 +487,6 @@ function highlightMarkerFromRestaurant(restaurantId) {
     if (listItem) {
         listItem.classList.add('active');
     }
-
-    // Make other list items slightly transparent
-    document.querySelectorAll('.location-list-item:not(.active)').forEach(item => {
-        item.style.opacity = '0.6';
-    });
-
-    // Reset opacity for active item
-    if (listItem) {
-        listItem.style.opacity = '1';
-    }
 }
 
 // Function to scale marker on hover
@@ -582,7 +526,6 @@ function resetHighlights() {
     document.querySelectorAll('.location-list-item').forEach(item => {
         item.classList.remove('active');
         item.classList.remove('hover-scale');
-        item.style.opacity = '1';
     });
 
     // Reset map center to specified coordinates
