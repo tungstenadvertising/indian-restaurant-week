@@ -65,11 +65,8 @@
 }
 
 .hero-texture {
-  /* background-color: #501c00; */
+  background-color: #501c00;
   background-image: url('/src/images/global/hero-texture.jpg');
-  background-repeat: repeat;
-  /* background-blend-mode: multiply; */
-
 }
 
 .page-texture {
