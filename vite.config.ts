@@ -93,7 +93,8 @@ export default defineConfig({
     host: true, // Allow external access
     watch: {
       usePolling: true, // Better for some file systems
-    }
+    },
+    allowedHosts: ["devserver-main--indianrestaurantweeksf.netlify.app"]
   },
   build: {
     outDir: 'build',
