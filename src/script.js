@@ -40,8 +40,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Mobile Navigation Toggle
 const navToggle = document.getElementById('nav-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
+const mobileMenu = document.getElementById('mobile-menu');
+const mobileLogo = document.querySelector('#mobile-logo img');
+const mobileCloseBtn = document.getElementById('mobile-close-btn');
+const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
 
+gsap.set([mobileLogo, mobileCloseBtn], {
+    scale: 0.8,
+    x: -50,
+    opacity: 0
+});
+gsap.set(mobileNavLinks, {
+    scale: 0.8,
+    x: -50,
+    opacity: 0
+});
+
+function setInitialAnimationStates() {
+    gsap.to([mobileLogo, mobileCloseBtn], {
+        scale: 0.8,
+        x: -50,
+        opacity: 0
+    });
+    gsap.to(mobileNavLinks, {
+        scale: 0.8,
+        x: -50,
+        opacity: 0
+    });
+}
     if (navToggle && mobileMenu) {
             navToggle.addEventListener('click', (e) => {
             e.preventDefault();
@@ -61,27 +87,45 @@ const navToggle = document.getElementById('nav-toggle');
                     mobileMenu.classList.remove('-translate-x-full');
                     mobileMenu.classList.add('translate-x-0');
 
+                   gsap.to(mobileLogo, {
+                    scale: 1,
+                    x: 0,
+                    opacity: 1,
+                    duration: 0.5,
+                    delay: 0.2,
+                    ease: "power2.inOut"
+                   });
+
+                   gsap.to(mobileCloseBtn, {
+                    scale: 1,
+                    x: 0,
+                    opacity: 1,
+                    duration: 0.5,
+                    delay: 0.3,
+                    ease: "power2.inOut"
+                   });
+
+                    gsap.fromTo(mobileNavLinks,{
+                        scale: 0.8,
+                        x: -50,
+                        opacity: 0
+                    }, {
+                        scale: 1,
+                        x: 0,
+                        opacity: 1,
+                        duration: 0.4,
+                        stagger: 0.1,
+                        delay: 0.4,
+                        ease: "power2.inOut"
+                    });
+
+
+
                     // Freeze body scrolling with scroll position preservation
                     freezeBodyScroll();
-                }, 150);
+                }, 100);
 
             }
-
-
-            // Add hamburger animation
-            const bars = navToggle.querySelectorAll('.bar');
-            bars.forEach((bar, index) => {
-                if (mobileMenu.classList.contains('translate-x-0')) {
-                    // Animate to X
-                    if (index === 0) bar.style.transform = 'rotate(45deg) translate(5px, 5px)';
-                    if (index === 1) bar.style.opacity = '0';
-                    if (index === 2) bar.style.transform = 'rotate(-45deg) translate(7px, -6px)';
-                } else {
-                    // Reset to hamburger
-                    bar.style.transform = 'none';
-                    bar.style.opacity = '1';
-                }
-    });
 });
 
         // Function to close mobile menu
@@ -89,12 +133,6 @@ const navToggle = document.getElementById('nav-toggle');
             mobileMenu.classList.remove('translate-x-0');
             mobileMenu.classList.add('-translate-x-full');
 
-            // Reset hamburger animation
-            const bars = navToggle.querySelectorAll('.bar');
-            bars.forEach(bar => {
-                bar.style.transform = 'none';
-                bar.style.opacity = '1';
-            });
 
             // Re-enable page scrolling
             unfreezeBodyScroll();
@@ -105,6 +143,7 @@ const navToggle = document.getElementById('nav-toggle');
                 navToggle.style.opacity = '1';
             }, 150);
 
+            setInitialAnimationStates();
         }
 
         // Close mobile menu when clicking close button
