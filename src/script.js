@@ -10,32 +10,33 @@ import 'swiper/css';
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
 
+// Body scroll freeze utilities (global scope)
+let scrollPosition = 0;
+
+function freezeBodyScroll() {
+    // Store current scroll position
+    scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+    // Apply styles to freeze scroll
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollPosition}px`;
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+}
+
+function unfreezeBodyScroll() {
+    // Remove freeze styles
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+
+    // Restore scroll position
+    window.scrollTo(0, scrollPosition);
+}
+
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Body scroll freeze utilities
-    let scrollPosition = 0;
-
-    function freezeBodyScroll() {
-        // Store current scroll position
-        scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-
-        // Apply styles to freeze scroll
-        document.body.style.position = 'fixed';
-        document.body.style.top = `-${scrollPosition}px`;
-        document.body.style.width = '100%';
-        document.body.style.overflow = 'hidden';
-    }
-
-    function unfreezeBodyScroll() {
-        // Remove freeze styles
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-        document.body.style.overflow = '';
-
-        // Restore scroll position
-        window.scrollTo(0, scrollPosition);
-    }
 
 // Mobile Navigation Toggle
 const navToggle = document.getElementById('nav-toggle');
@@ -719,11 +720,14 @@ class ChefPopup {
             this.currentChef = chefData;
             this.populatePopup(chefData);
 
-            // Show popup with GSAP animation
+            // Set initial animation states BEFORE showing popup
+            this.setInitialAnimationStates();
+
+            // Show popup in HTML and freeze scroll
             this.popup.classList.remove('hidden');
             freezeBodyScroll();
 
-            // Animate popup appearance with GSAP
+            // Start animation immediately
             this.animatePopupShow();
 
         } catch (error) {
@@ -866,11 +870,26 @@ class ChefPopup {
     }
 
     hidePopup() {
+        // Check if popup is already hidden
+        if (this.popup.classList.contains('hidden')) {
+            return;
+        }
+
         // Animate popup hide with GSAP
         this.animatePopupHide(() => {
             // Hide the popup after animation completes
             this.popup.classList.add('hidden');
             unfreezeBodyScroll();
+
+            // Reset any GSAP transforms that might interfere
+            const popupContainer = this.popup.querySelector('.chef-popup-container');
+            const overlay = this.popup.querySelector('.chef-popup-overlay');
+            if (popupContainer) {
+                gsap.set(popupContainer, { clearProps: "all" });
+            }
+            if (overlay) {
+                gsap.set(overlay, { clearProps: "all" });
+            }
 
             // Then destroy Swiper instance after popup is hidden (prevents visual glitch)
             if (this.swiper) {
@@ -884,6 +903,79 @@ class ChefPopup {
                 sliderContainer.style.display = 'block';
             }
         });
+    }
+
+    setInitialAnimationStates() {
+        const popupContainer = this.popup.querySelector('.chef-popup-container');
+        const overlay = this.popup.querySelector('.chef-popup-overlay');
+        const header = this.popup.querySelector('.chef-popup-header');
+        const headerImage = this.popup.querySelector('#chef-popup-image');
+        const content = this.popup.querySelector('.chef-popup-content');
+        const story = this.popup.querySelector('#chef-popup-story');
+        const slider = this.popup.querySelector('#chef-popup-slider');
+        const closeBtn = this.popup.querySelector('#chef-popup-close');
+
+        // Check for reduced motion preference
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (prefersReducedMotion) {
+            // For reduced motion, set final states immediately
+            gsap.set([overlay, popupContainer], {
+                opacity: 1,
+                scale: 1,
+                y: 0,
+                rotationX: 0,
+                borderRadius: '0%'
+            });
+            if (header) gsap.set(header, { height: 'auto' });
+            if (headerImage) gsap.set(headerImage, { opacity: 1, scale: 1.01 });
+            if (content) gsap.set(content, { height: 'auto' });
+            if (story) gsap.set(story, { opacity: 1, y: 0 });
+            if (slider) gsap.set(slider, { opacity: 1, y: 0 });
+            if (closeBtn) gsap.set(closeBtn, { opacity: 1, y: 0 });
+            return;
+        }
+
+        // Set initial states for animation
+        if (popupContainer) {
+            gsap.set(popupContainer, {
+                opacity: 0,
+                scale: 0,
+                rotationX: -15,
+                borderRadius: '50%'
+            });
+        }
+
+        if (overlay) {
+            gsap.set(overlay, {
+                opacity: 0,
+                backdropFilter: 'blur(0px)'
+            });
+        }
+
+        if (header) {
+            gsap.set(header, { height: 0 });
+        }
+
+        if (headerImage) {
+            gsap.set(headerImage, {
+                opacity: 0,
+                scale: 1.2
+            });
+        }
+
+        if (content) {
+            gsap.set(content, { height: 0 });
+        }
+
+        // Set initial states for content elements
+        const contentElements = [story, slider, closeBtn].filter(el => el !== null);
+        if (contentElements.length > 0) {
+            gsap.set(contentElements, {
+                opacity: 0,
+                y: 20
+            });
+        }
     }
 
     animatePopupShow() {
@@ -900,60 +992,23 @@ class ChefPopup {
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         if (prefersReducedMotion) {
-            // Simple fade-in for reduced motion
-            gsap.set([overlay, content, story, slider, closeBtn], {
-                opacity: 1,
-                scale: 1,
-                y: 0,
-                rotationX: 0,
-            });
+            // Already set in setInitialAnimationStates, just return empty timeline
             return gsap.timeline();
         }
-
-        // Set initial states
-        gsap.set(popupContainer, {
-            opacity: 0,
-            scale: 0,
-            rotationX: -15,
-            borderRadius: '50%'
-        });
-
-        gsap.set(header, {
-            height: 0
-        })
-
-        gsap.set(headerImage, {
-            opacity: 0,
-            scale: 1.2
-        })
-
-        gsap.set(content, {
-            height: 0
-        })
-
-        gsap.set(overlay, {
-            opacity: 0,
-            backdropFilter: 'blur(0px)'
-        });
-
-        gsap.set([story, slider, closeBtn], {
-            opacity: 0,
-            y: 20
-        });
 
         // Create timeline for smooth orchestrated animation
         const tl = gsap.timeline({
             ease: "power2.out"
         });
 
-        // Animate overlay first
+        // Animate overlay first with smoother transition
         tl.to(overlay, {
             opacity: 1,
             backdropFilter: 'blur(10px)',
-            duration: 0.4,
+            duration: 0.5,
             ease: "power2.out"
         })
-        // Animate popup container
+        // Animate popup container with more dramatic entrance
         .to(popupContainer, {
             opacity: 1,
             scale: 1,
@@ -961,29 +1016,29 @@ class ChefPopup {
             borderRadius: '0%',
             duration: 0.6,
             ease: "back.out(1.2)"
-        }, "-=0.1")
+        }, "<50%")
         .to(header, {
             height: 'auto',
-            duration: 0.6,
+            duration: 0.5,
             ease: "back.out(1.2)"
         }, "<20%")
         .to(headerImage, {
             opacity: 1,
             scale: 1.01,
-            duration: 1,
+            duration: 0.8,
             ease: "power2.out"
         }, "<20%")
         // Stagger animate content elements
         .to(content, {
             height: 'auto',
-            duration: 0.8,
+            duration: 0.6,
             ease: "power2.inOut"
         }, "<20%")
         // Animate story text separately for more control
         .to(story, {
             opacity: 1,
             y: 0,
-            duration: 0.6,
+            duration: 0.5,
             ease: "power2.out"
         })
         // Animate slider and close button
@@ -1030,37 +1085,42 @@ class ChefPopup {
         tl.to([slider, closeBtn, story], {
             opacity: 0,
             y: -20,
-            duration: 0.3,
-            stagger: 0.05,
+            duration: 0.2,
+            stagger: 0.03,
             ease: "power2.in"
         })
+        .to(content, {
+            height: 0,
+            duration: 0.4,
+            ease: "power2.inOut"
+        },"<30%")
         .to(header, {
             height: 0,
-            duration: 0.3,
+            duration: 0.2,
             ease: "power2.in"
-        })
+        },"<50%")
         .to(headerImage, {
             opacity: 0,
             scale: 1.3,
-            duration: 0.3,
+            duration: 0.2,
             ease: "power2.in"
-        })
+        }, "<50%")
         // Animate popup container
         .to(popupContainer, {
             opacity: 0,
             scale: 0.9,
             y: -30,
             rotationX: 10,
-            duration: 0.4,
-            ease: "power2.in"
-        }, "-=0.1")
+            duration: 0.3,
+            ease: "power2.inOut"
+        }, "<10%")
         // Animate overlay out
         .to(overlay, {
             opacity: 0,
             backdropFilter: 'blur(0px)',
-            duration: 0.3,
+            duration: 0.2,
             ease: "power2.in"
-        }, "-=0.2");
+        }, "<50%");
 
         return tl;
     }
@@ -1183,7 +1243,6 @@ class RestaurantCarousel {
         this.centralLogo = null;
         this.restaurantItems = [];
         this.totalRotation = 0; // Track total rotation for continuous loop
-        this.introAnimationPlayed = false; // Track if intro animation has been played
 
         this.init();
     }
@@ -1226,7 +1285,11 @@ class RestaurantCarousel {
         this.logoDisplay.addEventListener('click', () => {
             if (this.restaurants && this.restaurants[this.currentIndex]) {
                 const currentRestaurant = this.restaurants[this.currentIndex];
-                window.dishPopup.showPopup(currentRestaurant.id);
+                if (window.dishPopup && typeof window.dishPopup.showPopup === 'function') {
+                    window.dishPopup.showPopup(currentRestaurant.id);
+                } else {
+                    console.error('DishPopup not available or showPopup method not found');
+                }
             }
         });
 
@@ -1243,10 +1306,8 @@ class RestaurantCarousel {
         // Set initial active state and position
         this.rotateToRestaurant(0);
 
-        // Start the intro animation after a short delay
-        setTimeout(() => {
-            this.playIntroAnimation();
-        }, 500);
+        // Start rotation immediately
+        this.startRotation();
     }
 
     createRestaurantItem(restaurant, index) {
@@ -1255,20 +1316,17 @@ class RestaurantCarousel {
         item.setAttribute('data-restaurant-id', restaurant.id);
         item.setAttribute('data-index', index);
 
-        // Initially position all items at center (under the logo)
-        item.style.left = '50%';
-        item.style.top = '50%';
-        item.style.transform = 'translate(-50%, -50%)';
-
-        // Calculate final circular position with responsive radius
+        // Calculate circular position with responsive radius
         const angle = (index * 60) - 90; // Start from top (12 o'clock position)
         const radius = this.getCarouselRadius(); // Get radius from CSS variable
         const finalX = Math.cos(angle * Math.PI / 180) * radius;
         const finalY = Math.sin(angle * Math.PI / 180) * radius;
 
-        // Store final position as data attributes for the intro animation
-        item.setAttribute('data-final-x', finalX);
-        item.setAttribute('data-final-y', finalY);
+        // Position items directly in their final positions
+        item.style.left = `calc(50% + ${finalX}px)`;
+        item.style.top = `calc(50% + ${finalY}px)`;
+        item.style.transform = 'translate(-50%, -50%)';
+
 
         // Add restaurant dish image
         const img = document.createElement('img');
@@ -1302,58 +1360,16 @@ class RestaurantCarousel {
             this.resetRotation();
 
             // Show dish popup
-            if (window.dishPopup) {
+            if (window.dishPopup && typeof window.dishPopup.showPopup === 'function') {
                 window.dishPopup.showPopup(restaurant.id);
+            } else {
+                console.error('DishPopup not available or showPopup method not found');
             }
         });
 
         return item;
     }
 
-    playIntroAnimation() {
-        // Only play intro animation once
-        if (this.introAnimationPlayed) {
-            this.startRotation();
-            return;
-        }
-
-        this.introAnimationPlayed = true;
-
-        // Create a timeline for the flower opening effect
-        const tl = gsap.timeline({
-            ease: "power2.out"
-        });
-
-        // Animate each dish from center to its final position with staggered timing
-        this.restaurantItems.forEach((item, index) => {
-            const finalX = parseFloat(item.getAttribute('data-final-x'));
-            const finalY = parseFloat(item.getAttribute('data-final-y'));
-
-            // Set initial state (already at center, but ensure opacity and scale)
-            gsap.set(item, {
-                opacity: 0,
-                scale: 0.3
-            });
-
-            // Animate to final position with staggered timing
-            tl.to(item, {
-                opacity: 1,
-                scale: 1,
-                left: `calc(50% + ${finalX}px)`,
-                top: `calc(50% + ${finalY}px)`,
-                duration: 1.2,
-                ease: "back.out(1.7)",
-                delay: index * 0.15 // Stagger each dish by 0.15 seconds
-            }, 0); // Start all animations at the same time but with different delays
-        });
-
-        // After intro animation completes, start the normal rotation
-        tl.call(() => {
-            // Ensure counter-rotation is properly applied before starting rotation
-            this.updateCounterRotation();
-            this.startRotation();
-        });
-    }
 
     setActiveRestaurant(index) {
         // Remove active class from all items
@@ -1684,6 +1700,12 @@ class DishPopup {
         this.overlay = document.querySelector('.dish-popup-overlay');
         this.currentRestaurant = null;
 
+        // Check if required elements exist
+        if (!this.popup || !this.closeBtn || !this.overlay) {
+            console.error('DishPopup: Required DOM elements not found');
+            return;
+        }
+
         this.init();
     }
 
@@ -1710,6 +1732,16 @@ class DishPopup {
 
     async showPopup(restaurantId) {
         try {
+            // Check if popup is already open
+            if (!this.popup.classList.contains('hidden')) {
+                console.log('Popup already open, closing first');
+                this.hidePopup();
+                // Wait a bit for the close animation to complete
+                setTimeout(() => {
+                    this.showPopup(restaurantId);
+                }, 400);
+                return;
+            }
 
             // Find restaurant data
             const restaurantData = restaurants.find(restaurant => restaurant.id === restaurantId);
@@ -1718,19 +1750,24 @@ class DishPopup {
                 return;
             }
 
-
             this.currentRestaurant = restaurantData;
             this.populatePopup(restaurantData);
 
-            // Show popup with GSAP animation
+            // Set initial animation states BEFORE showing popup
+            this.setInitialAnimationStates();
+
+            // Show popup in HTML and freeze scroll
             this.popup.classList.remove('hidden');
             freezeBodyScroll();
 
-            // Animate popup appearance with GSAP
+            // Start animation immediately
             this.animatePopupShow();
 
         } catch (error) {
             console.error('Error showing dish popup:', error);
+            // Ensure popup is hidden if there's an error
+            this.popup.classList.add('hidden');
+            unfreezeBodyScroll();
         }
     }
 
@@ -1932,15 +1969,30 @@ class DishPopup {
     }
 
     hidePopup() {
+        // Check if popup is already hidden
+        if (this.popup.classList.contains('hidden')) {
+            return;
+        }
+
         // Animate popup hide with GSAP
         this.animatePopupHide(() => {
             // Hide the popup after animation completes
             this.popup.classList.add('hidden');
             unfreezeBodyScroll();
+
+            // Reset any GSAP transforms that might interfere
+            const popupContainer = this.popup.querySelector('.dish-popup-container');
+            const overlay = this.popup.querySelector('.dish-popup-overlay');
+            if (popupContainer) {
+                gsap.set(popupContainer, { clearProps: "all" });
+            }
+            if (overlay) {
+                gsap.set(overlay, { clearProps: "all" });
+            }
         });
     }
 
-    animatePopupShow() {
+    setInitialAnimationStates() {
         const popupContainer = this.popup.querySelector('.dish-popup-container');
         const overlay = this.popup.querySelector('.dish-popup-overlay');
         const header = this.popup.querySelector('.dish-popup-header');
@@ -1951,60 +2003,97 @@ class DishPopup {
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         if (prefersReducedMotion) {
-            // Simple fade-in for reduced motion
-            gsap.set([overlay, popupContainer, header, content, closeBtn], {
+            // For reduced motion, set final states immediately
+            gsap.set([overlay, popupContainer], {
                 opacity: 1,
                 scale: 1,
                 y: 0
             });
+            if (header) gsap.set(header, { opacity: 1, y: 0 });
+            if (content) gsap.set(content, { opacity: 1, y: 0 });
+            if (closeBtn) gsap.set(closeBtn, { opacity: 1, y: 0 });
+            return;
+        }
+
+        // Set initial states for animation
+        if (popupContainer) {
+            gsap.set(popupContainer, {
+                opacity: 0,
+                scale: 0.8,
+                y: 50
+            });
+        }
+
+        if (overlay) {
+            gsap.set(overlay, {
+                opacity: 0,
+                backdropFilter: 'blur(0px)'
+            });
+        }
+
+        // Set initial states for content elements
+        const contentElements = [header, content, closeBtn].filter(el => el !== null);
+        if (contentElements.length > 0) {
+            gsap.set(contentElements, {
+                opacity: 0,
+                y: 20
+            });
+        }
+    }
+
+    animatePopupShow() {
+        const popupContainer = this.popup.querySelector('.dish-popup-container');
+        const overlay = this.popup.querySelector('.dish-popup-overlay');
+        const header = this.popup.querySelector('.dish-popup-header');
+        const content = this.popup.querySelector('.dish-popup-content');
+        const closeBtn = this.popup.querySelector('#dish-popup-close');
+
+        // Debug: Check if elements exist
+        if (!popupContainer || !overlay) {
+            console.error('DishPopup: Required animation elements not found');
             return gsap.timeline();
         }
 
-        // Set initial states
-        gsap.set(popupContainer, {
-            opacity: 0,
-            scale: 0.8,
-            y: 50
-        });
+        // Check for reduced motion preference
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        gsap.set(overlay, {
-            opacity: 0,
-            backdropFilter: 'blur(0px)'
-        });
-
-        gsap.set([header, content, closeBtn], {
-            opacity: 0,
-            y: 20
-        });
+        if (prefersReducedMotion) {
+            // Already set in setInitialAnimationStates, just return empty timeline
+            return gsap.timeline();
+        }
 
         // Create timeline for smooth orchestrated animation
         const tl = gsap.timeline({
             ease: "power2.out"
         });
 
-        // Animate overlay first
+        // Animate overlay first with smoother transition
         tl.to(overlay, {
             opacity: 1,
             backdropFilter: 'blur(10px)',
-            duration: 0.4,
+            duration: 0.5,
             ease: "power2.out"
         })
-        // Animate popup container
+        // Animate popup container with more dramatic entrance
         .to(popupContainer, {
             opacity: 1,
             scale: 1,
             y: 0,
-            duration: 0.6,
-            ease: "back.out(1.2)"
-        }, "-=0.1")
-        // Animate content elements
-        .to([header, content, closeBtn], {
-            opacity: 1,
-            y: 0,
-            duration: 0.4,
-            stagger: 0.1,
-            ease: "power2.out"
+            duration: 0.7,
+            ease: "back.out(1.4)"
         }, "-=0.2");
+
+        // Animate content elements if they exist
+        const contentElements = [header, content, closeBtn].filter(el => el !== null);
+        if (contentElements.length > 0) {
+            tl.to(contentElements, {
+                opacity: 1,
+                y: 0,
+                duration: 0.5,
+                stagger: 0.15,
+                ease: "power2.out"
+            }, "-=0.3");
+        }
 
         return tl;
     }
@@ -2016,15 +2105,23 @@ class DishPopup {
         const content = this.popup.querySelector('.dish-popup-content');
         const closeBtn = this.popup.querySelector('#dish-popup-close');
 
+        // Debug: Check if elements exist
+        if (!popupContainer || !overlay) {
+            console.error('DishPopup: Required animation elements not found for hide');
+            if (callback) callback();
+            return gsap.timeline();
+        }
+
         // Check for reduced motion preference
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         if (prefersReducedMotion) {
             // Simple fade-out for reduced motion
-            gsap.set([popupContainer, overlay, header, content, closeBtn], {
-                opacity: 0
-            });
-            callback();
+            gsap.set([popupContainer, overlay], { opacity: 0 });
+            if (header) gsap.set(header, { opacity: 0 });
+            if (content) gsap.set(content, { opacity: 0 });
+            if (closeBtn) gsap.set(closeBtn, { opacity: 0 });
+            if (callback) callback();
             return gsap.timeline();
         }
 
@@ -2034,16 +2131,22 @@ class DishPopup {
             onComplete: callback
         });
 
+        // Only animate elements that exist
+        const contentElements = [header, content, closeBtn].filter(el => el !== null);
+
         // Animate content elements out first
-        tl.to([header, content, closeBtn], {
-            opacity: 0,
-            y: -20,
-            duration: 0.3,
-            stagger: 0.05,
-            ease: "power2.in"
-        })
+        if (contentElements.length > 0) {
+            tl.to(contentElements, {
+                opacity: 0,
+                y: -20,
+                duration: 0.3,
+                stagger: 0.05,
+                ease: "power2.in"
+            });
+        }
+
         // Animate popup container
-        .to(popupContainer, {
+        tl.to(popupContainer, {
             opacity: 0,
             scale: 0.9,
             y: 30,

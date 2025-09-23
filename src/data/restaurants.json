@@ -19,8 +19,8 @@
         "chef-popup-header": "chefs/ashish-tiwari/chef-popup-header.jpg",
         "restaurant-popup-header": {
           "headerStyle": {
-            "background": "linear-gradient(180deg, #1E2A78 42.89%, #384EDE 61.11%, #384EDE 74.02%), linear-gradient(0deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.28))",
-            "height": "380px"
+            "background": "linear-gradient(180deg, #1E2A78 50%, #384EDE 100%)",
+            "height": "420px"
           }
         },
         "logo": "chefs/ashish-tiwari/logo.png",
