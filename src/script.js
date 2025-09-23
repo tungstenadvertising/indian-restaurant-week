@@ -1904,10 +1904,10 @@ class DishPopup {
         if (priceString.includes('&')) {
             // Split by "&" and format each price
             const prices = priceString.split('&').map(price => price.trim());
-            return prices.map(price => `<span class="price-value text-4xl -top-1 relative">${price}</span><span class="price-currency text-3xl">$</span>`).join(' & ');
+            return prices.map(price => `<span class="price-value md:text-4xl text-3xl -top-1 relative">${price}</span><span class="price-currency md:text-3xl text-2xl">$</span>`).join(' & ');
         } else {
             // Single price - add dollar sign
-            return `<span class="price-value text-4xl -top-1 relative">${priceString}</span><span class="price-currency text-3xl">$</span>`;
+            return `<span class="price-value md:text-4xl text-3xl -top-1 relative">${priceString}</span><span class="price-currency md:text-3xl text-2xl">$</span>`;
         }
     }
 
