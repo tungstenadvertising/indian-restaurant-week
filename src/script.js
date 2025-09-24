@@ -1142,8 +1142,8 @@ function populateChefsList() {
                         </div>
                     </div>
                     <div class="chef-name-container relative grid place-items-center -mt-10 z-10 cursor-pointer" data-chef="${restaurant.id}">
-                        <span class="chef-name absolute font-bold text-white text-lg md:text-xl">${restaurant.chef}</span>
-                        <img src="${imageBasePath}/ui/chefNameShape.svg" alt="Chef Name Shape Background" class="chef-name-shape" loading="lazy" fetchpriority="low" decoding="async">
+                        <span class="chef-name absolute font-bold text-white text-lg lg:text-xl">${restaurant.chef}</span>
+                        <img src="${imageBasePath}/ui/chefNameShape.svg" alt="Chef Name Decoration" class="chef-name-shape" loading="lazy" fetchpriority="low" decoding="async">
                     </div>
                 </div>
                 <div class="@container w-full hef-excerpt-container mt-2 md:mt-0 px-4 text-center ${textAlignmentClass} flex-1">

@@ -338,16 +338,6 @@
 }
 
 
-
-
-#chefs-list {
-  .chef:not(:first-child) {
-    @media (width >= 1024px) {
-      margin-top: -50px;
-    }
-  }
-}
-
 /* GSAP Animation Initial States for Chefs */
 .chef {
   opacity: 0;
@@ -382,8 +372,15 @@
       scale: 1.05;
     }
   }
-}
 
+}
+.chef-name-shape {
+  width: clamp(250px, 20vw, 300px);
+  @media (width > 1024px) {
+    width: auto;
+  }
+
+}
 /* Chef Popup Swiper Carousel Styles */
 
 
