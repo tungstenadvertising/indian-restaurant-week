@@ -582,17 +582,17 @@
 }
 
 /* Dish Popup Styles */
-.dish-popup-overlay {
+/* .dish-popup-overlay {
   backdrop-filter: blur(10px);
   transition: opacity 0.5s ease-in-out;
   opacity: 1;
   scale: 1;
-}
+} */
 
-#dish-popup.hidden .dish-popup-overlay {
+/* #dish-popup.hidden .dish-popup-overlay {
   opacity: 0;
   scale: 0.9;
-}
+} */
 
 .dish-popup-container {
   max-height: 90vh;
@@ -614,28 +614,28 @@
 /* Responsive Design for Dish Popup */
 @media (max-width: 768px) {
   .dish-popup-container {
-    margin: 1rem auto;
-    max-width: calc(100vw - 2rem);
+    /* margin: 1rem auto;
+    max-width: calc(100vw - 2rem); */
   }
 
 }
 
 @media (max-width: 480px) {
   .dish-popup-container {
-    margin: 0.5rem auto;
-    max-width: calc(100vw - 1rem);
+    /* margin: 0.5rem auto;
+    max-width: calc(100vw - 1rem); */
   }
 
 }
 
 /* Accessibility Improvements */
 .dish-popup-overlay:focus-within {
-  outline: none;
+  /* outline: none; */
 }
 
 .dish-popup-container:focus {
-  outline: 2px solid #FFA73C;
-  outline-offset: 2px;
+  /* outline: 2px solid #FFA73C;
+  outline-offset: 2px; */
 }
 
 /* High contrast mode support */

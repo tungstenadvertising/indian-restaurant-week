@@ -257,31 +257,7 @@ function setupLocationAnimations() {
     // Location items now appear without animation
 }
 
-// Function to set up chefs section animations with ScrollTrigger
-function setupChefsAnimations() {
-    // Animate chef items with stagger effect
-    const chefItems = document.querySelectorAll('#chefs-list .chef');
-    if (chefItems.length > 0) {
 
-        chefItems.forEach((chefItem, index) => {
-            gsap.to(chefItem, {
-                opacity: 1,
-                y: 0,
-                duration: 1,
-                ease: "power2.inOut",
-                delay: index * 0.3,
-                scrollTrigger: {
-                    trigger: chefItem,
-                    start: "top bottom",
-                    end: "bottom 20%",
-                    toggleActions: "play none none none",
-                    once: true
-                }
-            });
-        });
-
-    }
-}
 
 // Initialize Mapbox Map and Load Restaurant Data
 async function initializeMap() {
@@ -622,6 +598,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Initialize map when DOM is loaded
 document.addEventListener('DOMContentLoaded', initializeMap);
+
+
+// Function to set up chefs section animations with ScrollTrigger
+function setupChefsAnimations() {
+    // Animate chef items with stagger effect
+    const chefItems = document.querySelectorAll('#chefs-list .chef');
+    if (chefItems.length > 0) {
+
+        chefItems.forEach((chefItem, index) => {
+            gsap.to(chefItem, {
+                opacity: 1,
+                y: 0,
+                duration: 0.7,
+                ease: "power1.inOut",
+                scrollTrigger: {
+                    trigger: chefItem,
+                    start: "top 70%",
+                    toggleActions: "play none none none",
+                    once: true
+                }
+            });
+        });
+
+    }
+}
 
 // Chef Popup System
 class ChefPopup {
