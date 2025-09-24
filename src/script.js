@@ -178,72 +178,19 @@ function setInitialAnimationStates() {
 
 
 
-// Smooth scrolling for navigation links (only for actual nav links, not all anchor links)
-document.querySelectorAll('nav a[href^="#"], .mobile-nav-link[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
-
-
-
-
-// Add intersection observer for smooth animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
-
-// Observe elements for animation
-document.querySelectorAll('.location-info, .contact-info').forEach(el => {
-        if (el) {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(30px)';
-    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    observer.observe(el);
-        }
-});
-
-// Touch device detection for hero elements
-function isTouchDevice() {
-    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-}
-
-// Adjust hero element behavior for touch devices
-if (isTouchDevice()) {
-    document.querySelectorAll('.interactive-element').forEach(element => {
-        element.addEventListener('touchstart', function(e) {
+    // Smooth scrolling for navigation links (only for actual nav links, not all anchor links)
+    document.querySelectorAll('nav a[href^="#"], .mobile-nav-link[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
             e.preventDefault();
-            const popup = this.querySelector('.popup');
-            popup.style.opacity = '1';
-            popup.style.visibility = 'visible';
-            popup.style.transform = 'translateX(-50%) translateY(-10px)';
-        });
-
-        element.addEventListener('touchend', function() {
-            const popup = this.querySelector('.popup');
-            popup.style.opacity = '0';
-            popup.style.visibility = 'hidden';
-            popup.style.transform = 'translateX(-50%)';
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
         });
     });
-}
 });
 
 // Global variables to store map and marker references
@@ -611,7 +558,7 @@ function setupChefsAnimations() {
                 opacity: 1,
                 y: 0,
                 duration: 0.7,
-                ease: "power1.inOut",
+                ease: "power2.inOut",
                 scrollTrigger: {
                     trigger: chefItem,
                     start: "top 70%",
