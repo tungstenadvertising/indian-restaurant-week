@@ -122,28 +122,35 @@
     line-height: 1.2;
   }
   cursor: pointer;
-  transition: all 0.3s ease-out;
+  transition: all 0.5s ease-in-out;
   transform-origin: left center;
-  &:hover, &.hover-scale {
-    scale: 1.1;
+  &.hover, &.active {
+    scale: 1.15;
+    opacity: 1;
   }
 }
 .location-list-item-name {
-  font-size: clamp(19px, 2.5vw, 25px);
+  font-size: clamp(19px, 3.5vw, 25px);
   transition: all 0.4s ease-out;
 }
 
 .location-list-item-address {
-    font-size: clamp(14px, 2vw, 18px);
+    font-size: clamp(14px, 2.5vw, 18px);
     transition: all 0.4s ease-out;
 }
+#restaurant-list {
+  padding-inline: 10px;
+  @media (width > 420px) {
+    padding-inline: 20px;
 
-
-
-  .location-list-item.active .location-list-item-name,
-  .location-list-item.active .location-list-item-address {
-    color: #fff;
   }
+  &:has(.location-list-item.active, .location-list-item.hover) {
+    .location-list-item:not(.active,.hover) {
+      opacity: 0.7;
+    }
+  }
+}
+
 
 
 
@@ -165,10 +172,6 @@
 
 
 /* Map marker active state */
-.restaurant-marker.active {
-  transform: scale(1.2);
-  z-index: 1000;
-}
 
 /* GSAP Animation Initial States */
 .restaurant-marker {
@@ -180,26 +183,20 @@
     transform-origin: center bottom;
   }
 }
-
-.restaurant-marker:hover {
-  transform: scale(1.1);
+.restaurant-marker.hover,
+.restaurant-marker:hover,
+.restaurant-marker.active {
+  z-index: 1000;
   svg {
-    filter:backdrop-blur(10px) brightness(1.5) saturate(1.2);
+    filter: brightness(1.1) saturate(1.1);
     scale: 1.5;
   }
 }
-.mapboxgl-canvas-container:has(.restaurant-marker:hover, .restaurant-marker.hover-scale) .restaurant-marker:not(:hover, .active, .hover-scale) {
+.mapboxgl-canvas-container:has(.restaurant-marker.active, .restaurant-marker.hover, .restaurant-marker:hover) .restaurant-marker:not(.active, .hover, :hover) {
+  transform: scale(1.5);
   svg {
-    filter: saturate(0.7);
+    filter: saturate(0.5);
     opacity: 0.9;
-  }
-}
-
-.restaurant-marker.hover-scale, .restaurant-marker.active {
-  transform: scale(1.1);
-  svg {
-    filter: backdrop-blur(10px);
-    scale: 1.5;
   }
 }
 

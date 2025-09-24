@@ -301,8 +301,8 @@ async function initializeMap() {
 
             // Add click event to marker
             markerEl.addEventListener('click', () => {
-                // Remove hover-scale class when marker is clicked
-                markerEl.classList.remove('hover-scale');
+                // Remove hover class when marker is clicked
+                markerEl.classList.remove('hover');
                 map.easeTo({
                     center: restaurant.coordinates,
                     zoom: 13,
@@ -314,26 +314,42 @@ async function initializeMap() {
                 highlightRestaurantFromMarker(restaurant.id);
             });
 
-            // Add hover events to marker
-            markerEl.addEventListener('mouseenter', () => {
-                // Add hover-scale class to corresponding list item
-                const listItem = document.querySelector(`[data-restaurant-id="${restaurant.id}"]`);
-                if (listItem && !listItem.classList.contains('active')) {
-                    listItem.classList.add('hover-scale');
-                }
-            });
-
-            markerEl.addEventListener('mouseleave', () => {
-                // Remove hover-scale class from corresponding list item
-                const listItem = document.querySelector(`[data-restaurant-id="${restaurant.id}"]`);
-                if (listItem) {
-                    listItem.classList.remove('hover-scale');
-                }
-            });
+            // Add hover events to marker (will be set up after list is populated)
         });
 
         // Populate restaurant list
         populateRestaurantList(restaurants);
+
+        // Now set up marker hover events after list is populated
+        markers.forEach(markerData => {
+            const markerEl = markerData.element;
+            const restaurant = markerData.restaurant;
+
+            markerEl.addEventListener('mouseenter', () => {
+                console.log('Marker hover enter:', restaurant.id);
+                // Add hover class to corresponding list item
+                const listItem = document.querySelector(`.location-list-item[data-restaurant-id="${restaurant.id}"]`);
+                console.log('Found list item:', listItem);
+                if (listItem && !listItem.classList.contains('hover')) {
+                    listItem.classList.add('hover');
+                    console.log('Added hover class to list item');
+                }
+            });
+
+            markerEl.addEventListener('mouseleave', () => {
+                console.log('Marker hover leave:', restaurant.id);
+                // Remove hover class from corresponding list item
+                const listItem = document.querySelector(`.location-list-item[data-restaurant-id="${restaurant.id}"]`);
+                if (listItem) {
+                    listItem.classList.remove('hover');
+                    console.log('Removed hover class from list item');
+                }
+            });
+        });
+
+        // Debug: Log markers and list items
+        console.log('Total markers created:', markers.length);
+        console.log('Total list items:', document.querySelectorAll('.location-list-item').length);
 
 
 
@@ -360,35 +376,48 @@ function populateRestaurantList(restaurants) {
     const restaurantList = document.getElementById('restaurant-list');
 
     restaurantList.innerHTML = `
-        <div class="text-white">
-            <ul class="space-y-4">
-                ${restaurants.map(restaurant => `
-                    <li class="location-list-item block" data-restaurant-id="${restaurant.id}">
-                        <div class="location-list-item-name font-extrabold text-white">${restaurant.name}</div>
-                        <div class="location-list-item-address text-white/90">${restaurant.address}</div>
-                    </li>
-                `).join('')}
-            </ul>
-        </div>
+        <ul class="space-y-4">
+            ${restaurants.map(restaurant => `
+                <li class="location-list-item block" data-restaurant-id="${restaurant.id}">
+                    <div class="location-list-item-name font-extrabold text-white">${restaurant.name}</div>
+                    <div class="location-list-item-address text-white/90">${restaurant.address}</div>
+                </li>
+            `).join('')}
+        </ul>
     `;
 
     // Add click and hover event listeners to restaurant list items
-    document.querySelectorAll('.location-list-item').forEach(item => {
-        item.addEventListener('click', (e) => {
+    const listItems = document.querySelectorAll('.location-list-item');
+    console.log('Setting up event listeners for', listItems.length, 'list items');
+    console.log('List items found:', listItems);
 
+    listItems.forEach((item, index) => {
+        console.log(`Setting up events for list item ${index}:`, item);
+        console.log(`Restaurant ID:`, item.getAttribute('data-restaurant-id'));
+
+        item.addEventListener('click', (e) => {
+            console.log('List item clicked:', item.getAttribute('data-restaurant-id'));
             const restaurantId = item.getAttribute('data-restaurant-id');
             highlightMarkerFromRestaurant(restaurantId);
+            listItems.forEach(item => {
+                item.classList.remove('active');
+            });
+           item.classList.add('active');
         });
 
         // Add hover events for marker scaling
         item.addEventListener('mouseenter', () => {
             const restaurantId = item.getAttribute('data-restaurant-id');
+            console.log('List item hover enter:', restaurantId, item);
             scaleMarkerOnHover(restaurantId, true);
+            item.classList.add('hover');
         });
 
         item.addEventListener('mouseleave', () => {
             const restaurantId = item.getAttribute('data-restaurant-id');
+            console.log('List item hover leave:', restaurantId);
             scaleMarkerOnHover(restaurantId, false);
+            item.classList.remove('hover');
         });
     });
 }
@@ -404,15 +433,16 @@ function highlightRestaurantFromMarker(restaurantId) {
     const listItem = document.querySelector(`[data-restaurant-id="${restaurantId}"]`);
     if (listItem) {
         listItem.classList.add('active');
+        console.log('Added active class to list item', 'restaurantId', restaurantId, 'listItem', listItem);
     }
 }
 
 // Function to highlight marker from restaurant list click
 function highlightMarkerFromRestaurant(restaurantId) {
-    // Remove active and hover-scale classes from all markers
+    // Remove active and hover classes from all markers
     markers.forEach(markerData => {
         markerData.element.classList.remove('active');
-        markerData.element.classList.remove('hover-scale');
+        markerData.element.classList.remove('hover');
     });
 
     // Find and highlight the corresponding marker
@@ -438,11 +468,6 @@ function highlightMarkerFromRestaurant(restaurantId) {
         });
     }
 
-    // Remove active and hover-scale classes from all list items
-    document.querySelectorAll('.location-list-item').forEach(item => {
-        item.classList.remove('active');
-        item.classList.remove('hover-scale');
-    });
 
     // Add active class to clicked list item
     const listItem = document.querySelector(`[data-restaurant-id="${restaurantId}"]`);
@@ -454,14 +479,17 @@ function highlightMarkerFromRestaurant(restaurantId) {
 // Function to scale marker on hover
 function scaleMarkerOnHover(restaurantId, isHovering) {
     const markerData = markers.find(m => m.restaurant.id === restaurantId);
+    console.log('scaleMarkerOnHover:', restaurantId, isHovering, markerData);
     if (markerData) {
         if (isHovering) {
             // Only add hover scale if marker is not already active
-            if (!markerData.element.classList.contains('active')) {
-                markerData.element.classList.add('hover-scale');
+            if (!markerData.element.classList.contains('hover') && !markerData.element.classList.contains('active')) {
+                markerData.element.classList.add('hover');
+                console.log('Added hover class to marker');
             }
         } else {
-            markerData.element.classList.remove('hover-scale');
+            markerData.element.classList.remove('hover');
+            console.log('Removed hover class from marker');
         }
     }
 }
@@ -481,13 +509,13 @@ function resetHighlights() {
     // Remove active class from all markers
     markers.forEach(markerData => {
         markerData.element.classList.remove('active');
-        markerData.element.classList.remove('hover-scale');
+        markerData.element.classList.remove('hover');
     });
 
-    // Remove active and hover-scale classes from all list items
+    // Remove active and hover classes from all list items
     document.querySelectorAll('.location-list-item').forEach(item => {
         item.classList.remove('active');
-        item.classList.remove('hover-scale');
+        item.classList.remove('hover');
     });
 
     // Reset map center to specified coordinates
