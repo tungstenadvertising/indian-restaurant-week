@@ -200,8 +200,40 @@ let restaurants = [];
 
 // Function to set up location section animations with ScrollTrigger
 function setupLocationAnimations() {
-    // GSAP entrance animation for location items has been removed
-    // Location items now appear without animation
+    const locationListItems = document.querySelectorAll('.location-list-item .location-list-item-container');
+
+    if (locationListItems.length === 0) {
+        console.warn('No location list items found for animation setup');
+        return;
+    }
+
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+        // For reduced motion, set final states immediately
+        gsap.set(locationListItems, {
+            opacity: 1,
+            y: 0
+        });
+        return;
+    }
+
+
+    // Create entrance animations with stagger effect
+    gsap.to(locationListItems, {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        stagger: 0.2,
+        ease: "power.inOut",
+        scrollTrigger: {
+            trigger: "#restaurant-list",
+            start: "top 80%",
+            toggleActions: "play none none none",
+            once: true
+        }
+    });
 }
 
 
@@ -320,6 +352,9 @@ async function initializeMap() {
         // Populate restaurant list
         populateRestaurantList(restaurants);
 
+        // Set up location list animations after populating the list
+        setupLocationAnimations();
+
         // Now set up marker hover events after list is populated
         markers.forEach(markerData => {
             const markerEl = markerData.element;
@@ -378,9 +413,12 @@ function populateRestaurantList(restaurants) {
     restaurantList.innerHTML = `
         <ul class="space-y-4">
             ${restaurants.map(restaurant => `
-                <li class="location-list-item block" data-restaurant-id="${restaurant.id}">
-                    <div class="location-list-item-name font-extrabold text-white">${restaurant.name}</div>
-                    <div class="location-list-item-address text-white/90">${restaurant.address}</div>
+                <li class="location-list-item block" data-restaurant-id="${restaurant.id}" >
+                    <div class="location-list-item-container" style="opacity: 0; transform: translateY(10px);">
+                        <div class="location-list-item-name font-extrabold text-white">${restaurant.name}</div>
+                        <div class="location-list-item-address text-white/90">${restaurant.address}</div>
+                        </div>
+                    </div>
                 </li>
             `).join('')}
         </ul>
@@ -1919,10 +1957,10 @@ class DishPopup {
         if (priceString.includes('&')) {
             // Split by "&" and format each price
             const prices = priceString.split('&').map(price => price.trim());
-            return prices.map(price => `<span class="price-value md:text-4xl text-3xl -top-1 relative">${price}</span><span class="price-currency md:text-3xl text-2xl">$</span>`).join(' & ');
+            return prices.map(price => `<span class="price-currency md:text-3xl text-2xl">$</span><span class="price-value md:text-4xl text-3xl -top-1 relative">${price}</span>`).join(' & ');
         } else {
             // Single price - add dollar sign
-            return `<span class="price-value md:text-4xl text-3xl -top-1 relative">${priceString}</span><span class="price-currency md:text-3xl text-2xl">$</span>`;
+            return `<span class="price-currency md:text-3xl text-2xl">$</span><span class="price-value md:text-4xl text-3xl -top-1 relative">${priceString}</span>`;
         }
     }
 
