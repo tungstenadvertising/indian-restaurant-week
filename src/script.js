@@ -106,16 +106,16 @@ function setInitialAnimationStates() {
                    });
 
                     gsap.fromTo(mobileNavLinks,{
-                        scale: 0.8,
-                        x: -50,
+                        scale: 0.95,
+                        x: -25,
                         opacity: 0
                     }, {
                         scale: 1,
                         x: 0,
                         opacity: 1,
-                        duration: 0.4,
+                        duration: 0.5,
                         stagger: 0.1,
-                        delay: 0.4,
+                        delay: 0.3,
                         ease: "power2.inOut"
                     });
 
@@ -2328,13 +2328,15 @@ class RestaurantDropdown {
         tl.fromTo(links, {
             opacity: 0,
             x: -20,
+            filter: "blur(3px)"
         }, {
             opacity: 1,
             x: 0,
+            filter: "blur(0px)",
             duration: 0.7,
             stagger: 0.075,
             ease: "power2.out"
-        }, "=1.2"); // Start slightly before container animation ends
+        }, "<50%"); // Start slightly before container animation ends
     }
 
     closeMobileDropdown() {
