@@ -2327,14 +2327,14 @@ class RestaurantDropdown {
         const links = dropdown.querySelectorAll('.mobile-restaurant-link');
         tl.fromTo(links, {
             opacity: 0,
-            x: 20,
+            x: -20,
         }, {
             opacity: 1,
             x: 0,
-            duration: 0.6,
+            duration: 0.7,
             stagger: 0.075,
-            ease: "power4.out"
-        }, "<"); // Start slightly before container animation ends
+            ease: "power2.out"
+        }, "=1.2"); // Start slightly before container animation ends
     }
 
     closeMobileDropdown() {

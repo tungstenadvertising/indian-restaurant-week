@@ -604,34 +604,6 @@
 }
 
 
-
-/* Responsive Design for Dish Popup */
-@media (max-width: 768px) {
-  .dish-popup-container {
-    /* margin: 1rem auto;
-    max-width: calc(100vw - 2rem); */
-  }
-
-}
-
-@media (max-width: 480px) {
-  .dish-popup-container {
-    /* margin: 0.5rem auto;
-    max-width: calc(100vw - 1rem); */
-  }
-
-}
-
-/* Accessibility Improvements */
-.dish-popup-overlay:focus-within {
-  /* outline: none; */
-}
-
-.dish-popup-container:focus {
-  /* outline: 2px solid #FFA73C;
-  outline-offset: 2px; */
-}
-
 /* High contrast mode support */
 @media (prefers-contrast: high) {
   .dish-popup-container {
@@ -675,7 +647,6 @@
 .restaurant-dropdown-link {
   position: relative;
   /* overflow: hidden; */
-  transition: all 1.8s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 0;
   .restaurant-dropdown-link-name {
     transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
@@ -718,10 +689,10 @@
 }
 
 .mobile-restaurant-link {
-  position: relative;
-  padding: 8px 0;
-  border-left: 2px solid transparent;
-  opacity: 0;
+  /* position: relative; */
+  padding: 3.5px 0;
+  /* border-left: 2px solid transparent; */
+  /* opacity: 0; */
 }
 
 
@@ -766,7 +737,6 @@
 }
 
 /* Smooth Transitions */
-.restaurant-dropdown-link,
-.mobile-restaurant-link {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+.restaurant-dropdown-link {
+  /* transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); */
 }
