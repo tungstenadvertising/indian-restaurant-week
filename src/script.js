@@ -152,16 +152,20 @@ function setInitialAnimationStates() {
             mobileCloseBtn.addEventListener('click', closeMobileMenu);
         }
 
-        // Close mobile menu when clicking on a mobile nav link
+        // Close mobile menu when clicking on a mobile nav link (but not restaurants dropdown)
         document.querySelectorAll('.mobile-nav-link').forEach(link => {
-            link.addEventListener('click', closeMobileMenu);
+            // Don't close mobile menu if clicking on restaurants dropdown toggle
+            if (!link.closest('.mobile-restaurants-dropdown')) {
+                link.addEventListener('click', closeMobileMenu);
+            }
         });
 
         // Close mobile menu when clicking outside
         document.addEventListener('click', (e) => {
             if (mobileMenu.classList.contains('translate-x-0') &&
                 !navToggle.contains(e.target) &&
-                !mobileMenu.contains(e.target)) {
+                !mobileMenu.contains(e.target) &&
+                !e.target.closest('.mobile-restaurants-dropdown')) {
                 closeMobileMenu();
             }
         });
@@ -1754,6 +1758,7 @@ class DishPopup {
 
             // Show popup in HTML and freeze scroll
             this.popup.classList.remove('hidden');
+            this.popup.classList.add('grid', 'place-items-center');
             freezeBodyScroll();
 
             // Start animation immediately
@@ -1974,6 +1979,7 @@ class DishPopup {
         this.animatePopupHide(() => {
             // Hide the popup after animation completes
             this.popup.classList.add('hidden');
+            this.popup.classList.remove('grid', 'place-items-center');
             unfreezeBodyScroll();
 
             // Reset any GSAP transforms that might interfere
@@ -2161,6 +2167,260 @@ class DishPopup {
     }
 }
 
+// Restaurant Dropdown System
+class RestaurantDropdown {
+    constructor() {
+        this.restaurants = [];
+        this.desktopDropdown = document.getElementById('restaurants-dropdown');
+        this.mobileDropdown = document.getElementById('mobile-restaurants-dropdown-menu');
+        this.mobileToggle = document.getElementById('mobile-restaurants-toggle');
+        this.isMobileOpen = false;
+
+        this.init();
+    }
+
+    async init() {
+        // Wait for restaurants data to be loaded
+        await this.waitForRestaurantsData();
+
+        if (this.restaurants.length > 0) {
+            this.populateDropdowns();
+            this.addEventListeners();
+        }
+    }
+
+    async waitForRestaurantsData() {
+        return new Promise((resolve) => {
+            const checkData = () => {
+                if (typeof restaurants !== 'undefined' && restaurants.length > 0) {
+                    this.restaurants = restaurants;
+                    resolve();
+                } else {
+                    setTimeout(checkData, 100);
+                }
+            };
+            checkData();
+        });
+    }
+
+    populateDropdowns() {
+        // Populate desktop dropdown
+        const desktopLinksContainer = document.getElementById('restaurant-dropdown-links');
+        if (desktopLinksContainer) {
+            desktopLinksContainer.innerHTML = this.restaurants.map(restaurant => `
+                <a href="#" class="block px-4 py-3 restaurant-dropdown-link" data-restaurant-id="${restaurant.id}">
+                    <div class="font-bold restaurant-dropdown-link-name">${restaurant.name}</div>
+                    <div class="text-sm text-gray-500 restaurant-dropdown-link-chef">${restaurant.chef}</div>
+                </a>
+            `).join('');
+        }
+
+        // Populate mobile dropdown
+        if (this.mobileDropdown) {
+            this.mobileDropdown.innerHTML = this.restaurants.map(restaurant => `
+                <a href="#" class="block text-white hover:text-amber-200 mobile-restaurant-link" data-restaurant-id="${restaurant.id}">
+                    <div class="font-semibold text-lg mobile-restaurant-link-name">${restaurant.name}</div>
+                    <div class="text-sm text-white/70 mobile-restaurant-link-chef">${restaurant.chef}</div>
+                </a>
+            `).join('');
+        }
+    }
+
+    addEventListeners() {
+        // Desktop dropdown event listeners
+        const desktopLinks = document.querySelectorAll('.restaurant-dropdown-link');
+        desktopLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const restaurantId = link.getAttribute('data-restaurant-id');
+                this.showRestaurantCard(restaurantId);
+            });
+        });
+
+        // Add hover event listener for desktop dropdown animation
+        if (this.desktopDropdown) {
+            this.desktopDropdown.addEventListener('mouseenter', () => {
+                this.animateDesktopDropdownOpen();
+            });
+        }
+
+        // Mobile dropdown toggle
+        if (this.mobileToggle) {
+            this.mobileToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation(); // Prevent event from bubbling up to mobile nav
+                this.toggleMobileDropdown();
+            });
+        }
+
+        // Mobile dropdown links
+        const mobileLinks = document.querySelectorAll('.mobile-restaurant-link');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation(); // Prevent event from bubbling up to mobile nav
+                const restaurantId = link.getAttribute('data-restaurant-id');
+                this.showRestaurantCard(restaurantId);
+                this.closeMobileDropdown();
+                // Close mobile menu
+                if (typeof closeMobileMenu === 'function') {
+                    closeMobileMenu();
+                }
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (this.desktopDropdown && !this.desktopDropdown.contains(e.target)) {
+                // Desktop dropdown will close automatically on mouse leave
+            }
+
+            // Close mobile dropdown when clicking outside of it
+            if (this.mobileDropdown && this.isMobileOpen &&
+                !this.mobileDropdown.contains(e.target) &&
+                !this.mobileToggle.contains(e.target)) {
+                this.closeMobileDropdown();
+            }
+        });
+
+        // Handle escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.closeMobileDropdown();
+            }
+        });
+    }
+
+    toggleMobileDropdown() {
+        const dropdown = this.mobileDropdown;
+        const toggle = this.mobileToggle;
+        const arrow = toggle.querySelector('svg');
+
+        if (this.isMobileOpen) {
+            this.closeMobileDropdown();
+        } else {
+            this.openMobileDropdown();
+        }
+    }
+
+    openMobileDropdown() {
+        const dropdown = this.mobileDropdown;
+        const toggle = this.mobileToggle;
+        const arrow = toggle.querySelector('svg');
+
+        dropdown.classList.remove('hidden');
+        arrow.style.transform = 'rotate(180deg)';
+        this.isMobileOpen = true;
+
+        // Create timeline for coordinated animation
+        const tl = gsap.timeline();
+
+        // First animate the dropdown container
+        tl.to(dropdown, {
+            opacity: 1,
+            maxHeight: "500px",
+            duration: 0.8,
+            ease: "power2.inOut"
+        });
+
+        // Then animate dropdown items with stagger effect from left
+        const links = dropdown.querySelectorAll('.mobile-restaurant-link');
+        tl.fromTo(links, {
+            opacity: 0,
+            x: 20,
+        }, {
+            opacity: 1,
+            x: 0,
+            duration: 0.6,
+            stagger: 0.075,
+            ease: "power4.out"
+        }, "<"); // Start slightly before container animation ends
+    }
+
+    closeMobileDropdown() {
+        const dropdown = this.mobileDropdown;
+        const toggle = this.mobileToggle;
+        const arrow = toggle.querySelector('svg');
+
+        if (dropdown && !dropdown.classList.contains('hidden')) {
+            // Create timeline for coordinated close animation
+            const tl = gsap.timeline({
+                onComplete: () => {
+                    dropdown.classList.add('hidden');
+                    this.isMobileOpen = false;
+                }
+            });
+
+            // First animate dropdown items out
+            const links = dropdown.querySelectorAll('.mobile-restaurant-link');
+            tl.to(links, {
+                opacity: 0,
+                x: 20,
+                duration: 0.2,
+                stagger: 0.03,
+                ease: "power2.in"
+            });
+
+            // Then animate the dropdown container out
+            tl.to(dropdown, {
+                opacity: 0,
+                y: -10,
+                maxHeight: "0px",
+                duration: 0.3,
+                ease: "power2.in"
+            }, "<80%");
+
+            // Rotate arrow back
+            arrow.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    animateDesktopDropdownOpen() {
+        // Set initial state for desktop dropdown links
+        const desktopLinks = document.querySelectorAll('.restaurant-dropdown-link');
+        gsap.set(desktopLinks, {
+            opacity: 0,
+            x: -20,
+            scale: 0.95
+        });
+
+        // Animate desktop dropdown items with stagger effect from left
+        gsap.to(desktopLinks, {
+            opacity: 1,
+            x: 0,
+            scale: 1,
+            duration: 0.3,
+            stagger: 0.05,
+            ease: "back.out(1.1)"
+        });
+    }
+
+    showRestaurantCard(restaurantId) {
+        // Find the restaurant data
+        const restaurant = this.restaurants.find(r => r.id === restaurantId);
+        if (!restaurant) {
+            console.error('Restaurant not found:', restaurantId);
+            return;
+        }
+
+        // Show the dish popup for the selected restaurant
+        if (window.dishPopup && typeof window.dishPopup.showPopup === 'function') {
+            window.dishPopup.showPopup(restaurantId);
+        } else {
+            console.error('DishPopup not available');
+        }
+
+        // Scroll to restaurants section
+        const restaurantsSection = document.getElementById('restaurants');
+        if (restaurantsSection) {
+            restaurantsSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    }
+}
+
 // Initialize chef popup system when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -2175,6 +2435,9 @@ document.addEventListener('DOMContentLoaded', () => {
             window.dishPopup = new DishPopup();
 
             window.restaurantCarousel = new RestaurantCarousel();
+
+            // Initialize restaurant dropdown
+            window.restaurantDropdown = new RestaurantDropdown();
         } else {
             console.error('Restaurants data not available for chef popup initialization');
         }

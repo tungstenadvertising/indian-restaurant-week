@@ -33,10 +33,25 @@
             </div>
             <!-- Desktop Navigation -->
             <div class="hidden md:flex ml-auto space-x-8 font-bold py-4 bg-irw-amber" id="nav-menu">
-                <a href="#restaurants" class="text-white hover:text-amber-200 transition-colors duration-300 relative group">
-                    Restaurants
-                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-full"></span>
-                </a>
+                <!-- Restaurants Dropdown -->
+                <div class="relative group" id="restaurants-dropdown">
+                    <a href="#restaurants" class="text-white hover:text-amber-200 transition-colors duration-300 relative group flex items-center">
+                        Restaurants
+                        <svg class="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <!-- Dropdown Menu -->
+                    <div class="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50" id="restaurants-dropdown-menu">
+                        <div class="py-2">
+                            <div class="px-4 py-2 text-sm font-semibold text-gray-500 border-b border-gray-200">Choose a Restaurant</div>
+                            <div id="restaurant-dropdown-links" class="py-1">
+                                <!-- Restaurant links will be populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <a href="#chefs" class="text-white hover:text-amber-100 transition-colors duration-300 relative group">
                     Chefs
                     <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-full"></span>
@@ -82,21 +97,29 @@
                 </div>
 
                 <div class="flex flex-col justify-center h-full space-y-8 pt-10 text-[25px]" id="mobile-nav-menu">
-                    <a href="#restaurants" class=" text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
-                        Restaurants
-                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-2/3"></span>
-                    </a>
+                    <!-- Mobile Restaurants Dropdown -->
+                    <div class="mobile-restaurants-dropdown">
+                        <button class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group flex items-center justify-between w-full" id="mobile-restaurants-toggle">
+                            <span>Restaurants</span>
+                            <svg class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="mobile-restaurants-dropdown-menu hidden mt-4 ml-4 space-y-4" id="mobile-restaurants-dropdown-menu">
+                            <!-- Mobile restaurant links will be populated dynamically -->
+                        </div>
+                    </div>
                     <a href="#chefs" class=" text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
                         Chefs
-                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-2/3"></span>
+
                     </a>
                     <a href="#location" class=" text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
                         Location
-                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-2/3"></span>
+
                     </a>
                     <a href="mailto:mbakshi@tungstenadvertising.com" target="_blank" class=" text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
                         Contact
-                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-2/3"></span>
+
                     </a>
                 </div>
             </div>
@@ -325,7 +348,7 @@
     </div>
 
     <!-- Dish Popup Modal -->
-    <div id="dish-popup" class="fixed p-4 sm:p-0 inset-0 z-50 hidden grid place-items-center">
+    <div id="dish-popup" class="fixed p-4 sm:p-0 inset-0 z-50 hidden">
         <div class="dish-popup-container max-w-lg lg:max-w-xl xl:max-w-2xl m-auto bg-irw-sand shadow-2xl overflow-hidden z-10 relative inset-0 pb-12">
 
             <!-- Header Section -->

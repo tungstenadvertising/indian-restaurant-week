@@ -654,3 +654,117 @@
   text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
 
 }
+
+/* Restaurant Dropdown Styles */
+#restaurants-dropdown {
+  position: relative;
+}
+
+#restaurants-dropdown-menu {
+  transform: translateY(-10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+#restaurants-dropdown:hover #restaurants-dropdown-menu {
+  transform: translateY(0);
+}
+
+.restaurant-dropdown-link {
+  position: relative;
+  overflow: hidden;
+  transition: all 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+
+  background: linear-gradient(-90deg, var(--color-irw-orange), var(--color-irw-red));
+  background-size: 0% 100%;
+  background-repeat: no-repeat;
+  .restaurant-dropdown-link-name {
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: left center;
+
+  }
+  .restaurant-dropdown-link-chef {
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: left center;
+  }
+}
+
+.restaurant-dropdown-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, hsla(from var(--color-irw-sand) h s l / 0.8), transparent);
+  mix-blend-mode: multiply;
+  transition: left 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.restaurant-dropdown-link:hover::before {
+  left: 100%;
+}
+
+.mobile-restaurants-dropdown:has(#mobile-restaurants-dropdown-menu:not(.hidden)) #mobile-restaurants-toggle {
+    @apply text-amber-200;
+}
+/* Mobile Dropdown Styles */
+.mobile-restaurants-dropdown-menu {
+  overflow: hidden;
+  opacity: 0;
+  max-height: 0;
+}
+
+.mobile-restaurant-link {
+  position: relative;
+  padding: 8px 0;
+  border-left: 2px solid transparent;
+  opacity: 0;
+}
+
+
+
+
+/* Dropdown Arrow Animation */
+#restaurants-dropdown svg {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#restaurants-dropdown:hover svg {
+  transform: rotate(180deg);
+}
+
+/* Mobile Toggle Arrow Animation */
+#mobile-restaurants-toggle svg {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced Hover Effects */
+.restaurant-dropdown-link:hover {
+  background-size: 100% 100%;
+  .restaurant-dropdown-link-name {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: left center;
+    color: var(--color-irw-sand);
+    scale: 1.1;
+  }
+  .restaurant-dropdown-link-chef {
+    color: var(--color-irw-yellow);
+  }
+  transform: translateX(4px);
+}
+
+/* Focus States for Accessibility */
+.restaurant-dropdown-link:focus,
+.mobile-restaurant-link:focus {
+  outline: 2px solid #E78824;
+  outline-offset: 2px;
+}
+
+/* Smooth Transitions */
+.restaurant-dropdown-link,
+.mobile-restaurant-link {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
