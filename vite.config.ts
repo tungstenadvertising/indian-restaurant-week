@@ -259,7 +259,9 @@ export default defineConfig({
       output: {
         // Optimize chunk splitting
         manualChunks: {
-          vendor: []
+          'vendor-gsap': ['gsap'],
+          'vendor-swiper': ['swiper'],
+          'vendor-mapbox': ['mapbox-gl']
         },
         // Custom asset file names - no hashing for images
         assetFileNames: (assetInfo) => {
