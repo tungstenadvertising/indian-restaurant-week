@@ -25,7 +25,9 @@ The website now supports individual URLs for each popup (chef and dish popups), 
 - **Examples**:
   - `/restaurant/rooh` - Shows ROOH's restaurant popup
   - `/restaurant/tiya` - Shows Tiya's restaurant popup
-  - `/restaurant/bombaybrasserie` - Shows Bombay Brasserie's restaurant popup
+  - `/restaurant/bombay-brasserie` - Shows Bombay Brasserie's restaurant popup
+  - `/restaurant/amber-india` - Shows Amber India's restaurant popup
+  - `/restaurant/new-delhi-restaurant` - Shows New Delhi Restaurant's popup
 
 ## Technical Implementation
 
@@ -39,7 +41,7 @@ The website now supports individual URLs for each popup (chef and dish popups), 
 - **ChefPopup**: Now includes `showPopupWithURL()` and `hidePopupWithURL()` methods
 - **DishPopup**: Now includes `showPopupWithURL()` and `hidePopupWithURL()` methods
 - Both classes integrate with the PopupRouter for URL management
-- Restaurant names are converted to URL-friendly format (lowercase, no spaces)
+- Restaurant names are converted to URL-friendly format (lowercase, spaces to hyphens)
 - Chef names are converted to URL-friendly format (lowercase, spaces to hyphens, "Chef" prefix removed)
 
 ### 3. Server Configuration
@@ -93,10 +95,14 @@ To test the functionality:
 1. **Development**: Run `npm run dev` and visit:
    - `http://localhost:3000/chef/pujan-sarkar`
    - `http://localhost:3000/restaurant/tiya`
+   - `http://localhost:3000/restaurant/amber-india`
+   - `http://localhost:3000/restaurant/new-delhi-restaurant`
 
 2. **Production**: Deploy and visit:
    - `https://your-domain.com/chef/pujan-sarkar`
    - `https://your-domain.com/restaurant/tiya`
+   - `https://your-domain.com/restaurant/amber-india`
+   - `https://your-domain.com/restaurant/new-delhi-restaurant`
 
 3. **Browser Navigation**:
    - Open a popup, then use browser back button
@@ -104,7 +110,7 @@ To test the functionality:
    - Refresh page while popup is open
 
 4. **Direct URL Sharing**:
-   - Copy a popup URL (e.g., `http://localhost:3005/chef/pujan-sarkar`)
+   - Copy a popup URL (e.g., `http://localhost:3005/chef/pujan-sarkar` or `http://localhost:3005/restaurant/amber-india`)
    - Share it with a friend
    - When they open the URL, the popup should automatically appear
    - Test with different chef and restaurant URLs

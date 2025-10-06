@@ -795,13 +795,13 @@ class PopupRouter {
         this.currentId = restaurantName;
 
         // Find restaurant by name to get the ID
-        const restaurant = restaurants.find(r => r.name.toLowerCase().replace(/\s+/g, '') === restaurantName.toLowerCase());
+        const restaurant = restaurants.find(r => r.name.toLowerCase().replace(/\s+/g, '-') === restaurantName.toLowerCase());
         if (!restaurant) {
             console.error('PopupRouter: Restaurant not found for name:', restaurantName);
             console.log('PopupRouter: Available restaurants:', restaurants.map(r => ({
                 id: r.id,
                 name: r.name,
-                urlFriendlyName: r.name.toLowerCase().replace(/\s+/g, '')
+                urlFriendlyName: r.name.toLowerCase().replace(/\s+/g, '-')
             })));
             return;
         }
@@ -1971,7 +1971,7 @@ class DishPopup {
             // Find restaurant by ID to get the name
             const restaurant = restaurants.find(r => r.id === restaurantId);
             if (restaurant) {
-                const restaurantName = restaurant.name.toLowerCase().replace(/\s+/g, '');
+                const restaurantName = restaurant.name.toLowerCase().replace(/\s+/g, '-');
                 window.popupRouter.showRestaurantPopup(restaurantName);
             } else {
                 console.error('Restaurant not found for ID:', restaurantId);
