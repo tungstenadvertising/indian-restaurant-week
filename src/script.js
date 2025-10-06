@@ -948,7 +948,7 @@ class PopupRouter {
 class ChefPopup {
     constructor() {
         this.popup = document.getElementById('chef-popup');
-        this.closeBtn = document.getElementById('chef-popup-close');
+        this.closeBtn = document.getElementById('chef-popup-close-container');
         this.overlay = document.querySelector('.chef-popup-overlay');
         this.currentChef = null;
         this.swiper = null;
@@ -1249,7 +1249,7 @@ class ChefPopup {
         const content = this.popup.querySelector('.chef-popup-content');
         const story = this.popup.querySelector('#chef-popup-story');
         const slider = this.popup.querySelector('#chef-popup-slider');
-        const closeBtn = this.popup.querySelector('#chef-popup-close');
+        const closeBtn = this.popup.querySelector('#chef-popup-close-conainer');
 
         // Check for reduced motion preference
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1322,7 +1322,7 @@ class ChefPopup {
         const content = this.popup.querySelector('.chef-popup-content');
         const story = this.popup.querySelector('#chef-popup-story');
         const slider = this.popup.querySelector('#chef-popup-slider');
-        const closeBtn = this.popup.querySelector('#chef-popup-close');
+        const closeBtn = this.popup.querySelector('#chef-popup-close-container');
 
         // Check for reduced motion preference
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1397,7 +1397,7 @@ class ChefPopup {
         const content = this.popup.querySelector('.chef-popup-content');
         const story = this.popup.querySelector('#chef-popup-story');
         const slider = this.popup.querySelector('#chef-popup-slider');
-        const closeBtn = this.popup.querySelector('#chef-popup-close');
+        const closeBtn = this.popup.querySelector('#chef-popup-close-container');
 
         // Check for reduced motion preference
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -2085,7 +2085,7 @@ class RestaurantCarousel {
 class DishPopup {
     constructor() {
         this.popup = document.getElementById('dish-popup');
-        this.closeBtn = document.getElementById('dish-popup-close');
+        this.closeBtn = document.getElementById('dish-popup-close-container');
         this.overlay = document.querySelector('.dish-popup-overlay');
         this.currentRestaurant = null;
 
@@ -2415,7 +2415,7 @@ class DishPopup {
         const overlay = this.popup.querySelector('.dish-popup-overlay');
         const header = this.popup.querySelector('.dish-popup-header');
         const content = this.popup.querySelector('.dish-popup-content');
-        const closeBtn = this.popup.querySelector('#dish-popup-close');
+        const closeBtn = this.popup.querySelector('#dish-popup-close-container');
 
         // Check for reduced motion preference
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -2464,7 +2464,7 @@ class DishPopup {
         const overlay = this.popup.querySelector('.dish-popup-overlay');
         const header = this.popup.querySelector('.dish-popup-header');
         const content = this.popup.querySelector('.dish-popup-content');
-        const closeBtn = this.popup.querySelector('#dish-popup-close');
+        const closeBtn = this.popup.querySelector('#dish-popup-close-container');
 
         // Debug: Check if elements exist
         if (!popupContainer || !overlay) {
@@ -2521,7 +2521,7 @@ class DishPopup {
         const overlay = this.popup.querySelector('.dish-popup-overlay');
         const header = this.popup.querySelector('.dish-popup-header');
         const content = this.popup.querySelector('.dish-popup-content');
-        const closeBtn = this.popup.querySelector('#dish-popup-close');
+        const closeBtn = this.popup.querySelector('#dish-popup-close-container');
 
         // Debug: Check if elements exist
         if (!popupContainer || !overlay) {
