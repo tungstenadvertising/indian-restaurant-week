@@ -302,13 +302,15 @@ async function initializeMap() {
     try {
         // Use different paths for development vs production
         const isDev = import.meta.env.DEV;
-        const dataPath = isDev ? 'src/data/restaurants.json' : 'data/restaurants.json';
+        const dataPath = isDev ? '/src/data/restaurants.json' : '/data/restaurants.json';
+        console.log('Loading restaurant data from:', dataPath);
         const response = await fetch(dataPath);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
         restaurants = data.restaurants;
+        console.log('Restaurant data loaded successfully:', restaurants.length, 'restaurants');
 
         // Add markers for each restaurant
         restaurants.forEach((restaurant, index) => {
@@ -660,6 +662,190 @@ function setupChefsAnimations() {
     }
 }
 
+// URL Routing System for Popups
+class PopupRouter {
+    constructor() {
+        this.currentPopup = null;
+        this.currentId = null;
+        this.init();
+    }
+
+    init() {
+        // Listen for browser navigation events
+        window.addEventListener('popstate', (event) => {
+            this.handlePopState(event);
+        });
+
+        // Check for initial URL immediately since restaurants data is already loaded
+        console.log('PopupRouter: Initializing and checking initial URL');
+        this.checkInitialURL();
+    }
+
+    checkInitialURL() {
+        const url = new URL(window.location);
+        const path = url.pathname;
+
+        console.log('PopupRouter: Checking initial URL:', path);
+        console.log('PopupRouter: Available restaurants:', restaurants.map(r => ({ id: r.id, name: r.name, chef: r.chef })));
+
+        // Check for chef popup URL pattern: /chef/[chef-name]
+        const chefMatch = path.match(/^\/chef\/([^\/]+)$/);
+        if (chefMatch) {
+            const chefName = chefMatch[1];
+            console.log('PopupRouter: Found chef popup URL, chefName:', chefName);
+            this.showChefPopupByName(chefName);
+            return;
+        }
+
+        // Check for restaurant popup URL pattern: /restaurant/[restaurant-name]
+        const restaurantMatch = path.match(/^\/restaurant\/([^\/]+)$/);
+        if (restaurantMatch) {
+            const restaurantName = restaurantMatch[1];
+            console.log('PopupRouter: Found restaurant popup URL, restaurantName:', restaurantName);
+            this.showRestaurantPopup(restaurantName);
+            return;
+        }
+
+        console.log('PopupRouter: No popup URL found, staying on main page');
+    }
+
+    handlePopState(event) {
+        // If there's no state or we're going back to the main page
+        if (!event.state || event.state.popup === null) {
+            this.closeCurrentPopup();
+            return;
+        }
+
+        // Handle different popup types
+        if (event.state.popup === 'chef') {
+            this.showChefPopupByName(event.state.name);
+        } else if (event.state.popup === 'restaurant') {
+            this.showRestaurantPopup(event.state.name);
+        }
+    }
+
+    showChefPopup(chefId) {
+        console.log('PopupRouter: Showing chef popup for:', chefId);
+        this.currentPopup = 'chef';
+        this.currentId = chefId;
+
+        // Find chef by ID to get the name
+        const chef = restaurants.find(r => r.id === chefId);
+        if (!chef) {
+            console.error('PopupRouter: Chef not found for ID:', chefId);
+            return;
+        }
+
+        // Convert chef name to URL-friendly format
+        const chefName = chef.chef.toLowerCase().replace(/^chef\s+/i, '').replace(/\s+/g, '-');
+
+        // Update URL without triggering navigation
+        const newUrl = `/chef/${chefName}`;
+        history.pushState({ popup: 'chef', name: chefName, id: chefId }, '', newUrl);
+        console.log('PopupRouter: Updated URL to:', newUrl);
+
+        // Show the popup
+        if (window.chefPopup && typeof window.chefPopup.showPopup === 'function') {
+            window.chefPopup.showPopup(chefId);
+        } else {
+            console.warn('PopupRouter: ChefPopup not available');
+        }
+    }
+
+    showChefPopupByName(chefName) {
+        console.log('PopupRouter: Showing chef popup for name:', chefName);
+        this.currentPopup = 'chef';
+        this.currentId = chefName;
+
+        // Find chef by name (convert URL format back to chef name)
+        const chef = restaurants.find(r => {
+            const urlFriendlyName = r.chef.toLowerCase().replace(/^chef\s+/i, '').replace(/\s+/g, '-');
+            return urlFriendlyName === chefName;
+        });
+
+        if (!chef) {
+            console.error('PopupRouter: Chef not found for name:', chefName);
+            console.log('PopupRouter: Available chefs:', restaurants.map(r => ({
+                id: r.id,
+                chef: r.chef,
+                urlFriendlyName: r.chef.toLowerCase().replace(/^chef\s+/i, '').replace(/\s+/g, '-')
+            })));
+            return;
+        }
+
+        console.log('PopupRouter: Found chef:', chef.chef, 'with ID:', chef.id);
+
+        // Update URL without triggering navigation
+        const newUrl = `/chef/${chefName}`;
+        history.pushState({ popup: 'chef', name: chefName, id: chef.id }, '', newUrl);
+        console.log('PopupRouter: Updated URL to:', newUrl);
+
+        // Show the popup
+        if (window.chefPopup && typeof window.chefPopup.showPopup === 'function') {
+            console.log('PopupRouter: Calling chefPopup.showPopup with ID:', chef.id);
+            window.chefPopup.showPopup(chef.id);
+        } else {
+            console.warn('PopupRouter: ChefPopup not available');
+        }
+    }
+
+    showRestaurantPopup(restaurantName) {
+        console.log('PopupRouter: Showing restaurant popup for:', restaurantName);
+        this.currentPopup = 'restaurant';
+        this.currentId = restaurantName;
+
+        // Find restaurant by name to get the ID
+        const restaurant = restaurants.find(r => r.name.toLowerCase().replace(/\s+/g, '') === restaurantName.toLowerCase());
+        if (!restaurant) {
+            console.error('PopupRouter: Restaurant not found for name:', restaurantName);
+            console.log('PopupRouter: Available restaurants:', restaurants.map(r => ({
+                id: r.id,
+                name: r.name,
+                urlFriendlyName: r.name.toLowerCase().replace(/\s+/g, '')
+            })));
+            return;
+        }
+
+        console.log('PopupRouter: Found restaurant:', restaurant.name, 'with ID:', restaurant.id);
+
+        // Update URL without triggering navigation
+        const newUrl = `/restaurant/${restaurantName}`;
+        history.pushState({ popup: 'restaurant', name: restaurantName, id: restaurant.id }, '', newUrl);
+        console.log('PopupRouter: Updated URL to:', newUrl);
+
+        // Show the popup
+        if (window.dishPopup && typeof window.dishPopup.showPopup === 'function') {
+            console.log('PopupRouter: Calling dishPopup.showPopup with ID:', restaurant.id);
+            window.dishPopup.showPopup(restaurant.id);
+        } else {
+            console.warn('PopupRouter: DishPopup not available');
+        }
+    }
+
+    closeCurrentPopup() {
+        this.currentPopup = null;
+        this.currentId = null;
+
+        // Update URL to main page
+        history.pushState({ popup: null }, '', '/');
+
+        // Close any open popups
+        if (window.chefPopup && typeof window.chefPopup.hidePopup === 'function') {
+            window.chefPopup.hidePopup();
+        }
+        if (window.dishPopup && typeof window.dishPopup.hidePopup === 'function') {
+            window.dishPopup.hidePopup();
+        }
+    }
+
+    getCurrentPopup() {
+        return {
+            type: this.currentPopup,
+            id: this.currentId
+        };
+    }
+}
+
 // Chef Popup System
 class ChefPopup {
     constructor() {
@@ -687,7 +873,7 @@ class ChefPopup {
                 chefImageContainer.addEventListener('click', (e) => {
                     e.preventDefault();
                     const chefId = chefImageContainer.getAttribute('data-chef');
-                    this.showPopup(chefId);
+                    this.showPopupWithURL(chefId);
                 });
             }
 
@@ -696,16 +882,16 @@ class ChefPopup {
                 chefNameContainer.addEventListener('click', (e) => {
                     e.preventDefault();
                     const chefId = chefNameContainer.getAttribute('data-chef');
-                    this.showPopup(chefId);
+                    this.showPopupWithURL(chefId);
                 });
             }
         });
 
         // Close popup events
-        this.closeBtn.addEventListener('click', () => this.hidePopup());
+        this.closeBtn.addEventListener('click', () => this.hidePopupWithURL());
         this.overlay.addEventListener('click', (e) => {
             if (e.target === this.overlay) {
-                this.hidePopup();
+                this.hidePopupWithURL();
             }
         });
 
@@ -713,10 +899,30 @@ class ChefPopup {
         document.addEventListener('keydown', (e) => {
             if (this.popup && !this.popup.classList.contains('hidden')) {
                 if (e.key === 'Escape') {
-                    this.hidePopup();
+                    this.hidePopupWithURL();
                 }
             }
         });
+    }
+
+    showPopupWithURL(chefId) {
+        // Use the router to show popup with URL
+        if (window.popupRouter && typeof window.popupRouter.showChefPopup === 'function') {
+            window.popupRouter.showChefPopup(chefId);
+        } else {
+            // Fallback to direct popup if router not available
+            this.showPopup(chefId);
+        }
+    }
+
+    hidePopupWithURL() {
+        // Use the router to hide popup with URL
+        if (window.popupRouter && typeof window.popupRouter.closeCurrentPopup === 'function') {
+            window.popupRouter.closeCurrentPopup();
+        } else {
+            // Fallback to direct popup if router not available
+            this.hidePopup();
+        }
     }
 
     async showPopup(chefId) {
@@ -1232,7 +1438,7 @@ function populateChefsList() {
                     </div>
                     <div class="chef-name-container relative grid place-items-center -mt-10 z-10 cursor-pointer" data-chef="${restaurant.id}">
                         <span class="chef-name absolute font-bold text-white text-lg lg:text-xl">${restaurant.chef}</span>
-                        <img src="${imageBasePath}/ui/chefNameShape.svg" alt="Chef Name Decoration" class="chef-name-shape" loading="lazy" fetchpriority="low" decoding="async">
+                        <img src="${imageBasePath}/ui/chefNameShape.svg" alt="Chef Name Decoration" class="chef-name-shape" loading="lazy" fetchpriority="low" decoding="async" width="322" height="73">
                     </div>
                 </div>
                 <div class="@container w-full hef-excerpt-container mt-2 md:mt-0 px-4 text-center ${textAlignmentClass} flex-1">
@@ -1306,10 +1512,10 @@ class RestaurantCarousel {
         this.logoDisplay.addEventListener('click', () => {
             if (this.restaurants && this.restaurants[this.currentIndex]) {
                 const currentRestaurant = this.restaurants[this.currentIndex];
-                if (window.dishPopup && typeof window.dishPopup.showPopup === 'function') {
-                    window.dishPopup.showPopup(currentRestaurant.id);
+                if (window.dishPopup && typeof window.dishPopup.showPopupWithURL === 'function') {
+                    window.dishPopup.showPopupWithURL(currentRestaurant.id);
                 } else {
-                    console.error('DishPopup not available or showPopup method not found');
+                    console.error('DishPopup not available or showPopupWithURL method not found');
                 }
             }
         });
@@ -1389,10 +1595,10 @@ class RestaurantCarousel {
             this.resetRotation();
 
             // Show dish popup
-            if (window.dishPopup && typeof window.dishPopup.showPopup === 'function') {
-                window.dishPopup.showPopup(restaurant.id);
+            if (window.dishPopup && typeof window.dishPopup.showPopupWithURL === 'function') {
+                window.dishPopup.showPopupWithURL(restaurant.id);
             } else {
-                console.error('DishPopup not available or showPopup method not found');
+                console.error('DishPopup not available or showPopupWithURL method not found');
             }
         });
 
@@ -1740,10 +1946,10 @@ class DishPopup {
 
     init() {
         // Close popup events
-        this.closeBtn.addEventListener('click', () => this.hidePopup());
+        this.closeBtn.addEventListener('click', () => this.hidePopupWithURL());
         this.overlay.addEventListener('click', (e) => {
             if (e.target === this.overlay) {
-                this.hidePopup();
+                this.hidePopupWithURL();
             }
         });
 
@@ -1751,12 +1957,40 @@ class DishPopup {
         document.addEventListener('keydown', (e) => {
             if (this.popup && !this.popup.classList.contains('hidden')) {
                 if (e.key === 'Escape') {
-                    this.hidePopup();
+                    this.hidePopupWithURL();
                 }
             }
         });
 
         // Price toggler events
+    }
+
+    showPopupWithURL(restaurantId) {
+        // Use the router to show popup with URL
+        if (window.popupRouter && typeof window.popupRouter.showRestaurantPopup === 'function') {
+            // Find restaurant by ID to get the name
+            const restaurant = restaurants.find(r => r.id === restaurantId);
+            if (restaurant) {
+                const restaurantName = restaurant.name.toLowerCase().replace(/\s+/g, '');
+                window.popupRouter.showRestaurantPopup(restaurantName);
+            } else {
+                console.error('Restaurant not found for ID:', restaurantId);
+                this.showPopup(restaurantId);
+            }
+        } else {
+            // Fallback to direct popup if router not available
+            this.showPopup(restaurantId);
+        }
+    }
+
+    hidePopupWithURL() {
+        // Use the router to hide popup with URL
+        if (window.popupRouter && typeof window.popupRouter.closeCurrentPopup === 'function') {
+            window.popupRouter.closeCurrentPopup();
+        } else {
+            // Fallback to direct popup if router not available
+            this.hidePopup();
+        }
     }
 
     async showPopup(restaurantId) {
@@ -2435,8 +2669,8 @@ class RestaurantDropdown {
         }
 
         // Show the dish popup for the selected restaurant
-        if (window.dishPopup && typeof window.dishPopup.showPopup === 'function') {
-            window.dishPopup.showPopup(restaurantId);
+        if (window.dishPopup && typeof window.dishPopup.showPopupWithURL === 'function') {
+            window.dishPopup.showPopupWithURL(restaurantId);
         } else {
             console.error('DishPopup not available');
         }
@@ -2455,13 +2689,13 @@ class RestaurantDropdown {
 // Initialize chef popup system when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Wait for restaurants data to be loaded
+    // Wait for restaurants data to be loaded first
     setTimeout(() => {
 
         if (typeof restaurants !== 'undefined' && restaurants.length > 0) {
             populateChefsList();
 
-            new ChefPopup();
+            window.chefPopup = new ChefPopup();
 
             window.dishPopup = new DishPopup();
 
@@ -2469,6 +2703,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Initialize restaurant dropdown
             window.restaurantDropdown = new RestaurantDropdown();
+
+            // Initialize the popup router AFTER popup systems are ready
+            window.popupRouter = new PopupRouter();
         } else {
             console.error('Restaurants data not available for chef popup initialization');
         }

@@ -1,0 +1,12 @@
+# Netlify redirects for client-side routing
+# This ensures that all routes are handled by the main HTML file
+# so that client-side routing works properly
+
+# Handle chef popup routes
+/chef/* /index.html 200
+
+# Handle restaurant popup routes
+/restaurant/* /index.html 200
+
+# Fallback for all other routes
+/* /index.html 200

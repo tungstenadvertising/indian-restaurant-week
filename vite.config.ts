@@ -249,7 +249,8 @@ export default defineConfig({
     watch: {
       usePolling: true, // Better for some file systems
     },
-    allowedHosts: ["devserver-main--indianrestaurantweeksf.netlify.app"]
+    allowedHosts: ["devserver-main--indianrestaurantweeksf.netlify.app"],
+    historyApiFallback: true // Enable client-side routing
   },
   build: {
     outDir: 'build',
