@@ -2,13 +2,70 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-// Import Swiper
-import Swiper from 'swiper';
-import { Navigation, EffectCards } from 'swiper/modules';
-import 'swiper/css';
-
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
+
+// Dynamic import functions for heavy libraries
+let mapboxgl = null;
+let Swiper = null;
+let Navigation = null;
+let EffectCards = null;
+
+// Function to dynamically load Mapbox GL JS
+async function loadMapbox() {
+    if (mapboxgl) return mapboxgl;
+
+    try {
+        // Load Mapbox CSS dynamically
+        if (!document.querySelector('link[href*="mapbox-gl.css"]')) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css';
+            document.head.appendChild(link);
+        }
+
+        // Load Mapbox JS dynamically
+        const mapboxModule = await import('mapbox-gl');
+        mapboxgl = mapboxModule.default;
+        window.mapboxgl = mapboxgl;
+
+        console.log('Mapbox GL JS loaded dynamically');
+        return mapboxgl;
+    } catch (error) {
+        console.error('Failed to load Mapbox GL JS:', error);
+        throw error;
+    }
+}
+
+// Function to dynamically load Swiper
+async function loadSwiper() {
+    if (Swiper && Navigation && EffectCards) return { Swiper, Navigation, EffectCards };
+
+    try {
+        // Load Swiper CSS dynamically
+        if (!document.querySelector('link[href*="swiper-bundle.min.css"]')) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css';
+            document.head.appendChild(link);
+        }
+
+        // Load Swiper JS dynamically
+        const swiperModule = await import('swiper');
+        const navigationModule = await import('swiper/modules');
+        const effectCardsModule = await import('swiper/modules');
+
+        Swiper = swiperModule.default;
+        Navigation = navigationModule.Navigation;
+        EffectCards = effectCardsModule.EffectCards;
+
+        console.log('Swiper loaded dynamically');
+        return { Swiper, Navigation, EffectCards };
+    } catch (error) {
+        console.error('Failed to load Swiper:', error);
+        throw error;
+    }
+}
 
 // Body scroll freeze utilities (global scope)
 let scrollPosition = 0;
@@ -36,7 +93,9 @@ function unfreezeBodyScroll() {
 }
 
 // Wait for DOM to be fully loaded
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    // Load restaurant data early
+    await loadRestaurantData();
 
 // Mobile Navigation Toggle
 const navToggle = document.getElementById('nav-toggle');
@@ -202,6 +261,27 @@ let map;
 let markers = [];
 let restaurants = [];
 
+// Function to load restaurant data globally
+async function loadRestaurantData() {
+    try {
+        // Use different paths for development vs production
+        const isDev = import.meta.env.DEV;
+        const dataPath = isDev ? '/src/data/restaurants.json' : '/data/restaurants.json';
+        console.log('Loading restaurant data from:', dataPath);
+        const response = await fetch(dataPath);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        restaurants = data.restaurants;
+        console.log('Restaurant data loaded successfully:', restaurants.length, 'restaurants');
+        return restaurants;
+    } catch (error) {
+        console.error('Failed to load restaurant data:', error);
+        return [];
+    }
+}
+
 // Function to set up location section animations with ScrollTrigger
 function setupLocationAnimations() {
     const locationListItems = document.querySelectorAll('.location-list-item .location-list-item-container');
@@ -263,17 +343,21 @@ function setupLocationAnimations() {
 
 // Initialize Mapbox Map and Load Restaurant Data
 async function initializeMap() {
-    // You'll need to get a Mapbox access token from https://mapbox.com
-    // For now, let's use a demo token or you can get your own
-    window.mapboxgl.accessToken = 'pk.eyJ1IjoidHVuZ3N0ZW5hZHZlcnRpc2luZyIsImEiOiJja2dsZGNyZjAwMXltMnNqbzNrYTIwb210In0.PFX4yyFsRcpGMyQJV3uOkA';
+    try {
+        // Load Mapbox dynamically
+        const mapbox = await loadMapbox();
 
-    // Initialize the map
-    map = new window.mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v12', // Using a stable Mapbox style
-        center: [-122.4142, 37.7894], // San Francisco center
-        zoom: 12
-    });
+        // You'll need to get a Mapbox access token from https://mapbox.com
+        // For now, let's use a demo token or you can get your own
+        mapbox.accessToken = 'pk.eyJ1IjoidHVuZ3N0ZW5hZHZlcnRpc2luZyIsImEiOiJja2dsZGNyZjAwMXltMnNqbzNrYTIwb210In0.PFX4yyFsRcpGMyQJV3uOkA';
+
+        // Initialize the map
+        map = new mapbox.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v12', // Using a stable Mapbox style
+            center: [-122.4142, 37.7894], // San Francisco center
+            zoom: 12
+        });
 
     // Add error handling for map loading
     map.on('error', (e) => {
@@ -298,19 +382,11 @@ async function initializeMap() {
         canvas.style.width = '100%';
     });
 
-    // Load restaurant data from JSON
-    try {
-        // Use different paths for development vs production
-        const isDev = import.meta.env.DEV;
-        const dataPath = isDev ? '/src/data/restaurants.json' : '/data/restaurants.json';
-        console.log('Loading restaurant data from:', dataPath);
-        const response = await fetch(dataPath);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        restaurants = data.restaurants;
-        console.log('Restaurant data loaded successfully:', restaurants.length, 'restaurants');
+    // Use already loaded restaurant data
+    if (restaurants.length === 0) {
+        console.log('Restaurant data not yet loaded, loading now...');
+        await loadRestaurantData();
+    }
 
         // Add markers for each restaurant
         restaurants.forEach((restaurant, index) => {
@@ -341,9 +417,9 @@ async function initializeMap() {
             `;
 
             // Create marker and store reference
-            const marker = new window.mapboxgl.Marker(markerEl)
+            const marker = new mapbox.Marker(markerEl)
                 .setLngLat(restaurant.coordinates)
-                .setPopup(new window.mapboxgl.Popup({
+                .setPopup(new mapbox.Popup({
                     focusAfterOpen: false
                 }).setHTML(popupContent))
                 .addTo(map);
@@ -410,24 +486,16 @@ async function initializeMap() {
         // Debug: Log markers and list items
         console.log('Total markers created:', markers.length);
         console.log('Total list items:', document.querySelectorAll('.location-list-item').length);
-
-
-
     } catch (error) {
-        console.error('Error loading restaurant data:', error);
-        console.error('Error details:', error.message);
-        console.error('Restaurants data available:', restaurantsData);
-
-        // Fallback: show error message
-        const restaurantList = document.getElementById('restaurant-list');
-        if (restaurantList) {
-            restaurantList.innerHTML = `
-                <div class="col-span-full text-center text-white">
-                    <p>Unable to load restaurant data. Please try again later.</p>
-                    <p class="text-sm mt-2">Error: ${error.message}</p>
+        console.error('Failed to initialize map:', error);
+        document.getElementById('map').innerHTML = `
+            <div class="flex items-center justify-center h-full bg-gray-200 rounded-lg">
+                <div class="text-center text-gray-600">
+                    <p class="text-lg font-semibold mb-2">Map Unavailable</p>
+                    <p class="text-sm">Please check your Mapbox token</p>
                 </div>
-            `;
-        }
+            </div>
+        `;
     }
 }
 
@@ -634,8 +702,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1000);
 });
 
-// Initialize map when DOM is loaded
-document.addEventListener('DOMContentLoaded', initializeMap);
+// Initialize map when user scrolls to location section or clicks on it
+let mapInitialized = false;
+
+function initializeMapOnDemand() {
+    if (!mapInitialized) {
+        mapInitialized = true;
+        initializeMap();
+    }
+}
+
+// Set up intersection observer to load map when location section comes into view
+document.addEventListener('DOMContentLoaded', () => {
+    const locationSection = document.getElementById('location');
+    if (locationSection) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    initializeMapOnDemand();
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        observer.observe(locationSection);
+    }
+
+    // Also initialize map when user clicks on location navigation
+    const locationNavLinks = document.querySelectorAll('a[href="#location"]');
+    locationNavLinks.forEach(link => {
+        link.addEventListener('click', initializeMapOnDemand);
+    });
+});
 
 
 // Function to set up chefs section animations with ScrollTrigger
@@ -943,7 +1041,7 @@ class ChefPopup {
 
 
             this.currentChef = chefData;
-            this.populatePopup(chefData);
+            await this.populatePopup(chefData);
 
             // Set initial animation states BEFORE showing popup
             this.setInitialAnimationStates();
@@ -960,7 +1058,7 @@ class ChefPopup {
         }
     }
 
-    populatePopup(chefData) {
+    async populatePopup(chefData) {
         // Update chef image
         const chefImage = document.getElementById('chef-popup-image');
         if (chefImage && chefData.images && chefData.images['chef-popup-header']) {
@@ -1017,11 +1115,11 @@ class ChefPopup {
         }
 
         // Initialize or update the carousel
-        this.initializeCarousel(chefData);
+        await this.initializeCarousel(chefData);
     }
 
 
-    initializeCarousel(chefData) {
+    async initializeCarousel(chefData) {
         const swiperWrapper = document.querySelector('.chef-popup-swiper .swiper-wrapper');
 
         if (!swiperWrapper) {
@@ -1034,57 +1132,70 @@ class ChefPopup {
 
         // Check if chef has slider images
         if (chefData.images && chefData.images.slides && chefData.images.slides.length > 0) {
-            // Create slides for each image
-            chefData.images.slides.forEach((imagePath, index) => {
-                const slide = document.createElement('div');
-                slide.className = 'swiper-slide';
-                const isDev = import.meta.env.DEV;
-                const fullImagePath = isDev ? `/src/images/${imagePath}` : `/assets/images/${convertToWebP(imagePath)}`;
-                slide.innerHTML = `
-                    <img
-                        src="${fullImagePath}"
-                        alt="${chefData.chef} - Image ${index + 1}"
-                        loading="lazy" fetchpriority="low" decoding="async"
-                        class="object-cover rounded-full border-4 border-irw-amber"
-                    >
-                `;
-                swiperWrapper.appendChild(slide);
-            });
+            try {
+                // Load Swiper dynamically
+                const { Swiper: SwiperClass, Navigation, EffectCards } = await loadSwiper();
 
-            // Initialize or reinitialize Swiper
-            if (this.swiper) {
-                this.swiper.destroy(true, true);
-            }
+                // Create slides for each image
+                chefData.images.slides.forEach((imagePath, index) => {
+                    const slide = document.createElement('div');
+                    slide.className = 'swiper-slide';
+                    const isDev = import.meta.env.DEV;
+                    const fullImagePath = isDev ? `/src/images/${imagePath}` : `/assets/images/${convertToWebP(imagePath)}`;
+                    slide.innerHTML = `
+                        <img
+                            src="${fullImagePath}"
+                            alt="${chefData.chef} - Image ${index + 1}"
+                            loading="lazy" fetchpriority="low" decoding="async"
+                            class="object-cover rounded-full border-4 border-irw-amber"
+                        >
+                    `;
+                    swiperWrapper.appendChild(slide);
+                });
 
-            this.swiper = new Swiper('.chef-popup-swiper', {
-                modules: [Navigation, EffectCards],
-                effect: 'cards',
-                grabCursor: true,
-                cardsEffect: {
-                    perSlideOffset: 8,
-                    perSlideRotate: 2,
-                    rotate: true,
-                    slideShadows: true,
-                },
-                navigation: {
-                    nextEl: '.chef-popup-swiper-button-next',
-                    prevEl: '.chef-popup-swiper-button-prev',
-                },
-                breakpoints: {
-                    320: {
-                        effect: 'cards',
-                        slidesPerView: 'auto',
-                    },
-                    768: {
-                        effect: 'cards',
-                        slidesPerView: 'auto',
-                    },
-                    1024: {
-                        effect: 'cards',
-                        slidesPerView: 'auto',
-                    },
+                // Initialize or reinitialize Swiper
+                if (this.swiper) {
+                    this.swiper.destroy(true, true);
                 }
-            });
+
+                this.swiper = new SwiperClass('.chef-popup-swiper', {
+                    modules: [Navigation, EffectCards],
+                    effect: 'cards',
+                    grabCursor: true,
+                    cardsEffect: {
+                        perSlideOffset: 8,
+                        perSlideRotate: 2,
+                        rotate: true,
+                        slideShadows: true,
+                    },
+                    navigation: {
+                        nextEl: '.chef-popup-swiper-button-next',
+                        prevEl: '.chef-popup-swiper-button-prev',
+                    },
+                    breakpoints: {
+                        320: {
+                            effect: 'cards',
+                            slidesPerView: 'auto',
+                        },
+                        768: {
+                            effect: 'cards',
+                            slidesPerView: 'auto',
+                        },
+                        1024: {
+                            effect: 'cards',
+                            slidesPerView: 'auto',
+                        },
+                    }
+                });
+            } catch (error) {
+                console.error('Failed to load Swiper:', error);
+                // Show fallback content
+                swiperWrapper.innerHTML = `
+                    <div class="text-center text-gray-600 p-4">
+                        <p>Image carousel unavailable</p>
+                    </div>
+                `;
+            }
         } else {
             // Hide the carousel if no images
             const sliderContainer = document.getElementById('chef-popup-slider');
@@ -1530,6 +1641,9 @@ class RestaurantCarousel {
             this.restaurantItems.push(item);
         });
 
+        // Preload all logos for optimized transitions
+        this.preloadLogos();
+
         // Set initial active state and position
         this.rotateToRestaurant(0);
 
@@ -1624,63 +1738,93 @@ class RestaurantCarousel {
         this.currentIndex = index;
     }
 
-    updateCentralLogo(restaurant) {
-        if (!this.logoDisplay) return;
+    preloadLogos() {
+        // Create logo elements for all restaurants upfront
+        this.logoElements = [];
 
-        // Get the logo path for this restaurant
-        let logoPath;
-        const isDev = import.meta.env.DEV;
+        this.restaurants.forEach((restaurant, index) => {
+            const logoElement = document.createElement('img');
+            logoElement.className = 'logo-element';
+            logoElement.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                opacity: 0;
+                z-index: ${index === 0 ? 2 : 1};
+            `;
 
-        if (restaurant.images && restaurant.images.logo) {
-            logoPath = isDev ? `/src/images/${restaurant.images.logo}` : `/assets/images/${convertToWebP(restaurant.images.logo)}`;
-        } else {
-            // Fallback to the old method if no logo in data
-            logoPath = this.getLogoPath(restaurant.id);
-            logoPath = isDev ? logoPath : convertToWebP(logoPath);
+            // Get the logo path for this restaurant
+            let logoPath;
+            const isDev = import.meta.env.DEV;
+
+            if (restaurant.images && restaurant.images.logo) {
+                logoPath = isDev ? `/src/images/${restaurant.images.logo}` : `/assets/images/${convertToWebP(restaurant.images.logo)}`;
+            } else {
+                // Fallback to the old method if no logo in data
+                logoPath = this.getLogoPath(restaurant.id);
+                logoPath = isDev ? logoPath : convertToWebP(logoPath);
+            }
+
+            // Set the image source and attributes
+            logoElement.src = logoPath;
+            logoElement.alt = `${restaurant.name} logo`;
+            logoElement.loading = index === 0 ? 'eager' : 'lazy'; // Load first logo immediately, others lazily
+            logoElement.decoding = 'async';
+
+            // Add to logo display container
+            this.logoDisplay.appendChild(logoElement);
+            this.logoElements.push(logoElement);
+        });
+
+        // Show the first logo initially
+        if (this.logoElements.length > 0) {
+            this.logoElements[0].style.opacity = '1';
         }
+    }
 
-        // Create a smooth crossfade transition
-        // First, create a temporary overlay element for the new logo
-        const tempLogo = document.createElement('div');
-        tempLogo.style.cssText = `
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('${logoPath}');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            opacity: 0;
-            filter: blur(10px);
-            transform: scale(1.1);
-            z-index: 2;
-        `;
+    updateCentralLogo(restaurant) {
+        if (!this.logoDisplay || !this.logoElements) return;
 
-        // Add the temporary logo to the display container
-        this.logoDisplay.appendChild(tempLogo);
+        // Find the restaurant index
+        const restaurantIndex = this.restaurants.findIndex(r => r.id === restaurant.id);
+        if (restaurantIndex === -1) return;
 
-        // Crossfade animation: fade out current logo while fading in new logo
+        // Get current and next logo elements
+        const currentLogo = this.logoElements.find(el => el.style.opacity === '1' || el.style.opacity === '');
+        const nextLogo = this.logoElements[restaurantIndex];
+
+        if (!currentLogo || !nextLogo || currentLogo === nextLogo) return;
+
+        // Set up the next logo for animation
+        nextLogo.style.filter = 'blur(10px)';
+        nextLogo.style.transform = 'scale(1.1)';
+        nextLogo.style.zIndex = '2';
+
+        // Create smooth crossfade animation
         const tl = gsap.timeline({
             onComplete: () => {
-                // Update the main logo background and remove temporary element
-                this.logoDisplay.style.backgroundImage = `url('${logoPath}')`;
-                this.logoDisplay.style.backgroundSize = 'contain';
-                this.logoDisplay.style.backgroundRepeat = 'no-repeat';
-                this.logoDisplay.style.backgroundPosition = 'center';
-                this.logoDisplay.removeChild(tempLogo);
+                // Reset z-index after animation
+                currentLogo.style.zIndex = '1';
+                nextLogo.style.zIndex = '1';
             }
         });
 
-        // Fade in the new logo while keeping the old one visible
-        tl.to(tempLogo, {
+        // Fade out current logo and fade in next logo simultaneously
+        tl.to(currentLogo, {
+            opacity: 0,
+            duration: 0.7,
+            ease: "power2.inOut"
+        })
+        .to(nextLogo, {
             opacity: 1,
             scale: 1,
             filter: 'blur(0px)',
             duration: 0.7,
             ease: "power2.inOut"
-        });
+        }, 0); // Start at the same time as the fade out
     }
 
     getChefFolder(restaurantId) {
@@ -1923,6 +2067,16 @@ class RestaurantCarousel {
     destroy() {
         if (this.rotationInterval) {
             clearInterval(this.rotationInterval);
+        }
+
+        // Clean up logo elements
+        if (this.logoElements && this.logoDisplay) {
+            this.logoElements.forEach(element => {
+                if (element.parentNode) {
+                    element.parentNode.removeChild(element);
+                }
+            });
+            this.logoElements = [];
         }
     }
 }

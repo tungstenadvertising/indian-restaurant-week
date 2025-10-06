@@ -4,8 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Indian Restaurant Week - Celebrate Diwali</title>
+
+    <!-- Preload critical assets first -->
+    <link rel="preload" href="/src/images/global/irw-logo.svg" as="image" type="image/svg+xml">
+
+    <link rel="preload" href="/src/data/restaurants.json" as="fetch" crossorigin>
+    <link rel="preload" href="/src/script.js" as="script">
+
+    <!-- Preconnect to external domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Load external resources -->
     <link href="https://fonts.googleapis.com/css2?family=Ysabeau:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700;1,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/src/style.css">
 </head>
@@ -26,7 +36,7 @@
                   </svg>
 
                 <div class="relative z-10">
-                    <img src="/src/images/global/logo.svg" alt="Logo" width="250" height="250" class="mt-2 mb-0 mx-auto max-w-[212px] w-8/12 md:w-10/12 lg:w-11/12" fetchpriority="high" decoding="async">
+                    <img src="/src/images/global/irw-logo.svg" alt="Logo" width="250" height="250" class="mt-2 mb-0 mx-auto max-w-[212px] w-8/12 md:w-10/12 lg:w-11/12" fetchpriority="high" decoding="async">
                     <div id="logo-text" class="mt-0 tracking-tight text-irw-red text-center">October <br>
                         5-11, 2025</div>
                 </div>
@@ -83,7 +93,7 @@
             <div class="md:hidden inset-0 w-full h-screen bg-irw-red text-white px-8 py-6 absolute -translate-x-full transition-transform duration-400 ease-power2-in-out z-50" id="mobile-menu">
                 <!-- Logo -->
                 <a href="/" id="mobile-logo">
-                    <img src="/src/images/global/logo-white.svg" alt="Logo" class="w-24 h-24" width="152" height="152" fetchpriority="low" loading="lazy" decoding="async">
+                    <img src="/src/images/global/irw-logo-white.svg" alt="Logo" class="w-24 h-24" width="152" height="152" fetchpriority="low" loading="lazy" decoding="async">
                 </a>
 
                 <!-- Close Button -->
@@ -260,7 +270,7 @@
 
             </div>
                 <div class="relative z-50 size-32 lg:size-44 mx-auto grid place-items-center bg-white rounded-full top-2 sm:top-4 md:top-8 lg:top-12 xl:top-16 2xl:top-20" >
-                    <img src="/src/images/global/logo.svg" alt="Logo" width="150" height="150" class="size-full" loading="lazy" fetchpriority="low" decoding="async">
+                    <img src="/src/images/global/irw-logo.svg" alt="Logo" width="150" height="150" class="size-full" loading="lazy" fetchpriority="low" decoding="async">
                 </div>
         </div>
         <div class="location-bottom -top-1 relative">
@@ -431,19 +441,6 @@
         <div class="dish-popup-overlay fixed inset-0 bg-amber-950/90 z-0"></div>
     </div>
 
-    <!-- Swiper CSS loaded at bottom for better performance -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-
-    <!-- Mapbox CSS loaded at bottom for better performance -->
-    <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet">
-
     <script type="module" src="/src/script.js"></script>
-    <script type="module">
-        // Import Mapbox GL JS at the bottom of the page
-        import mapboxgl from 'mapbox-gl';
-
-        // Make mapboxgl available globally for the main script
-        window.mapboxgl = mapboxgl;
-    </script>
 </body>
 </html>
