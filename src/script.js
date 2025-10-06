@@ -2333,14 +2333,13 @@ class DishPopup {
         const reservationBtn = document.getElementById('dish-popup-reservation');
         if (!reservationBtn) return;
 
-        const shapePath = reservationBtn.querySelector('svg path');
-        if (!shapePath) return;
-
-        // Get the dedicated color from restaurant data, fallback to default
+        // Get the dedicated colors from restaurant data, fallback to defaults
         const shapeColor = restaurantData.popup?.reserveTableShapeColor || '#1E2A78';
+        const hoverColor = restaurantData.popup?.reservationLinkFillHover || '#4A5BC7';
 
-        // Update the fill color of the shape
-        shapePath.setAttribute('fill', shapeColor);
+        // Update the CSS custom properties for both fill and hover colors
+        reservationBtn.style.setProperty('--reservation-link-fill', shapeColor);
+        reservationBtn.style.setProperty('--reservation-link-fill-hover', hoverColor);
 
     }
 

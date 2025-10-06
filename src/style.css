@@ -739,3 +739,29 @@
 .restaurant-dropdown-link {
   /* transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); */
 }
+
+
+
+#dish-popup-reservation  {
+  span {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+  }
+  svg {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    path {
+      fill: var(--reservation-link-fill);
+      transition: fill 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  }
+  &:hover {
+    svg {
+      path {
+        fill: var(--reservation-link-fill-hover);
+      }
+    }
+    span {
+      text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
+    }
+  }
+}
