@@ -65,7 +65,7 @@
 }
 
 .hero-texture {
-  background-color: #501c00;
+  background-color: #341818;
   background-image: url('/src/images/global/hero-texture.webp');
   background-size: 125px 172px;
   background-repeat: repeat;
@@ -112,7 +112,7 @@
   filter: drop-shadow(-41px 54px 30.8px #00000022) drop-shadow(-12px 11px 16.3px #000000dd);
 }
 
-
+/* location section */
 #location {
   margin-top: calc(-1 * (100vw / 1440 * 164));
 }
@@ -207,7 +207,6 @@
 #footer {
     max-height: 500px;
     margin-top: calc(-1 * (100vw / 1440 * 164));
-    position: relative;
     z-index: 1;
 }
 

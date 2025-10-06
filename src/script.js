@@ -240,7 +240,26 @@ function setupLocationAnimations() {
     });
 }
 
-
+// function setupFooterAnimations() {
+//     const footerImg = document.querySelector('#footer img');
+//     const locationsSection = document.querySelector('#location-section');
+//     gsap.fromTo(footerImg, {
+//         yPercent: 50,
+//         scale: 1.1,
+//     },{
+//         y: 0,
+//         scale: 1,
+//         duration: 2,
+//         ease: 'power1.inOut',
+//         scrollTrigger: {
+//             markers: true,
+//             trigger: footerImg,
+//             start: '50% 90%',
+//             scrub: true,
+//             toggleActions: 'play none none reverse'
+//         }
+//     })
+// }
 
 // Initialize Mapbox Map and Load Restaurant Data
 async function initializeMap() {
@@ -1229,6 +1248,8 @@ function populateChefsList() {
 
     // Set up GSAP animations for chefs after they are populated
     setupChefsAnimations();
+    // setupFooterAnimations();
+
 }
 
 // Restaurant Carousel System
@@ -1328,27 +1349,35 @@ class RestaurantCarousel {
         item.style.transform = 'translate(-50%, -50%)';
 
 
-        // Add restaurant dish image
+        // Add restaurant dish image with responsive sizing
         const img = document.createElement('img');
+        const chefFolder = this.getChefFolder(restaurant.id);
         const isDev = import.meta.env.DEV;
 
-        // Use the dish image from restaurant data
-        let imageSource;
-        if (restaurant.images && restaurant.images.dish) {
-            imageSource = isDev ? `/src/images/${restaurant.images.dish}` : `/assets/images/${convertToWebP(restaurant.images.dish)}`;
-        } else {
-            // Fallback to the old method if no dish image in data
-            imageSource = this.getDishImagePath(restaurant.id);
-            imageSource = isDev ? imageSource : convertToWebP(imageSource);
-        }
+        // Create srcset with responsive sizes and high-DPI support
+        const imageBasePath = isDev ? '/src/images' : '/assets/images';
+        const srcset = [
+            `${imageBasePath}/chefs/${chefFolder}/dish-105w.webp 105w`,
+            `${imageBasePath}/chefs/${chefFolder}/dish-140w.webp 140w`,
+            `${imageBasePath}/chefs/${chefFolder}/dish-160w.webp 160w`,
+            `${imageBasePath}/chefs/${chefFolder}/dish-180w.webp 180w`,
+            `${imageBasePath}/chefs/${chefFolder}/dish-220w.webp 220w`,
+            `${imageBasePath}/chefs/${chefFolder}/dish-280w.webp 280w`,
+            `${imageBasePath}/chefs/${chefFolder}/dish-350w.webp 350w`,
+            `${imageBasePath}/chefs/${chefFolder}/dish-440w.webp 440w`
+        ].join(', ');
 
-        img.src = imageSource;
+        img.srcset = srcset;
+        img.src = `${imageBasePath}/chefs/${chefFolder}/dish-280w.webp`; // Fallback for 2x displays
         img.alt = restaurant.name;
-        img.loading = 'lazy';
+        img.loading = 'eager';
+        img.width = 220; // Intrinsic width for layout calculation
+        img.height = 220; // Intrinsic height for layout calculation
+        img.sizes = '(max-width: 420px) 105px, (max-width: 580px) 140px, (max-width: 768px) 160px, (max-width: 1024px) 180px, 220px'; // Responsive sizes matching carousel breakpoints
 
         // Add error handling for images
         img.onerror = () => {
-            console.warn(`Failed to load image for ${restaurant.name}: ${imageSource}`);
+            console.warn(`Failed to load image for ${restaurant.name}: ${img.src}`);
             // Could set a fallback image here
         };
 
@@ -2444,5 +2473,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Restaurants data not available for chef popup initialization');
         }
     }, 1000);
+
+
+
 });
 
