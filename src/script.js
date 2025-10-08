@@ -320,26 +320,7 @@ function setupLocationAnimations() {
     });
 }
 
-// function setupFooterAnimations() {
-//     const footerImg = document.querySelector('#footer img');
-//     const locationsSection = document.querySelector('#location-section');
-//     gsap.fromTo(footerImg, {
-//         yPercent: 50,
-//         scale: 1.1,
-//     },{
-//         y: 0,
-//         scale: 1,
-//         duration: 2,
-//         ease: 'power1.inOut',
-//         scrollTrigger: {
-//             markers: true,
-//             trigger: footerImg,
-//             start: '50% 90%',
-//             scrub: true,
-//             toggleActions: 'play none none reverse'
-//         }
-//     })
-// }
+
 
 // Initialize Mapbox Map and Load Restaurant Data
 async function initializeMap() {
@@ -757,6 +738,123 @@ function setupChefsAnimations() {
             });
         });
 
+    }
+}
+
+// gsap.fromTo('.hero-texture', {
+//         y: -30,
+
+//         transformOrigin: "center top",
+//     }, {
+//         y: 0,
+
+//         duration: 2,
+//         ease: "power1.inOut",
+//         scrollTrigger: {
+//             trigger: '.hero-texture',
+//             start: "top 70%",
+//             scrub: true
+//         }
+// });
+
+
+
+    // gsap.fromTo('#chefs-title .irw-title', {
+    //     opacity: 0,
+    //     y: 10,
+    // }, {
+    //     opacity: 1,
+    //     duration: 0.8,
+    //     ease: "power2.out",
+    //     y: 0,
+    //     scrollTrigger: {
+    //         trigger: '#chefs',
+    //         start: "top bottom",
+    //         toggleActions: "play none none none",
+    //     }
+    // })
+
+
+
+
+
+gsap.to('.meet-chefs-title-shape', {
+       opacity: 1,
+       maxWidth: '100%',
+       duration: 1.3,
+       ease: "power1.inOut",
+        scrollTrigger: {
+            trigger: '#chefs',
+            start: "top 95%",
+            toggleActions: "play none none none",
+            once: true
+
+        }
+    }
+);
+
+
+
+// Function to set up candles and courses images scroll animations
+function setupImageScrollAnimations() {
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+        console.log('Reduced motion preference detected, skipping image scroll animations');
+        return;
+    }
+
+    // Animate candles image
+    const candlesImg = document.getElementById('candles-img');
+    if (candlesImg) {
+        // Set initial state
+        gsap.set(candlesImg, {
+            opacity: 0,
+            y: 10,
+            scale: 0.95
+        });
+
+        // Create scroll trigger animation
+        gsap.to(candlesImg, {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 1.2,
+            ease: "power2.inOut",
+            scrollTrigger: {
+                trigger: candlesImg,
+                start: "top 80%",
+                toggleActions: "play none none none",
+                once: true
+            }
+        });
+    }
+
+    // Animate courses image
+    const coursesImg = document.getElementById('courses-img');
+    if (coursesImg) {
+        // Set initial state
+        gsap.set(coursesImg, {
+            opacity: 0,
+            y: 10,
+            scale: 0.95
+        });
+
+        // Create scroll trigger animation
+        gsap.to(coursesImg, {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 1.2,
+            ease: "power2.inOut",
+            scrollTrigger: {
+                trigger: coursesImg,
+                start: "top 80%",
+                toggleActions: "play none none none",
+                once: true
+            }
+        });
     }
 }
 
@@ -1266,7 +1364,14 @@ class ChefPopup {
             if (header) gsap.set(header, { height: 'auto' });
             if (headerImage) gsap.set(headerImage, { opacity: 1, scale: 1.01 });
             if (content) gsap.set(content, { height: 'auto' });
-            if (story) gsap.set(story, { opacity: 1, y: 0 });
+            if (story) {
+
+                // Also set paragraphs to visible for reduced motion
+                const storyParagraphs = story.querySelectorAll('p');
+                if (storyParagraphs.length > 0) {
+                    gsap.set(storyParagraphs, { opacity: 1, y: 0 });
+                }
+            }
             if (slider) gsap.set(slider, { opacity: 1, y: 0 });
             if (closeBtn) gsap.set(closeBtn, { opacity: 1, y: 0 });
             return;
@@ -1296,7 +1401,8 @@ class ChefPopup {
         if (headerImage) {
             gsap.set(headerImage, {
                 opacity: 0,
-                scale: 1.2
+                scale: 1.1,
+                y: -30
             });
         }
 
@@ -1305,12 +1411,23 @@ class ChefPopup {
         }
 
         // Set initial states for content elements
-        const contentElements = [story, slider, closeBtn].filter(el => el !== null);
+        const contentElements = [slider, closeBtn].filter(el => el !== null);
         if (contentElements.length > 0) {
             gsap.set(contentElements, {
                 opacity: 0,
                 y: 20
             });
+        }
+
+        // Set initial states for story paragraphs
+        if (story) {
+            const storyParagraphs = story.querySelectorAll('p');
+            if (storyParagraphs.length > 0) {
+                gsap.set(storyParagraphs, {
+                    opacity: 0,
+                    y: -10
+                });
+            }
         }
     }
 
@@ -1341,7 +1458,7 @@ class ChefPopup {
         tl.to(overlay, {
             opacity: 1,
             backdropFilter: 'blur(10px)',
-            duration: 0.5,
+            duration: 0.3,
             ease: "power2.out"
         })
         // Animate popup container with more dramatic entrance
@@ -1351,16 +1468,17 @@ class ChefPopup {
             rotationX: 0,
             borderRadius: '0%',
             duration: 0.6,
-            ease: "back.out(1.2)"
-        }, "<50%")
+            ease: "power2.out"
+        }, "-=0.14")
         .to(header, {
             height: 'auto',
             duration: 0.5,
-            ease: "back.out(1.2)"
+            ease: "power2.inOut"
         }, "<20%")
         .to(headerImage, {
             opacity: 1,
             scale: 1.01,
+            y: 0,
             duration: 0.8,
             ease: "power2.out"
         }, "<20%")
@@ -1368,15 +1486,17 @@ class ChefPopup {
         .to(content, {
             height: 'auto',
             duration: 0.6,
-            ease: "power2.inOut"
+            ease: "power2.out"
         }, "<20%")
-        // Animate story text separately for more control
-        .to(story, {
+        // Animate story paragraphs with stagger effect
+        // Add stagger animation for individual paragraphs
+        .to(story.querySelectorAll('p'), {
             opacity: 1,
             y: 0,
-            duration: 0.5,
-            ease: "power2.out"
-        })
+            duration: 0.8,
+            ease: "power2.out",
+            stagger: 0.08
+        }, "<40%")
         // Animate slider and close button
         .to([slider, closeBtn], {
             opacity: 1,
@@ -1418,9 +1538,9 @@ class ChefPopup {
         });
 
         // Animate content elements out first
-        tl.to([slider, closeBtn, story], {
+        tl.to([slider, closeBtn], {
             opacity: 0,
-            y: -20,
+            y: -10,
             duration: 0.2,
             stagger: 0.03,
             ease: "power2.in"
@@ -1428,27 +1548,20 @@ class ChefPopup {
         .to(content, {
             height: 0,
             duration: 0.4,
-            ease: "power2.inOut"
+            ease: "power2.out"
         },"<30%")
         .to(header, {
             height: 0,
-            duration: 0.2,
-            ease: "power2.in"
+            duration: 0.4,
+            ease: "power2.out"
         },"<50%")
-        .to(headerImage, {
-            opacity: 0,
-            scale: 1.3,
-            duration: 0.2,
-            ease: "power2.in"
-        }, "<50%")
         // Animate popup container
         .to(popupContainer, {
             opacity: 0,
             scale: 0.9,
-            y: -30,
             rotationX: 10,
             duration: 0.3,
-            ease: "power2.inOut"
+            ease: "power2.out"
         }, "<10%")
         // Animate overlay out
         .to(overlay, {
@@ -1565,7 +1678,9 @@ function populateChefsList() {
 
     // Set up GSAP animations for chefs after they are populated
     setupChefsAnimations();
-    // setupFooterAnimations();
+
+    // Set up scroll animations for candles and courses images
+    setupImageScrollAnimations();
 
 }
 
@@ -2417,6 +2532,12 @@ class DishPopup {
         const content = this.popup.querySelector('.dish-popup-content');
         const closeBtn = this.popup.querySelector('#dish-popup-close-container');
 
+        // Get the specific popup elements for animation
+        const logoElement = document.getElementById('dish-popup-logo');
+        const chefElement = document.getElementById('dish-popup-chef');
+        const restaurantElement = document.getElementById('dish-popup-restaurant');
+        const locationElement = document.getElementById('dish-popup-location');
+
         // Check for reduced motion preference
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -2430,6 +2551,12 @@ class DishPopup {
             if (header) gsap.set(header, { opacity: 1, y: 0 });
             if (content) gsap.set(content, { opacity: 1, y: 0 });
             if (closeBtn) gsap.set(closeBtn, { opacity: 1, y: 0 });
+
+            // Set final states for specific popup elements
+            const popupElements = [logoElement, chefElement, restaurantElement, locationElement].filter(el => el !== null);
+            if (popupElements.length > 0) {
+                gsap.set(popupElements, { opacity: 1, y: 0, scale: 1 });
+            }
             return;
         }
 
@@ -2438,7 +2565,7 @@ class DishPopup {
             gsap.set(popupContainer, {
                 opacity: 0,
                 scale: 0.8,
-                y: 50
+                y: -50
             });
         }
 
@@ -2457,6 +2584,16 @@ class DishPopup {
                 y: 20
             });
         }
+
+        // Set initial states for specific popup elements
+        const popupElements = [logoElement, chefElement, restaurantElement, locationElement].filter(el => el !== null);
+        if (popupElements.length > 0) {
+            gsap.set(popupElements, {
+                opacity: 0,
+                y: 10,
+                scale: 0.9
+            });
+        }
     }
 
     animatePopupShow() {
@@ -2465,6 +2602,12 @@ class DishPopup {
         const header = this.popup.querySelector('.dish-popup-header');
         const content = this.popup.querySelector('.dish-popup-content');
         const closeBtn = this.popup.querySelector('#dish-popup-close-container');
+
+        // Get the specific popup elements for animation
+        const logoElement = document.getElementById('dish-popup-logo');
+        const chefElement = document.getElementById('dish-popup-chef');
+        const restaurantElement = document.getElementById('dish-popup-restaurant');
+        const locationElement = document.getElementById('dish-popup-location');
 
         // Debug: Check if elements exist
         if (!popupContainer || !overlay) {
@@ -2489,17 +2632,17 @@ class DishPopup {
         tl.to(overlay, {
             opacity: 1,
             backdropFilter: 'blur(10px)',
-            duration: 0.5,
-            ease: "power2.out"
+            duration: 0.3,
+            ease: "power2.inOut"
         })
         // Animate popup container with more dramatic entrance
         .to(popupContainer, {
             opacity: 1,
             scale: 1,
             y: 0,
-            duration: 0.7,
-            ease: "back.out(1.4)"
-        }, "-=0.2");
+            duration: 0.6,
+            ease: "power2.out"
+        }, "<70%");
 
         // Animate content elements if they exist
         const contentElements = [header, content, closeBtn].filter(el => el !== null);
@@ -2510,7 +2653,20 @@ class DishPopup {
                 duration: 0.5,
                 stagger: 0.15,
                 ease: "power2.out"
-            }, "-=0.3");
+            }, "<10%");
+        }
+
+        // Animate specific popup elements with staggered timing
+        const popupElements = [logoElement, chefElement, restaurantElement, locationElement].filter(el => el !== null);
+        if (popupElements.length > 0) {
+            tl.to(popupElements, {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                duration: 0.5,
+                stagger: 0.1,
+                ease: "power2.out"
+            }, "<20%");
         }
 
         return tl;
@@ -2545,7 +2701,7 @@ class DishPopup {
 
         // Create timeline for smooth exit animation
         const tl = gsap.timeline({
-            ease: "power2.in",
+            ease: "power2.out",
             onComplete: callback
         });
 
@@ -2559,7 +2715,7 @@ class DishPopup {
                 y: -20,
                 duration: 0.3,
                 stagger: 0.05,
-                ease: "power2.in"
+                ease: "power1.inOut"
             });
         }
 
@@ -2569,14 +2725,14 @@ class DishPopup {
             scale: 0.9,
             y: 30,
             duration: 0.4,
-            ease: "power2.in"
+            ease: "power1.inOut"
         }, "-=0.1")
         // Animate overlay out
         .to(overlay, {
             opacity: 0,
             backdropFilter: 'blur(0px)',
             duration: 0.3,
-            ease: "power2.in"
+            ease: "power1.inOut"
         }, "-=0.2");
 
         return tl;
