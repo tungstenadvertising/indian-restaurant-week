@@ -795,6 +795,51 @@ gsap.to('.meet-chefs-title-shape', {
 
 
 
+// Function to set up footer fixed positioning and parallax
+function setupFooterParallax() {
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+        console.log('Reduced motion preference detected, skipping footer parallax');
+        return;
+    }
+
+    const footerImg = document.querySelector('#footer img');
+    if (!footerImg) return;
+
+    // Add fixed positioning when footer comes into view
+    ScrollTrigger.create({
+        trigger: "#footer",
+        start: "top bottom",
+        onEnter: () => {
+            footerImg.classList.add('fixed', 'bottom-0', 'left-0', 'right-0');
+        },
+        onLeaveBack: () => {
+            footerImg.classList.remove('fixed', 'bottom-0', 'left-0', 'right-0');
+        }
+    });
+
+    // Create subtle parallax effect using GSAP ScrollTrigger
+    gsap.to(footerImg, {
+        y: 0, // Move up 40px as user scrolls (subtle effect)
+        filter: "brightness(1) saturate(1) blur(0px)",
+        ease: "power2.in",
+        duration: 3,
+        scrollTrigger: {
+            trigger: "body", // Use body as trigger for full page scroll
+            start: "top top",
+            end: "bottom bottom",
+            scrub: 3, // Smooth scrubbing for subtle effect
+            invalidateOnRefresh: true,
+            onUpdate: () => {
+                // Force hardware acceleration
+                footerImg.style.transform = `translateY(${footerImg._gsap.y}px)`;
+            }
+        }
+    });
+}
+
 // Function to set up candles and courses images scroll animations
 function setupImageScrollAnimations() {
     // Check for reduced motion preference
@@ -1681,6 +1726,9 @@ function populateChefsList() {
 
     // Set up scroll animations for candles and courses images
     setupImageScrollAnimations();
+
+    // Set up footer parallax effect
+    setupFooterParallax();
 
 }
 

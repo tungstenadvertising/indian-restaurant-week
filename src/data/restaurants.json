@@ -189,7 +189,7 @@
       "area": "Downtown",
       "coordinates": [-122.4068, 37.7849],
       "phone": "(415) 397-8470",
-      "reservation": "https://www.opentable.com/booking/restref/availability?rid=7547&correlationId=c1526d2b-851d-4b0c-bcfd-54c42da766a0",
+      "reservation": "https://www.opentable.com/booking/experiences-availability?rid=7547&restref=7547&experienceId=554704&utm_source=external&utm_medium=referral&utm_campaign=shared",
       "website": "https://newdelhirestaurant.com",
       "cuisine": "Traditional Indian",
       "specialties": ["Heirloom Recipes", "Ceremonial Dishes", "Modern Fine Dining"],
