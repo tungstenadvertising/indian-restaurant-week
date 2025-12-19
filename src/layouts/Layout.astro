@@ -1,0 +1,44 @@
+---
+import '../style.css';
+import restaurantsJson from '../../public/data/restaurants.json';
+
+interface Props {
+  title?: string;
+}
+
+const { title = "Indian Restaurant Week - Celebrate Diwali" } = Astro.props;
+
+// Extract restaurants array for injection
+const restaurants = restaurantsJson.restaurants;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+
+    <!-- Preload critical assets first -->
+    <link rel="preload" href="/images/global/irw-logo.svg" as="image" type="image/svg+xml">
+
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Load external resources -->
+    <link href="https://fonts.googleapis.com/css2?family=Ysabeau:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700;1,800&display=swap" rel="stylesheet">
+
+    <!-- Inject restaurant data at build time for instant access -->
+    <script is:inline define:vars={{ restaurants }}>
+        window.__RESTAURANTS__ = restaurants;
+    </script>
+</head>
+<body class="text-gray-800 text-lg leading-relaxed overflow-x-hidden scroll-smooth">
+    <slot />
+    <script>
+        import '../script.js';
+    </script>
+</body>
+</html>
+

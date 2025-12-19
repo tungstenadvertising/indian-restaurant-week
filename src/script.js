@@ -261,25 +261,18 @@ let map;
 let markers = [];
 let restaurants = [];
 
-// Function to load restaurant data globally
-async function loadRestaurantData() {
-    try {
-        // Use different paths for development vs production
-        const isDev = import.meta.env.DEV;
-        const dataPath = isDev ? '/src/data/restaurants.json' : '/data/restaurants.json';
-        console.log('Loading restaurant data from:', dataPath);
-        const response = await fetch(dataPath);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        restaurants = data.restaurants;
-        console.log('Restaurant data loaded successfully:', restaurants.length, 'restaurants');
-        return restaurants;
-    } catch (error) {
-        console.error('Failed to load restaurant data:', error);
-        return [];
+// Function to get restaurant data from global (injected at build time via Layout.astro)
+function getRestaurantData() {
+    if (restaurants.length === 0) {
+        restaurants = window.__RESTAURANTS__ || [];
+        console.log('Restaurant data loaded from global:', restaurants.length, 'restaurants');
     }
+    return restaurants;
+}
+
+// Legacy async wrapper for compatibility (now synchronous)
+async function loadRestaurantData() {
+    return getRestaurantData();
 }
 
 // Function to set up location section animations with ScrollTrigger
@@ -830,7 +823,7 @@ function setupFooterParallax() {
             trigger: "body", // Use body as trigger for full page scroll
             start: "top top",
             end: "bottom bottom",
-            scrub: 3, // Smooth scrubbing for subtle effect
+            scrub: 1, // Smooth scrubbing for subtle effect
             invalidateOnRefresh: true,
             onUpdate: () => {
                 // Force hardware acceleration
@@ -1206,7 +1199,7 @@ class ChefPopup {
         const chefImage = document.getElementById('chef-popup-image');
         if (chefImage && chefData.images && chefData.images['chef-popup-header']) {
             const isDev = import.meta.env.DEV;
-            const imagePath = isDev ? `/src/images/${chefData.images['chef-popup-header']}` : `/assets/images/${convertToWebP(chefData.images['chef-popup-header'])}`;
+            const imagePath = isDev ? `/images/${chefData.images['chef-popup-header']}` : `/images/${convertToWebP(chefData.images['chef-popup-header'])}`;
             chefImage.src = imagePath;
             chefImage.alt = chefData.chef;
         }
@@ -1284,7 +1277,7 @@ class ChefPopup {
                     const slide = document.createElement('div');
                     slide.className = 'swiper-slide';
                     const isDev = import.meta.env.DEV;
-                    const fullImagePath = isDev ? `/src/images/${imagePath}` : `/assets/images/${convertToWebP(imagePath)}`;
+                    const fullImagePath = isDev ? `/images/${imagePath}` : `/images/${convertToWebP(imagePath)}`;
                     slide.innerHTML = `
                         <img
                             src="${fullImagePath}"
@@ -1690,10 +1683,10 @@ function populateChefsList() {
         chefElement.setAttribute('data-chef', restaurant.id);
 
         // Create different layouts for left vs right alignment
+        const imageBasePath = '/images';
         const isDev = import.meta.env.DEV;
-        const imageBasePath = isDev ? '/src/images' : '/assets/images';
 
-        // Convert image extensions for production
+        // Use WebP in production, original format in development
         const chefImagePath = isDev ? restaurant.images.profile : convertToWebP(restaurant.images.profile);
         const chefBgImagePath = isDev ? restaurant.images['profile-background'] : convertToWebP(restaurant.images['profile-background']);
 
@@ -1838,7 +1831,7 @@ class RestaurantCarousel {
         const isDev = import.meta.env.DEV;
 
         // Create srcset with responsive sizes and high-DPI support
-        const imageBasePath = isDev ? '/src/images' : '/assets/images';
+        const imageBasePath = '/images';
         const srcset = [
             `${imageBasePath}/chefs/${chefFolder}/dish-105w.webp 105w`,
             `${imageBasePath}/chefs/${chefFolder}/dish-140w.webp 140w`,
@@ -1924,11 +1917,13 @@ class RestaurantCarousel {
             const isDev = import.meta.env.DEV;
 
             if (restaurant.images && restaurant.images.logo) {
-                logoPath = isDev ? `/src/images/${restaurant.images.logo}` : `/assets/images/${convertToWebP(restaurant.images.logo)}`;
+                logoPath = isDev ? `/images/${restaurant.images.logo}` : `/images/${convertToWebP(restaurant.images.logo)}`;
             } else {
                 // Fallback to the old method if no logo in data
                 logoPath = this.getLogoPath(restaurant.id);
-                logoPath = isDev ? logoPath : convertToWebP(logoPath);
+                if (!isDev) {
+                    logoPath = convertToWebP(logoPath);
+                }
             }
 
             // Set the image source and attributes
@@ -2006,12 +2001,13 @@ class RestaurantCarousel {
 
     getLogoPath(restaurantId) {
         const chefFolder = this.getChefFolder(restaurantId);
-        return `/src/images/chefs/${chefFolder}/logo.png`;
+        return `/images/chefs/${chefFolder}/logo.png`;
     }
 
     getDishImagePath(restaurantId) {
         const chefFolder = this.getChefFolder(restaurantId);
-        return `/src/images/chefs/${chefFolder}/dish.png`;
+        const isDev = import.meta.env.DEV;
+        return isDev ? `/images/chefs/${chefFolder}/dish.png` : `/images/chefs/${chefFolder}/dish.webp`;
     }
 
     startRotation() {
@@ -2357,7 +2353,7 @@ class DishPopup {
         const logoElement = document.getElementById('dish-popup-logo');
         if (logoElement && restaurantData.images && restaurantData.images.logo) {
             const isDev = import.meta.env.DEV;
-            const logoPath = isDev ? `/src/images/${restaurantData.images.logo}` : `/assets/images/${convertToWebP(restaurantData.images.logo)}`;
+            const logoPath = isDev ? `/images/${restaurantData.images.logo}` : `/images/${convertToWebP(restaurantData.images.logo)}`;
             logoElement.src = logoPath;
             logoElement.alt = restaurantData.name;
         }
@@ -2420,7 +2416,7 @@ class DishPopup {
             } else if (typeof restaurantHeader === 'string') {
                 // Load image for other restaurants
                 const isDev = import.meta.env.DEV;
-                const imagePath = isDev ? `/src/images/${restaurantHeader}` : `/assets/images/${convertToWebP(restaurantHeader)}`;
+                const imagePath = isDev ? `/images/${restaurantHeader}` : `/images/${convertToWebP(restaurantHeader)}`;
 
                 const imgElement = dishPopupHeaderImage.querySelector('img');
                 if (imgElement) {
@@ -2438,13 +2434,13 @@ class DishPopup {
         const menuImageElement = document.getElementById('dish-popup-menu-image');
         if (menuImageElement && restaurantData.popup?.menu?.menuImage) {
             const isDev = import.meta.env.DEV;
-            const imagePath = isDev ? `/src/images/${restaurantData.popup.menu.menuImage}` : `/assets/images/${convertToWebP(restaurantData.popup.menu.menuImage)}`;
+            const imagePath = isDev ? `/images/${restaurantData.popup.menu.menuImage}` : `/images/${convertToWebP(restaurantData.popup.menu.menuImage)}`;
             menuImageElement.src = imagePath;
             menuImageElement.alt = `${restaurantData.name} - ${restaurantData.popup.menu.menuName}`;
         } else if (menuImageElement && restaurantData.images && restaurantData.images.dish) {
             // Fallback to dish image if menu image not available
             const isDev = import.meta.env.DEV;
-            const imagePath = isDev ? `/src/images/${restaurantData.images.dish}` : `/assets/images/${convertToWebP(restaurantData.images.dish)}`;
+            const imagePath = isDev ? `/images/${restaurantData.images.dish}` : `/images/${convertToWebP(restaurantData.images.dish)}`;
             menuImageElement.src = imagePath;
             menuImageElement.alt = `${restaurantData.name} - Special Menu`;
         }
@@ -2804,7 +2800,13 @@ class RestaurantDropdown {
         await this.waitForRestaurantsData();
 
         if (this.restaurants.length > 0) {
-            this.populateDropdowns();
+            // Only populate if not already pre-rendered by Astro
+            const desktopLinksContainer = document.getElementById('restaurant-dropdown-links');
+            const hasPrerenderedContent = desktopLinksContainer && desktopLinksContainer.children.length > 0;
+
+            if (!hasPrerenderedContent) {
+                this.populateDropdowns();
+            }
             this.addEventListeners();
         }
     }

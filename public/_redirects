@@ -2,11 +2,11 @@
 # This ensures that all routes are handled by the main HTML file
 # so that client-side routing works properly
 
-# Handle chef popup routes
-/chef/* /index.html 200
+# Handle chef popup routes (client-side routing)
+/chef/* / 200
 
-# Handle restaurant popup routes
-/restaurant/* /index.html 200
+# Handle restaurant popup routes (client-side routing)
+/restaurant/* / 200
 
-# Fallback for all other routes
+# Fallback for all other routes (Astro handles static pages)
 /* /index.html 200
