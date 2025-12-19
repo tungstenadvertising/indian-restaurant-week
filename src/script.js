@@ -1897,6 +1897,7 @@ class RestaurantCarousel {
     preloadLogos() {
         // Create logo elements for all restaurants upfront
         this.logoElements = [];
+        const isDev = import.meta.env.DEV;
 
         this.restaurants.forEach((restaurant, index) => {
             const logoElement = document.createElement('img');
@@ -1914,23 +1915,35 @@ class RestaurantCarousel {
 
             // Get the logo path for this restaurant
             let logoPath;
-            const isDev = import.meta.env.DEV;
+            let logoBasePath = '';
 
             if (restaurant.images && restaurant.images.logo) {
+                // Extract the directory path from the logo (e.g., "chefs/thomas-george/logo.png" -> "chefs/thomas-george")
+                const logoDir = restaurant.images.logo.replace(/\/[^/]+$/, '');
+                logoBasePath = `/images/${logoDir}`;
                 logoPath = isDev ? `/images/${restaurant.images.logo}` : `/images/${convertToWebP(restaurant.images.logo)}`;
             } else {
                 // Fallback to the old method if no logo in data
+                logoBasePath = `/images/chefs/${restaurant.id}`;
                 logoPath = this.getLogoPath(restaurant.id);
                 if (!isDev) {
                     logoPath = convertToWebP(logoPath);
                 }
             }
 
-            // Set the image source and attributes
+            // Set the image source and attributes with explicit dimensions
             logoElement.src = logoPath;
             logoElement.alt = `${restaurant.name} logo`;
-            logoElement.loading = index === 0 ? 'eager' : 'lazy'; // Load first logo immediately, others lazily
+            logoElement.width = 176;
+            logoElement.height = 176;
+            logoElement.loading = index === 0 ? 'eager' : 'lazy';
             logoElement.decoding = 'async';
+
+            // Use responsive srcset in production for optimized loading
+            if (!isDev) {
+                logoElement.srcset = `${logoBasePath}/logo-84.webp 84w, ${logoBasePath}/logo-128.webp 128w, ${logoBasePath}/logo-176.webp 176w`;
+                logoElement.sizes = '(max-width: 420px) 84px, (max-width: 768px) 128px, 176px';
+            }
 
             // Add to logo display container
             this.logoDisplay.appendChild(logoElement);
