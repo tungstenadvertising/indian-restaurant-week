@@ -1895,64 +1895,14 @@ class RestaurantCarousel {
     }
 
     preloadLogos() {
-        // Create logo elements for all restaurants upfront
-        this.logoElements = [];
-        const isDev = import.meta.env.DEV;
+        // Logo elements are pre-rendered in index.astro with responsive srcset
+        // Just query the existing elements
+        this.logoElements = Array.from(this.logoDisplay.querySelectorAll('.logo-element'));
 
-        this.restaurants.forEach((restaurant, index) => {
-            const logoElement = document.createElement('img');
-            logoElement.className = 'logo-element';
-            logoElement.style.cssText = `
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-                opacity: 0;
-                z-index: ${index === 0 ? 2 : 1};
-            `;
-
-            // Get the logo path for this restaurant
-            let logoPath;
-            let logoBasePath = '';
-
-            if (restaurant.images && restaurant.images.logo) {
-                // Extract the directory path from the logo (e.g., "chefs/thomas-george/logo.png" -> "chefs/thomas-george")
-                const logoDir = restaurant.images.logo.replace(/\/[^/]+$/, '');
-                logoBasePath = `/images/${logoDir}`;
-                logoPath = isDev ? `/images/${restaurant.images.logo}` : `/images/${convertToWebP(restaurant.images.logo)}`;
-            } else {
-                // Fallback to the old method if no logo in data
-                logoBasePath = `/images/chefs/${restaurant.id}`;
-                logoPath = this.getLogoPath(restaurant.id);
-                if (!isDev) {
-                    logoPath = convertToWebP(logoPath);
-                }
-            }
-
-            // Set the image source and attributes with explicit dimensions
-            logoElement.src = logoPath;
-            logoElement.alt = `${restaurant.name} logo`;
-            logoElement.width = 176;
-            logoElement.height = 176;
-            logoElement.loading = index === 0 ? 'eager' : 'lazy';
-            logoElement.decoding = 'async';
-
-            // Use responsive srcset in production for optimized loading
-            if (!isDev) {
-                logoElement.srcset = `${logoBasePath}/logo-84.webp 84w, ${logoBasePath}/logo-128.webp 128w, ${logoBasePath}/logo-176.webp 176w`;
-                logoElement.sizes = '(max-width: 420px) 84px, (max-width: 768px) 128px, 176px';
-            }
-
-            // Add to logo display container
-            this.logoDisplay.appendChild(logoElement);
-            this.logoElements.push(logoElement);
-        });
-
-        // Show the first logo initially
+        // First logo is already visible (set in HTML), ensure state is correct
         if (this.logoElements.length > 0) {
             this.logoElements[0].style.opacity = '1';
+            this.logoElements[0].style.zIndex = '2';
         }
     }
 
@@ -2010,11 +1960,6 @@ class RestaurantCarousel {
         };
 
         return chefFolderMap[restaurantId] || 'ashish-tiwari';
-    }
-
-    getLogoPath(restaurantId) {
-        const chefFolder = this.getChefFolder(restaurantId);
-        return `/images/chefs/${chefFolder}/logo.png`;
     }
 
     getDishImagePath(restaurantId) {
@@ -2362,12 +2307,13 @@ class DishPopup {
     }
 
     populatePopup(restaurantData) {
-        // Update restaurant logo
+        // Update restaurant logo with optimized WebP
         const logoElement = document.getElementById('dish-popup-logo');
-        if (logoElement && restaurantData.images && restaurantData.images.logo) {
-            const isDev = import.meta.env.DEV;
-            const logoPath = isDev ? `/images/${restaurantData.images.logo}` : `/images/${convertToWebP(restaurantData.images.logo)}`;
-            logoElement.src = logoPath;
+        if (logoElement && restaurantData.images?.logo) {
+            const logoBasePath = `/images/${restaurantData.images.logo.replace(/\/[^/]+$/, '')}`;
+            logoElement.src = `${logoBasePath}/logo-128.webp`;
+            logoElement.srcset = `${logoBasePath}/logo-84.webp 64w, ${logoBasePath}/logo-128.webp 96w`;
+            logoElement.sizes = '(max-width: 768px) 64px, 96px';
             logoElement.alt = restaurantData.name;
         }
 
