@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Custom Font Family */
+/* Custom Font Family - @font-face is inlined in Layout.astro for faster rendering */
 @layer base {
   html {
     font-family: var(--font-sans);
