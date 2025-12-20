@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
+import PopupWrapper from '../components/PopupWrapper.astro';
 import { Image } from 'astro:assets';
 import candlesImg from '../images/global/candles.png';
 import coursesImg from '../images/global/courses.png';
@@ -196,21 +197,15 @@ const restaurants = restaurantsJson.restaurants;
     </footer>
 
     <!-- Chef Popup Modal -->
-    <div id="chef-popup" class="fixed inset-0  z-50 hidden">
-        <div class="chef-popup-container max-w-xl mx-auto mt-8 mb-8 bg-irw-sand shadow-2xl overflow-hidden z-10 relative">
-            <!-- Title Bar -->
-            <div class="chef-popup-header h-[220px] md:h-[250px] relative z-0 overflow-hidden">
-                <!-- Close Button -->
-                <div class="absolute z-10 top-2 right-2 flex flex-col items-center" id="chef-popup-close-container">
-                    <button class="size-13 bg-irw-red/80 border-irw-amber border-4 text-white rounded-full text-2xl font-light hover:bg-irw-amber cursor-pointer transition-colors duration-300 shadow-lg flex items-center justify-center" id="chef-popup-close">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="currentColor" viewBox="0 0 21 21">
-                            <path d="M0 2.828 2.828 0l17.678 17.678-2.828 2.828L0 2.828Z"/>
-                            <path d="m17.678 0 2.828 2.828L2.828 20.506 0 17.678 17.678 0Z"/>
-                        </svg>
-                    </button>
-                    <span class="text-sm text-white mt-1 font-bold">Close</span>
-                </div>
-                <img id="chef-popup-image" src="" alt="Chef Portrait" class="w-full h-full object-cover object-top scale-[101%] relative z-0" loading="lazy" fetchpriority="low" decoding="async">
+    <PopupWrapper
+        id="chef-popup"
+        containerClass="max-w-xl mx-auto mt-8 mb-8 bg-irw-sand shadow-2xl overflow-hidden"
+        closeIconSize={21}
+        closeLabelSize="text-sm"
+    >
+        <!-- Header -->
+        <div class="chef-popup-header h-[220px] md:h-[250px] relative z-0 overflow-hidden">
+            <img id="chef-popup-image" src="" alt="Chef Portrait" class="w-full h-full object-cover object-top scale-[101%] relative z-0" loading="lazy" fetchpriority="low" decoding="async">
 
 
                 <!-- Decorative Header -->
@@ -261,30 +256,19 @@ const restaurants = restaurantsJson.restaurants;
                     <div class="swiper-button-next chef-popup-swiper-button-next rounded-full size-12"></div>
                     <div class="swiper-button-prev chef-popup-swiper-button-prev rounded-full size-12"></div>
 
-                </div>
             </div>
         </div>
-        <div class="chef-popup-overlay fixed inset-0 bg-amber-950/90 z-0"></div>
-    </div>
+    </PopupWrapper>
 
     <!-- Dish Popup Modal -->
-    <div id="dish-popup" class="fixed p-4 sm:p-0 inset-0 z-50 hidden">
-        <div class="dish-popup-container max-w-lg lg:max-w-xl xl:max-w-2xl m-auto bg-irw-sand shadow-2xl overflow-hidden z-10 relative inset-0 pb-12">
-
-            <!-- Header Section -->
-            <div id="dish-popup-header" class="dish-popup-header relative flex flex-col items-center">
-                <!-- Close Button -->
-                <div class="absolute z-10 top-2 right-2 flex flex-col items-center" id="dish-popup-close-container">
-                    <button class="size-13 bg-irw-red/80 border-irw-amber border-4 text-white rounded-full text-2xl font-light hover:bg-irw-amber cursor-pointer transition-colors duration-300 shadow-lg flex items-center justify-center" id="dish-popup-close">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 18 18">
-                            <path d="M0 2.5 2.5 0l15 15-2.5 2.5L0 2.5Z"/>
-                            <path d="m15 0 2.5 2.5L2.5 18 0 15.5 15 0Z"/>
-                        </svg>
-                    </button>
-                    <span class="text-xs text-white mt-1 font-bold">Close</span>
-                </div>
-
-                <!-- Restaurant Logo -->
+    <PopupWrapper
+        id="dish-popup"
+        containerClass="max-w-lg lg:max-w-xl xl:max-w-2xl m-auto bg-irw-sand shadow-2xl overflow-hidden inset-0 pb-12"
+        wrapperClass="p-4 sm:p-0"
+    >
+        <!-- Header Section -->
+        <div id="dish-popup-header" class="dish-popup-header relative flex flex-col items-center">
+            <!-- Restaurant Logo -->
                 <div class="absolute top-2 left-2 z-10 size-16 md:size-24">
                     <img id="dish-popup-logo" src="" alt="Restaurant Logo" width="96" height="96" class="w-full rounded-full border-3 border-irw-amber bg-white object-contain" loading="lazy" fetchpriority="low" decoding="async">
                 </div>
@@ -337,8 +321,6 @@ const restaurants = restaurantsJson.restaurants;
 
                 </a>
             </div>
-        </div>
-        <div class="dish-popup-overlay fixed inset-0 bg-amber-950/90 z-0"></div>
-    </div>
+    </PopupWrapper>
 
 </Layout>
