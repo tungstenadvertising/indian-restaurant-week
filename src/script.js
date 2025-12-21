@@ -2321,8 +2321,8 @@ class DishPopup {
         const logoElement = document.getElementById('dish-popup-logo');
         if (logoElement && restaurantData.images?.logo) {
             const logoBasePath = `/images/${restaurantData.images.logo.replace(/\/[^/]+$/, '')}`;
-            logoElement.src = `${logoBasePath}/logo-128.webp`;
-            logoElement.srcset = `${logoBasePath}/logo-84.webp 64w, ${logoBasePath}/logo-128.webp 96w`;
+            logoElement.src = `${logoBasePath}/logo.webp`;
+            logoElement.srcset = `${logoBasePath}/logo-176.webp 176w, ${logoBasePath}/logo.webp 256w`;
             logoElement.sizes = '(max-width: 768px) 64px, 96px';
             logoElement.alt = restaurantData.name;
         }
