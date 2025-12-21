@@ -4,12 +4,12 @@
   "description": "A beautiful, responsive landing page for Indian Restaurant Week, built with vanilla HTML, CSS, and JavaScript.",
   "main": "src/script.js",
   "scripts": {
-    "dev": "vite --host",
-    "build": "vite build",
-    "preview": "vite preview",
-    "build:prod": "vite build --mode production",
-    "serve": "vite preview --port 4173",
-    "clean": "rm -rf build",
+    "dev": "astro dev",
+    "build": "astro build && node scripts/convert-images-to-webp.js",
+    "preview": "astro preview",
+    "build:prod": "astro build && node scripts/convert-images-to-webp.js",
+    "serve": "astro preview --port 4173",
+    "clean": "rm -rf dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -23,6 +23,7 @@
   "type": "module",
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.12",
+    "astro": "^5.16.6",
     "imagemin": "^9.0.1",
     "imagemin-mozjpeg": "^10.0.0",
     "imagemin-pngquant": "^10.0.0",

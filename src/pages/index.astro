@@ -1,0 +1,317 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import PopupWrapper from '../components/PopupWrapper.astro';
+import WaveDivider from '../components/WaveDivider.astro';
+import { Image } from 'astro:assets';
+import candlesImg from '../images/global/candles.png';
+import coursesImg from '../images/global/courses.png';
+import footerImg from '../images/global/footer.jpg';
+import restaurantsJson from '../../public/data/restaurants.json';
+
+const restaurants = restaurantsJson.restaurants;
+---
+
+<Layout>
+    <Navigation restaurants={restaurants} />
+    <!-- Hero Section -->
+    <section id="restaurants" class="min-h-screen flex flex-col justify-center items-center text-center text-white relative z-0 py-16 px-5 overflow-hidden">
+
+        <!-- Restaurant Carousel -->
+        <div id="restaurant-carousel" class="relative w-full max-w-4xl mx-auto mb-8 z-30">
+            <!-- Central Logo Display -->
+            <div id="central-logo" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 overflow-hidden  rounded-full flex items-center justify-center shadow-2xl" style="width: var(--central-logo-size); height: var(--central-logo-size);">
+                <div id="logo-display" class="overflow-hidden rounded-full bg-no-repeat bg-center bg-contain cursor-pointer transition-opacity duration-300 ease-in-out" style="width: var(--central-logo-size); height: var(--central-logo-size);">
+                    {restaurants.map((restaurant, index) => {
+                        const logoBasePath = restaurant.images?.logo
+                            ? `/images/${restaurant.images.logo.replace(/\/[^/]+$/, '')}`
+                            : `/images/chefs/${restaurant.id}`;
+                        return (
+                            <img
+                                class="logo-element"
+                                src={`${logoBasePath}/logo-176.webp`}
+                                srcset={`${logoBasePath}/logo-176.webp 176w, ${logoBasePath}/logo.webp 256w`}
+                                sizes="(max-width: 420px) 84px, (max-width: 580px) 112px, (max-width: 768px) 128px, (max-width: 1024px) 144px, 200px"
+                                alt={`${restaurant.name} logo`}
+                                width="176"
+                                height="176"
+                                loading={index === 0 ? "eager" : "lazy"}
+                                decoding="async"
+                                data-restaurant-id={restaurant.id}
+                                style={`position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; opacity: ${index === 0 ? 1 : 0}; z-index: ${index === 0 ? 2 : 1};`}
+                            />
+                        )
+                    })}
+                </div>
+            </div>
+
+            <!-- Restaurant Images Container -->
+            <div id="carousel-container" class="relative w-full h-96">
+                <!-- Restaurant images will be dynamically inserted here -->
+            </div>
+        </div>
+
+        <!-- Gradient Overlay -->
+        <div class="absolute flex flex-col inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10  hero-shade">
+        </div>
+        <div class="hero-texture bg-repeat bg-center absolute z-0 w-full h-full inset-0"></div>
+        <div class="mt-auto px-6 md:px-10 hero-bottom absolute z-50 grid place-items-center w-full bottom-0 translate-y-1">
+            <svg xmlns="http://www.w3.org/2000/svg"  fill="none" viewBox="0 0 1049 118" class="w-full max-w-6xl">
+                <path fill="#FDEFDA" d="M524.135.78c91.48 85.165 274.074 49.854 410.928 42.791 96.277-4.836 112.097 44.633 113.157 74.21H.48c1.044-29.708 17.12-78.933 113.091-74.21C250.426 50.634 432.655 85.945 524.135.781Z"/>
+            </svg>
+            <div
+                class="pointer-events-none absolute top-2/3 translate-y-1"
+                style="
+                    width: 50%;
+                    height: 60px;
+                    z-index: 0;
+                    filter: blur(15px);
+                    opacity: 0.5;
+                    background: radial-gradient(circle at 50% 50%, #A4865B, #FDEFDA);
+                ">
+            </div>
+
+
+        </div>
+
+    </section>
+    <!-- Hero Section End -->
+    <!-- Content Section -->
+    <section id="content-section" class="relative z-10 overflow-x-hidden pt-2" >
+        <div class="max-w-7xl mx-auto px-6 md:px-8 lg:px-16 py-10 lg:py-18 -mt-2 content-wrapper bg-irw-sand rounded-t-4xl relative z-20 " style="padding-bottom: calc(100vw / 1440 * 164 + 4vw);">
+            <div class="">
+                <!-- First section with candles image -->
+                <div class="flex flex-col md:flex-row items-center gap-8 mb-8">
+                    <div class="flex-1 order-1 md:order-1">
+                        <h2 class="text-irw-red font-bold mb-4 text-balance irw-title">6 Chefs. 6 Stories. 1 Week of  Unforgettable Menus.</h2>
+                        <p class="mt-4 xl:mt-6 text-lg sm:text-xl lg:text-2xl xl:text-[28px] text-pretty">This Diwali, discover Indian fine dining like you've never tasted before.</p>
+                    </div>
+                    <div class="md:w-1/3 order-2 md:order-2">
+                        <Image id="candles-img" src={candlesImg} alt="Candles" class="w-full h-auto max-w-xs" loading="lazy" fetchpriority="low" decoding="async" width={615} height={615} format="webp" />
+                    </div>
+                </div>
+
+                <!-- Second section with courses image -->
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <div class="order-2 md:order-1 md:w-1/3">
+                        <Image id="courses-img" src={coursesImg} alt="Courses" class="w-full h-auto" loading="lazy" fetchpriority="low" decoding="async" width={772} height={500} format="webp" />
+                    </div>
+                    <div class="flex-1 order-1 md:order-2">
+                        <p class="mt-4 xl:mt-6 text-lg sm:text-xl lg:text-2xl xl:text-[28px] text-pretty">San Francisco's top Indian restaurants come together for a weeklong celebration of flavor, memory, and the art of Indian cuisine. Food is how we remember - moments, people,
+                        places. That's why each menu in Indian Restaurant Week is more than just a meal. It's a personal reflection from each chef,
+                        rooted in childhood memories, regional heritage, and the spirit of Diwali. And because food connects us so deeply to memory, this week isn't just a one-time celebration.</p>
+                    </div>
+                </div>
+
+                <!-- Third section with centered content -->
+                <div class="text-center">
+                    <h3 class="text-irw-red font-bold mb-4 irw-title mt-10 text-balance">What Is Indian Restaurant Week?</h3>
+                    <p class="text-lg sm:text-xl lg:text-2xl xl:text-[28px] text-pretty">A biannual culinary event where tradition meets innovation.Six chefs. Six stories. Six menus created just for this week. Rooted in the spirit of Diwali, each dish is a personal tribute to home, heritage, and the joy of gathering.</p>
+                </div>
+            </div>
+
+            <div id="chefs">
+                <!-- Meet the Chefs Title -->
+                <div id="chefs-title" class="meet-chefs-title-container text-irw-red text-center mt-12 flex items-center justify-center gap-6">
+                    <div class="meet-chefs-title-shape  overflow-hidden relative flex-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="320" height="19" fill="currentColor" viewBox="0 0 320 19" class="absolute left-0 top-1/3 m-auto" style="width:clamp(200px, 33vw, 320px)">
+                            <path fill="currentColor" d="m.214 9.39 8.66 8.66 8.66-8.66L8.875.73.215 9.39Zm8.66 0v1.5h320.001v-3h-320v1.5Z"/>
+                        </svg>
+                    </div>
+                    <h3 class="irw-title font-bold sm:flex-none">Meet the Chefs</h3>
+                    <div class="meet-chefs-title-shape  overflow-hidden relative flex-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="320" height="19" fill="currentColor" viewBox="0 0 320 19" class="absolute right-0 top-1/3 m-auto" style="width:clamp(200px, 33vw, 320px)">
+                            <path fill="currentColor" d="m319.535 9.39-8.66-8.66-8.661 8.66 8.661 8.66 8.66-8.66Zm-318.66 0v1.5h310v-3h-310v1.5Z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="text-center text-balance text-xl md:text-2xl lg:text-[28px]">Explore their stories and reserve your table →  </div>
+
+                <div id="chefs-list" class="flex flex-col space-y-10 md:-space-y-2 lg:-space-y-8 xl:-space-y-10 mt-6">
+                    <!-- Chefs will be populated dynamically from restaurants.json -->
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+        </div>
+        <div class="absolute z-10 flex flex-col inset-0 bg-gradient-to-b from-transparent via-black to-black" style="background: linear-gradient(to top, transparent, black);"></div>
+        <div class="page-texture bg-center bg-repeat absolute inset-0 w-full h-full z-0"></div>
+    </section>
+    <section id="location" class="relative z-10">
+        <WaveDivider flip class="top-1" />
+        <div class="location-content-wrapper bg-irw-amber">
+            <div class="location-content px-4 sm:px-8 xl:px-0 py-10 sm:py-16 max-w-6xl mx-auto">
+                <h2 class="text-white font-bold text-balance irw-title text-center">Location</h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="80" height="13" fill="none" viewBox="0 0 80 13" class="mx-auto mt-6">
+                    <path fill="#C0372C" d="M.226 6.5 6 12.274 11.774 6.5 6 .726.226 6.5Zm79.547 0L74 .726 68.227 6.5 74 12.274 79.773 6.5ZM6 6.5v1h68v-2H6v1Z"/>
+                  </svg>
+                <div class="mt-12">
+                    <div class="grid grid-cols-1 lg:grid-cols-[46%_54%] gap-6 items-stretch" >
+                        <div id="restaurant-list" class="flex flex-col justify-center"></div>
+                        <div id="map" class="w-full h-96 md:h-auto md:min-h-[400px] rounded-lg border-irw-sand border-4 order-first lg:order-last "></div>
+                    </div>
+                </div>
+
+
+            </div>
+                <div class="relative z-50 size-32 lg:size-44 mx-auto grid place-items-center bg-white rounded-full top-2 sm:top-4 md:top-8 lg:top-12 xl:top-16 2xl:top-20" >
+                    <img src="/images/global/irw-logo.svg" alt="Logo" width="150" height="150" class="size-full" loading="lazy" fetchpriority="low" decoding="async">
+                </div>
+        </div>
+        <WaveDivider class="-top-1" />
+
+    </section>
+    <footer id="footer" class="relative">
+        <Image
+            src={footerImg}
+            alt="Footer Background"
+            class="w-full h-screen object-cover object-bottom -z-10"
+            style="will-change: transform; backface-visibility: hidden; transform-style: preserve-3d;"
+            loading="lazy"
+            fetchpriority="low"
+            decoding="async"
+            width={1920}
+            height={1080}
+
+            format="webp"
+            sizes="100vw"
+            layout="constrained"
+        />
+    </footer>
+
+    <!-- Chef Popup Modal -->
+    <PopupWrapper
+        id="chef-popup"
+        containerClass="max-w-xl mx-auto mt-8 mb-8 bg-irw-sand shadow-2xl overflow-hidden"
+        closeIconSize={21}
+        closeLabelSize="text-sm"
+    >
+        <!-- Header -->
+        <div class="chef-popup-header h-[220px] md:h-[250px] relative z-0 overflow-hidden">
+            <img id="chef-popup-image" src="" alt="Chef Portrait" class="w-full h-full object-cover object-top scale-[101%] relative z-0" loading="lazy" fetchpriority="low" decoding="async">
+
+
+                <!-- Decorative Header -->
+            <div class="chef-popup-decor-header w-full inset-x-0 z-10 absolute bottom-0 translate-y-1">
+                <svg class="w-full scale-105" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 555 63">
+                    <path fill="#E78824" d="M275.408.804c62.639 57.298 177.538 46.7 278.945 38.414v20.034H.352v-19.74c100.44 8.232 213.16 17.91 275.056-38.708Z"/>
+                    <path fill="#fff" d="M275.408 3.804c62.639 57.298 177.538 46.7 278.945 38.414v20.034H.352v-19.74c100.44 8.232 213.16 17.91 275.056-38.708Z"/>
+                  </svg>
+            </div>
+            </div>
+
+
+
+
+
+            <!-- Chef Info Section -->
+            <div class="chef-popup-content px-8 md:px-14 bg-white overflow-hidden">
+                <!-- Chef Name and Restaurant -->
+                <div class="text-center mb-4">
+                    <h2 id="chef-popup-name" class="text-2xl sm:text-3xl lg:text-[42px] font-bold mt-2 leading-none">Chef Name</h2>
+                    <p id="chef-popup-restaurant" class=" text-[22px] font-bold">Restaurant Name</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="13" fill="none" viewBox="0 0 80 13" class="mx-auto mt-3 text-irw-orange">
+                    <path fill="currentColor" d="M.226 6.5 6 12.274 11.774 6.5 6 .726.226 6.5Zm79.547 0L74 .726 68.227 6.5 74 12.274 79.773 6.5ZM6 6.5v1h68v-2H6v1Z"/>
+                  </svg>
+                </div>
+
+                <!-- Chef Story -->
+                <div id="chef-popup-story" class="pb-10 text-base lg:text-lg leading-relaxed space-y-4 text-center max-w-[448px] mx-auto text-pretty">
+                    <!-- Story content will be populated here -->
+                </div>
+            </div>
+
+            <!-- Decorative Footer -->
+            <div class="chef-popup-decor-footer h-14 ">
+                <svg class="w-full scale-105 -scale-y-105" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 555 63">
+                    <path fill="#E78824" d="M275.408.804c62.639 57.298 177.538 46.7 278.945 38.414v20.034H.352v-19.74c100.44 8.232 213.16 17.91 275.056-38.708Z"/>
+                    <path fill="#fff" d="M275.408 3.804c62.639 57.298 177.538 46.7 278.945 38.414v20.034H.352v-19.74c100.44 8.232 213.16 17.91 275.056-38.708Z"/>
+                </svg>
+            </div>
+
+            <div id="chef-popup-slider" class="chef-popup-slider-container pt-2 md:pt-8 pb-6">
+                <!-- Swiper -->
+                <div class="swiper chef-popup-swiper h-36">
+                    <div class="swiper-wrapper">
+
+                    </div>
+
+                    <div class="swiper-button-next chef-popup-swiper-button-next rounded-full size-12"></div>
+                    <div class="swiper-button-prev chef-popup-swiper-button-prev rounded-full size-12"></div>
+
+            </div>
+        </div>
+    </PopupWrapper>
+
+    <!-- Dish Popup Modal -->
+    <PopupWrapper
+        id="dish-popup"
+        containerClass="max-w-lg lg:max-w-xl xl:max-w-2xl m-auto bg-irw-sand shadow-2xl overflow-hidden inset-0 pb-12"
+        wrapperClass="p-4 sm:p-0"
+    >
+        <!-- Header Section -->
+        <div id="dish-popup-header" class="dish-popup-header relative flex flex-col items-center">
+            <!-- Restaurant Logo -->
+                <div class="absolute top-2 left-2 z-10 size-16 md:size-24">
+                    <img id="dish-popup-logo" src="" alt="Restaurant Logo" width="96" height="96" class="w-full rounded-full border-3 border-irw-amber bg-white object-contain" loading="lazy" fetchpriority="low" decoding="async">
+                </div>
+
+                <!-- Chef and Restaurant Info -->
+                <div class="m-auto text-center px-4 top-4 relative z-10">
+                    <h3 id="dish-popup-chef" class="text-white leading-none text-xl sm:text-2xl md:text-[28px] font-bold mb-1">Chef Name</h3>
+                    <h2 id="dish-popup-restaurant" class="text-irw-orange text-3xl sm:text-4xl md:text-[46px] font-bold mb-1 text-shadow-sm">Restaurant Name</h2>
+                    <p id="dish-popup-location" class="text-white/80 text-base sm:text-lg md:text-xl">Location</p>
+                </div>
+
+                <div id="dish-popup-header-image" class="absolute top-0 inset-0 z-0 w-full h-full">
+                    <img class="w-full  h-full object-cover" src="" alt="Dish Popup Header Image" loading="lazy" fetchpriority="low" decoding="async"></img>
+                </div>
+            </div>
+
+            <!-- Content Section -->
+            <div class="dish-popup-content bg-[#FFA444] rounded-[45px] pt-1 px-1 pb-1 w-11/12 mx-auto -mt-10">
+                <!-- Special Menu Name -->
+                <div class="text-center relative">
+                    <h3 id="dish-popup-menu-name" class="text-xl md:text-2xl font-bold mb-1">Special Diwali Menu</h3>
+
+                    <!-- Menu Image -->
+                    <div class="relative mb-[3px]">
+                        <img id="dish-popup-menu-image" src="" alt="Menu Preview" class="w-full h-[304px] object-cover rounded-t-[45px]" loading="lazy" fetchpriority="low" decoding="async">
+                    </div>
+                    <div id="menu-price-container" class="absolute -bottom-[1px] translate-y-1/2 inset-x-0 w-1/2 mx-auto h-14">
+                        <span class="text-white font-bold mb-1 absolute m-auto inset-0 z-10 text-shadow-2xl translate-y-1" id="menu-price">Price</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="214" height="66" fill="none" viewBox="0 0 214 66" class="w-8/12 sm:w-full min-w-36 max-w-[214px] mx-auto absolute z-0 inset-0 m-auto">
+                            <path fill="#1E2A78" stroke="#FFA444" stroke-width="3" d="M172.37 2.019a24.33 24.33 0 0 1 2.04.042 29.58 29.58 0 0 1 6.816 1.228c5.311 1.625 11.626 5.251 15.749 13.342 4.407 8.647 8.243 13.107 11.09 15.415.466.378.908.695 1.32.967-.413.272-.854.59-1.32.969-2.847 2.307-6.683 6.767-11.09 15.413-4.123 8.09-10.438 11.717-15.749 13.342a29.577 29.577 0 0 1-6.816 1.228 24.33 24.33 0 0 1-2.04.042 15.182 15.182 0 0 1-.663-.03l-.028-.002a.006.006 0 0 1-.003-.001l-.067-.006H42.054l-.068.006h-.003l-.026.003-.13.009c-.117.007-.298.015-.534.021-.474.012-1.172.01-2.04-.042a29.591 29.591 0 0 1-6.817-1.228c-5.31-1.625-11.626-5.252-15.749-13.342-4.406-8.647-8.242-13.107-11.09-15.415a16.634 16.634 0 0 0-1.319-.968c.412-.272.853-.59 1.32-.968 2.847-2.308 6.683-6.767 11.09-15.413C20.81 8.541 27.125 4.914 32.435 3.29a29.584 29.584 0 0 1 6.817-1.228 24.502 24.502 0 0 1 2.04-.042 15.278 15.278 0 0 1 .664.03l.026.002h.003l.068.007H171.61l.067-.007h.003c.005 0 .015 0 .028-.002l.128-.009c.117-.007.298-.015.535-.021Z"/>
+                          </svg>
+
+                    </div>
+                </div>
+
+                <!-- Menu Content -->
+                <div id="dish-popup-menu-content" class="bg-white px-8 md:px-12 pt-8 md:pt-12 pb-14 md:pb-16 rounded-b-[45px] overflow-auto">
+                    <!-- Menu content will be populated here -->
+                </div>
+
+
+            </div>
+            <!-- Reservation Button -->
+            <div class="text-center relative -translate-y-1/2">
+                <a id="dish-popup-reservation" href="#" target="_blank" class="inline-block text-white font-bold transition-colors duration-300">
+                    <span class="relative z-10 text-2xl lg:text-[28px] leading-none">Reserve Table</span>
+                    <svg xmlns="http://www.w3.org/2000/svg"  fill="none" viewBox="0 0 235 65" class="w-8/12 sm:w-full max-w-[235px] mx-auto absolute z-0 inset-0 m-auto" style="translate: 0 -1.7px;">
+                        <path fill="#1E2A78" stroke="#FFA444" stroke-width="3" d="M189.899 1.506a30.36 30.36 0 0 1 2.28.042c1.941.105 4.627.417 7.596 1.24 5.934 1.642 12.934 5.3 17.486 13.385 4.872 8.655 9.109 13.108 12.238 15.404.489.359.953.662 1.386.923a18.35 18.35 0 0 0-1.386.924c-3.129 2.295-7.366 6.749-12.238 15.403-4.552 8.086-11.552 11.743-17.486 13.386a36.097 36.097 0 0 1-7.596 1.24c-.969.052-1.749.053-2.28.041a18.576 18.576 0 0 1-.748-.031l-.032-.002-.006-.001h.001l-.062-.005H45.948l-.062.005h-.005l-.032.003-.147.009a18.62 18.62 0 0 1-.601.022c-.531.012-1.31.01-2.28-.042a36.11 36.11 0 0 1-7.596-1.24c-5.934-1.642-12.934-5.3-17.486-13.385C12.867 40.172 8.63 35.72 5.501 33.423c-.49-.36-.953-.663-1.387-.924a18.27 18.27 0 0 0 1.387-.923c3.13-2.295 7.366-6.749 12.238-15.403C22.291 8.087 29.291 4.43 35.225 2.787a36.11 36.11 0 0 1 7.596-1.24 30.191 30.191 0 0 1 2.28-.041 18.494 18.494 0 0 1 .748.031l.032.002h.005v.001l.062.005h143.104l.062-.005h-.001.006l.032-.003.147-.009c.133-.007.336-.016.601-.022Z"/>
+                      </svg>
+
+                </a>
+            </div>
+    </PopupWrapper>
+
+</Layout>

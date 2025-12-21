@@ -1,0 +1,148 @@
+---
+// Navigation Component
+// Handles both desktop and mobile navigation
+
+interface Restaurant {
+    id: string;
+    name: string;
+    chef: string;
+    [key: string]: any;
+}
+
+interface Props {
+    restaurants?: Restaurant[];
+}
+
+const { restaurants = [] } = Astro.props;
+---
+
+<nav class="w-full bg-irw-amber">
+    <div class="max-w-6xl mx-auto px-5 flex items-center min-h-12 relative">
+        <!-- Logo Ribbon -->
+        <div class="absolute top-0 z-50 text-2xl font-bold text-irw-orange max-w-[212px] w-1/2 sm:w-1/3 md:w-full" id="ribbon-container">
+            <svg id="ribbon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 277 712" class="absolute inset-0 m-auto w-full" style="filter: drop-shadow(8px 24px 10px hsla(0, 0%, 0%, 0.2));">
+                <path fill="url(#a)" stroke="#FDDCB6" stroke-width="6" d="m7.338 194.175-.132-.43c-11.19-36.561-.06-77.131 33.519-105.994l97.775-83.8 97.775 83.8c33.574 28.858 44.594 69.43 33.516 106.003l-.129.425v323.27l.132.429c11.189 36.562.061 77.131-33.519 105.994l-97.775 83.8-97.775-83.8C7.15 595.014-3.868 554.443 7.209 517.87l.129-.426V194.175Z"/>
+                <defs>
+                    <radialGradient id="a" cx="0" cy="0" r="1" gradientTransform="rotate(163.2 131.41 171.686) scale(412.932 416.661)" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#fff"/>
+                        <stop offset=".745" stop-color="#FFEFDD"/>
+                        <stop offset="1" stop-color="#fff"/>
+                    </radialGradient>
+                </defs>
+            </svg>
+
+            <div class="relative z-10">
+                <img src="/images/global/irw-logo.svg" alt="Logo" width="250" height="250" class="mt-2 mb-0 mx-auto max-w-[212px] w-8/12 md:w-10/12 lg:w-11/12" fetchpriority="high" decoding="async">
+                <div id="logo-text" class="mt-0 tracking-tight text-irw-red text-center">October <br>5-11, 2025</div>
+            </div>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex ml-auto space-x-8 font-bold py-4 bg-irw-amber" id="nav-menu">
+            <!-- Restaurants Dropdown -->
+            <div class="relative group" id="restaurants-dropdown">
+                <a href="#restaurants" class="text-white hover:text-amber-200 transition-colors duration-300 relative group flex items-center">
+                    Restaurants
+                    <svg class="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <!-- Dropdown Menu -->
+                <div class="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50" id="restaurants-dropdown-menu">
+                    <div class="py-2">
+                        <div class="px-4 py-2 text-sm font-semibold text-gray-500 border-b border-gray-200">Choose a Restaurant</div>
+                        <div id="restaurant-dropdown-links" class="py-1">
+                            {restaurants.map(restaurant => (
+                                <a href="#" class="block px-4 py-3 restaurant-dropdown-link" data-restaurant-id={restaurant.id}>
+                                    <div class="font-bold restaurant-dropdown-link-name">{restaurant.name}</div>
+                                    <div class="text-sm text-gray-500 restaurant-dropdown-link-chef">{restaurant.chef}</div>
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a href="#chefs" class="text-white hover:text-amber-100 transition-colors duration-300 relative group">
+                Chefs
+                <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-full"></span>
+            </a>
+            <a href="#location" class="text-white hover:text-amber-100 transition-colors duration-300 relative group">
+                Location
+                <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-full"></span>
+            </a>
+            <a href="/media" class="text-white hover:text-amber-100 transition-colors duration-300 relative group">
+                Media
+                <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-full"></span>
+            </a>
+            <a href="mailto:mbakshi@tungstenadvertising.com" target="_blank" class="text-white hover:text-amber-100 transition-colors duration-300 relative group">
+                Contact
+                <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-full"></span>
+            </a>
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <div class="md:hidden flex flex-col items-center justify-center cursor-pointer absolute right-0 top-1/2 -translate-y-1/2 -translate-x-2 size-12 ease-in-out duration-400 group" id="nav-toggle">
+            <svg class="bar group-hover:text-irw-yellow text-irw-red mb-1 transition-all duration-300 ease-in-out" xmlns="http://www.w3.org/2000/svg" width="35" height="6" fill="none" viewBox="0 0 35 6">
+                <path fill="currentColor" d="M27.017.903s3.465-.128 5.132 1.184C33.816 3.4 35 3.4 35 3.4s-1.184 0-2.85 1.313c-1.668 1.312-5.133 1.184-5.133 1.184H7.983s-3.465.128-5.132-1.184C1.184 3.4 0 3.4 0 3.4s1.184 0 2.85-1.313C4.519.775 7.984.903 7.984.903h19.034Z"/>
+            </svg>
+            <svg class="bar group-hover:text-irw-yellow text-irw-red mb-1 transition-all duration-300 ease-in-out" xmlns="http://www.w3.org/2000/svg" width="35" height="6" fill="none" viewBox="0 0 35 6">
+                <path fill="currentColor" d="M27.017.903s3.465-.128 5.132 1.184C33.816 3.4 35 3.4 35 3.4s-1.184 0-2.85 1.313c-1.668 1.312-5.133 1.184-5.133 1.184H7.983s-3.465.128-5.132-1.184C1.184 3.4 0 3.4 0 3.4s1.184 0 2.85-1.313C4.519.775 7.984.903 7.984.903h19.034Z"/>
+            </svg>
+            <svg class="bar group-hover:text-irw-yellow text-irw-red mb-1 transition-all duration-300 ease-in-out" xmlns="http://www.w3.org/2000/svg" width="35" height="6" fill="none" viewBox="0 0 35 6">
+                <path fill="currentColor" d="M27.017.903s3.465-.128 5.132 1.184C33.816 3.4 35 3.4 35 3.4s-1.184 0-2.85 1.313c-1.668 1.312-5.133 1.184-5.133 1.184H7.983s-3.465.128-5.132-1.184C1.184 3.4 0 3.4 0 3.4s1.184 0 2.85-1.313C4.519.775 7.984.903 7.984.903h19.034Z"/>
+            </svg>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div class="md:hidden inset-0 w-full h-screen bg-irw-red text-white px-8 py-6 absolute -translate-x-full transition-transform duration-400 ease-power2-in-out z-50" id="mobile-menu">
+            <!-- Logo -->
+            <a href="/" id="mobile-logo">
+                <img src="/images/global/irw-logo-white.svg" alt="Logo" class="w-24 h-24" width="152" height="152" fetchpriority="low" loading="lazy" decoding="async">
+            </a>
+
+            <!-- Close Button -->
+            <div class="absolute top-4 right-4 flex flex-col items-center">
+                <button class="size-13 cursor-pointer transition-colors duration-300 flex items-center justify-center text-white hover:text-amber-200" id="mobile-close-btn" aria-label="Close menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="26" fill="currentColor" viewBox="0 0 25 26">
+                        <path d="M20.995 18.107s2.541 2.359 2.791 4.465c.25 2.107 1.088 2.945 1.088 2.945s-.837-.838-2.944-1.088c-2.107-.25-4.466-2.792-4.466-2.792L4.004 8.177s-2.54-2.359-2.79-4.465C.962 1.605.124.768.124.768s.838.837 2.944 1.088c2.107.25 4.466 2.79 4.466 2.79l13.46 13.46Z"/>
+                        <path d="M17.465 4.647s2.359-2.541 4.465-2.792c2.107-.25 2.944-1.087 2.944-1.087s-.837.837-1.087 2.944c-.25 2.106-2.792 4.465-2.792 4.465l-13.46 13.46s-2.359 2.541-4.465 2.791c-2.107.25-2.944 1.088-2.944 1.088s.837-.837 1.087-2.944 2.792-4.466 2.792-4.466l13.46-13.46Z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="flex flex-col justify-center h-full space-y-8 pt-10 text-[25px]" id="mobile-nav-menu">
+                <!-- Mobile Restaurants Dropdown -->
+                <div class="mobile-restaurants-dropdown">
+                    <button class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group flex items-center justify-between w-full" id="mobile-restaurants-toggle">
+                        <span>Restaurants</span>
+                        <svg class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="mobile-restaurants-dropdown-menu hidden mt-4 ml-4 space-y-4" id="mobile-restaurants-dropdown-menu">
+                        {restaurants.map(restaurant => (
+                            <a href="#" class="block text-white hover:text-amber-200 mobile-restaurant-link" data-restaurant-id={restaurant.id}>
+                                <div class="font-semibold text-lg mobile-restaurant-link-name">{restaurant.name}</div>
+                                <div class="text-sm opacity-80 mobile-restaurant-link-chef">{restaurant.chef}</div>
+                            </a>
+                        ))}
+                    </div>
+                </div>
+                <a href="#chefs" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
+                    Chefs
+                </a>
+                <a href="#location" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
+                    Location
+                </a>
+                <a href="/media" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
+                    Media
+                </a>
+                <a href="mailto:mbakshi@tungstenadvertising.com" target="_blank" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
+                    Contact
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+

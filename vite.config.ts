@@ -164,49 +164,44 @@ export default defineConfig({
         }
 
         // Copy images directory for dynamic loading (without hashes)
-        const srcImagesDir = resolve(__dirname, 'src/images')
+        // Chef and UI images come from public/ (single source of truth)
+        const chefsSrcDir = resolve(__dirname, 'public/images/chefs')
+        const uiSrcDir = resolve(__dirname, 'public/images/ui')
+        const chefsDestDir = resolve(__dirname, 'build/assets/images/chefs')
+        const uiDestDir = resolve(__dirname, 'build/assets/images/ui')
 
-        if (existsSync(srcImagesDir)) {
-          // Only copy chef and ui images for dynamic loading
-          // Global images are processed by Vite's asset pipeline with hashes
-          const chefsSrcDir = resolve(srcImagesDir, 'chefs')
-          const uiSrcDir = resolve(srcImagesDir, 'ui')
-          const chefsDestDir = resolve(__dirname, 'build/assets/images/chefs')
-          const uiDestDir = resolve(__dirname, 'build/assets/images/ui')
+        if (existsSync(chefsSrcDir)) {
+          await copyRecursiveWithOptimization(chefsSrcDir, chefsDestDir)
+        }
+        if (existsSync(uiSrcDir)) {
+          await copyRecursiveWithOptimization(uiSrcDir, uiDestDir)
+        }
 
-          if (existsSync(chefsSrcDir)) {
-            await copyRecursiveWithOptimization(chefsSrcDir, chefsDestDir)
-          }
-          if (existsSync(uiSrcDir)) {
-            await copyRecursiveWithOptimization(uiSrcDir, uiDestDir)
-          }
+        // Process global images from src/images/global: convert PNG/JPG to WebP, optimize SVG
+        const globalSrcDir = resolve(__dirname, 'src/images/global')
+        const globalDestDir = resolve(__dirname, 'build/assets/images/global')
 
-          // Process global images: convert PNG/JPG to WebP, optimize SVG
-          const globalSrcDir = resolve(srcImagesDir, 'global')
-          const globalDestDir = resolve(__dirname, 'build/assets/images/global')
+        if (existsSync(globalSrcDir)) {
+          const files = readdirSync(globalSrcDir)
+          for (const file of files) {
+            const srcFile = join(globalSrcDir, file)
+            const destFile = join(globalDestDir, file)
 
-          if (existsSync(globalSrcDir)) {
-            const files = readdirSync(globalSrcDir)
-            for (const file of files) {
-              const srcFile = join(globalSrcDir, file)
-              const destFile = join(globalDestDir, file)
-
-              // Only process PNG, JPG, and SVG files (skip existing WebP files)
-              if (/\.(png|jpe?g|svg)$/i.test(file)) {
-                await optimizeAndCopyImage(srcFile, destFile)
-              } else if (file.endsWith('.webp')) {
-                // Copy existing WebP files as-is
-                copyFileSync(srcFile, destFile)
-              }
+            // Only process PNG, JPG, and SVG files (skip existing WebP files)
+            if (/\.(png|jpe?g|svg)$/i.test(file)) {
+              await optimizeAndCopyImage(srcFile, destFile)
+            } else if (file.endsWith('.webp')) {
+              // Copy existing WebP files as-is
+              copyFileSync(srcFile, destFile)
             }
           }
-
-          // Update HTML and CSS files to use WebP paths
-          await updateFilePaths()
-
-          // Remove the PNG files since we have WebP versions
-          await removePngFiles()
         }
+
+        // Update HTML and CSS files to use WebP paths
+        await updateFilePaths()
+
+        // Remove the PNG files since we have WebP versions
+        await removePngFiles()
       }
     },
     tailwindcss(),

@@ -1,0 +1,39 @@
+---
+interface Props {
+  id: string;
+  containerClass?: string;
+  wrapperClass?: string;
+  closeIconSize?: number;
+  closeLabelSize?: 'text-xs' | 'text-sm';
+}
+
+const {
+  id,
+  containerClass = '',
+  wrapperClass = '',
+  closeIconSize = 18,
+  closeLabelSize = 'text-xs'
+} = Astro.props;
+---
+
+<div id={id} class:list={["fixed inset-0 z-50 hidden", wrapperClass]}>
+  <div class:list={[`${id}-container`, containerClass, "z-10 relative"]}>
+    <!-- Close Button -->
+    <div class="absolute z-10 top-2 right-2 flex flex-col items-center" id={`${id}-close-container`}>
+      <button
+        class="size-13 bg-irw-red/80 border-irw-amber border-4 text-white rounded-full text-2xl font-light hover:bg-irw-amber cursor-pointer transition-colors duration-300 shadow-lg flex items-center justify-center"
+        id={`${id}-close`}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width={closeIconSize} height={closeIconSize} fill="currentColor" viewBox="0 0 18 18">
+          <path d="M0 2.5 2.5 0l15 15-2.5 2.5L0 2.5Z"/>
+          <path d="m15 0 2.5 2.5L2.5 18 0 15.5 15 0Z"/>
+        </svg>
+      </button>
+      <span class:list={["text-white mt-1 font-bold", closeLabelSize]}>Close</span>
+    </div>
+
+    <slot />
+  </div>
+  <div class:list={[`${id}-overlay`, "fixed inset-0 z-0", id === 'chef-popup' ? 'bg-amber-950/95' : 'bg-[#341818]/95']}></div>
+</div>
+

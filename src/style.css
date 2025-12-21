@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Custom Font Family */
+/* Custom Font Family - @font-face is inlined in Layout.astro for faster rendering */
 @layer base {
   html {
     font-family: var(--font-sans);
@@ -66,15 +66,22 @@
 
 .hero-texture {
   background-color: #341818;
-  background-image: url('/src/images/global/hero-texture.webp');
+  /* Tiny 20x28 base64 placeholder - loads instantly */
+  background-image: url('data:image/webp;base64,UklGRkIAAABXRUJQVlA4IDYAAAAQAwCdASoUABwAPtFgqU+oJSOiKAgBABoJZQDH5BanFAAA/u+9PDPVpNIqAQm9Mv4XhxfgAAA=');
   background-size: 125px 172px;
   background-repeat: repeat;
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
+  image-rendering: auto;
+  filter: blur(2px);
+  transition: filter 0.4s ease-out;
+}
+
+.hero-texture.loaded {
+  background-image: url('/images/global/hero-texture.webp');
+  filter: blur(0);
 }
 
 .page-texture {
-    background-image: url('/src/images/global/page-texture.png');
+    background-image: url('/images/global/page-texture.webp');
     background-size: 30%;
 }
 
