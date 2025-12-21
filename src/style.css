@@ -66,10 +66,18 @@
 
 .hero-texture {
   background-color: #341818;
-  background-image: url('/images/global/hero-texture.webp');
+  /* Tiny 20x28 base64 placeholder - loads instantly */
+  background-image: url('data:image/webp;base64,UklGRkIAAABXRUJQVlA4IDYAAAAQAwCdASoUABwAPtFgqU+oJSOiKAgBABoJZQDH5BanFAAA/u+9PDPVpNIqAQm9Mv4XhxfgAAA=');
   background-size: 125px 172px;
   background-repeat: repeat;
   image-rendering: auto;
+  filter: blur(2px);
+  transition: filter 0.4s ease-out;
+}
+
+.hero-texture.loaded {
+  background-image: url('/images/global/hero-texture.webp');
+  filter: blur(0);
 }
 
 .page-texture {

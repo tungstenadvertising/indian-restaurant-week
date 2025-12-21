@@ -97,6 +97,16 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Load restaurant data early
     await loadRestaurantData();
 
+    // Progressive image loading: Hero texture blur-up
+    const heroTexture = document.querySelector('.hero-texture');
+    if (heroTexture) {
+        const fullImage = new Image();
+        fullImage.onload = () => {
+            heroTexture.classList.add('loaded');
+        };
+        fullImage.src = '/images/global/hero-texture.webp';
+    }
+
 // Mobile Navigation Toggle
 const navToggle = document.getElementById('nav-toggle');
 const mobileMenu = document.getElementById('mobile-menu');

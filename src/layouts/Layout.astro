@@ -42,7 +42,7 @@ const restaurants = restaurantsJson.restaurants;
 
     <!-- Preload other critical assets -->
     <link rel="preload" href="/images/global/irw-logo.svg" as="image" type="image/svg+xml">
-    <link rel="preload" href="/images/global/hero-texture.webp" as="image" type="image/webp">
+    <!-- hero-texture uses LQIP blur-up, no preload needed -->
 
     <!-- Inject restaurant data at build time for instant access -->
     <script is:inline define:vars={{ restaurants }}>

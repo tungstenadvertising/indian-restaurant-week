@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
 import PopupWrapper from '../components/PopupWrapper.astro';
+import WaveDivider from '../components/WaveDivider.astro';
 import { Image } from 'astro:assets';
 import candlesImg from '../images/global/candles.png';
 import coursesImg from '../images/global/courses.png';
@@ -29,8 +30,8 @@ const restaurants = restaurantsJson.restaurants;
                             <img
                                 class="logo-element"
                                 src={`${logoBasePath}/logo-176.webp`}
-                                srcset={`${logoBasePath}/logo-84.webp 84w, ${logoBasePath}/logo-128.webp 128w, ${logoBasePath}/logo-176.webp 176w`}
-                                sizes="(max-width: 420px) 84px, (max-width: 768px) 128px, 176px"
+                                srcset={`${logoBasePath}/logo-176.webp 176w, ${logoBasePath}/logo.webp 256w`}
+                                sizes="(max-width: 420px) 84px, (max-width: 580px) 112px, (max-width: 768px) 128px, (max-width: 1024px) 144px, 200px"
                                 alt={`${restaurant.name} logo`}
                                 width="176"
                                 height="176"
@@ -145,12 +146,7 @@ const restaurants = restaurantsJson.restaurants;
         <div class="page-texture bg-center bg-repeat absolute inset-0 w-full h-full z-0"></div>
     </section>
     <section id="location" class="relative z-10">
-        <div class="location-top -scale-y-100 top-1 relative">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 1440 164">
-                <path fill="#FCB870" fill-rule="evenodd" d="M1440 46.473a99.629 99.629 0 0 1-3.38 5.324c-20.83 30.49-63.27 54.57-145.96 50.458h-.01c-96.35-4.963-207.09-19.712-310.593-18.41-103.392 1.303-197.445 18.707-259.98 76.818l-3.403 3.162-3.404-3.162c-62.535-58.11-156.714-75.515-260.172-76.817-103.565-1.303-214.309 13.446-310.406 18.409h-.012C63.866 106.126 21.717 84.358 0 55.892V5.982h1440v40.49ZM719.695 154.244c-.507.454-1.013.911-1.516 1.37l1.516-1.37a217.56 217.56 0 0 1 1.529-1.355l-1.529 1.355Zm37.917-27.459c-.842.491-1.68.988-2.515 1.488l.753-.449c.586-.348 1.173-.695 1.762-1.039Zm59.256-25.84-.686.22c.909-.29 1.82-.578 2.734-.861l-2.048.641Zm37.98-9.905a436.09 436.09 0 0 0-4.332.935l2.163-.472c.722-.156 1.445-.31 2.169-.463Zm58.52-8.755c-1.547.15-3.091.305-4.632.465l2.315-.236a605.78 605.78 0 0 1 2.317-.229ZM32.811 77.777l.178.1c-.36-.205-.718-.411-1.073-.62l.896.52Z" clip-rule="evenodd"/>
-                <path fill="#E78824" fill-rule="evenodd" d="M1440 41.473a99.629 99.629 0 0 1-3.38 5.324c-20.83 30.49-63.27 54.57-145.96 50.458h-.01c-96.35-4.963-207.09-19.712-310.593-18.41-103.392 1.303-197.445 18.707-259.98 76.818l-3.403 3.162-3.404-3.162c-62.535-58.11-156.714-75.515-260.172-76.817-103.565-1.303-214.309 13.446-310.406 18.409h-.012C63.866 101.126 21.717 79.358 0 50.892V.982h1440v40.49ZM719.695 149.244c-.507.454-1.013.911-1.516 1.37l1.516-1.37a217.56 217.56 0 0 1 1.529-1.355l-1.529 1.355Zm37.917-27.459c-.842.491-1.68.988-2.515 1.488l.753-.449c.586-.348 1.173-.695 1.762-1.039Zm59.256-25.84-.686.22c.909-.29 1.82-.578 2.734-.861l-2.048.641Zm37.98-9.905a436.09 436.09 0 0 0-4.332.935l2.163-.472c.722-.156 1.445-.31 2.169-.463Zm58.52-8.755c-1.547.15-3.091.305-4.632.465l2.315-.236a605.78 605.78 0 0 1 2.317-.229ZM32.811 72.777l.178.1c-.36-.205-.718-.411-1.073-.62l.896.52Z" clip-rule="evenodd"/>
-              </svg>
-        </div>
+        <WaveDivider flip class="top-1" />
         <div class="location-content-wrapper bg-irw-amber">
             <div class="location-content px-4 sm:px-8 xl:px-0 py-10 sm:py-16 max-w-6xl mx-auto">
                 <h2 class="text-white font-bold text-balance irw-title text-center">Location</h2>
@@ -170,12 +166,7 @@ const restaurants = restaurantsJson.restaurants;
                     <img src="/images/global/irw-logo.svg" alt="Logo" width="150" height="150" class="size-full" loading="lazy" fetchpriority="low" decoding="async">
                 </div>
         </div>
-        <div class="location-bottom -top-1 relative">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 1440 164">
-                <path fill="#FCB870" fill-rule="evenodd" d="M1440 46.473a99.629 99.629 0 0 1-3.38 5.324c-20.83 30.49-63.27 54.57-145.96 50.458h-.01c-96.35-4.963-207.09-19.712-310.593-18.41-103.392 1.303-197.445 18.707-259.98 76.818l-3.403 3.162-3.404-3.162c-62.535-58.11-156.714-75.515-260.172-76.817-103.565-1.303-214.309 13.446-310.406 18.409h-.012C63.866 106.126 21.717 84.358 0 55.892V5.982h1440v40.49ZM719.695 154.244c-.507.454-1.013.911-1.516 1.37l1.516-1.37a217.56 217.56 0 0 1 1.529-1.355l-1.529 1.355Zm37.917-27.459c-.842.491-1.68.988-2.515 1.488l.753-.449c.586-.348 1.173-.695 1.762-1.039Zm59.256-25.84-.686.22c.909-.29 1.82-.578 2.734-.861l-2.048.641Zm37.98-9.905a436.09 436.09 0 0 0-4.332.935l2.163-.472c.722-.156 1.445-.31 2.169-.463Zm58.52-8.755c-1.547.15-3.091.305-4.632.465l2.315-.236a605.78 605.78 0 0 1 2.317-.229ZM32.811 77.777l.178.1c-.36-.205-.718-.411-1.073-.62l.896.52Z" clip-rule="evenodd"/>
-                <path fill="#E78824" fill-rule="evenodd" d="M1440 41.473a99.629 99.629 0 0 1-3.38 5.324c-20.83 30.49-63.27 54.57-145.96 50.458h-.01c-96.35-4.963-207.09-19.712-310.593-18.41-103.392 1.303-197.445 18.707-259.98 76.818l-3.403 3.162-3.404-3.162c-62.535-58.11-156.714-75.515-260.172-76.817-103.565-1.303-214.309 13.446-310.406 18.409h-.012C63.866 101.126 21.717 79.358 0 50.892V.982h1440v40.49ZM719.695 149.244c-.507.454-1.013.911-1.516 1.37l1.516-1.37a217.56 217.56 0 0 1 1.529-1.355l-1.529 1.355Zm37.917-27.459c-.842.491-1.68.988-2.515 1.488l.753-.449c.586-.348 1.173-.695 1.762-1.039Zm59.256-25.84-.686.22c.909-.29 1.82-.578 2.734-.861l-2.048.641Zm37.98-9.905a436.09 436.09 0 0 0-4.332.935l2.163-.472c.722-.156 1.445-.31 2.169-.463Zm58.52-8.755c-1.547.15-3.091.305-4.632.465l2.315-.236a605.78 605.78 0 0 1 2.317-.229ZM32.811 72.777l.178.1c-.36-.205-.718-.411-1.073-.62l.896.52Z" clip-rule="evenodd"/>
-              </svg>
-        </div>
+        <WaveDivider class="-top-1" />
 
     </section>
     <footer id="footer" class="relative">
