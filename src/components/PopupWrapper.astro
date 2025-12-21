@@ -34,6 +34,6 @@ const {
 
     <slot />
   </div>
-  <div class={`${id}-overlay fixed inset-0 bg-${id === 'chef-popup' ? 'amber-950' : '[#341818]'}/95 z-0`}></div>
+  <div class:list={[`${id}-overlay`, "fixed inset-0 z-0", id === 'chef-popup' ? 'bg-amber-950/95' : 'bg-[#341818]/95']}></div>
 </div>
 
