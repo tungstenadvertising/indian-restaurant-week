@@ -2,12 +2,8 @@
 
 /* Custom Font Family - @font-face is inlined in Layout.astro for faster rendering */
 @layer base {
-  html {
-    font-family: var(--font-sans);
-  }
 
   body {
-    font-family: var(--font-sans);
     color: #1c1c1c;
   }
 }
@@ -24,6 +20,7 @@
 
   /* Custom Easing Functions */
   --ease-power2-in-out: cubic-bezier(0.888, -0.1, 0.465, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Font Smoothing */
@@ -160,12 +157,6 @@
 
 
 
-
-/* Mapbox canvas height fix */
-#map {
-  position: relative;
-}
-
 #map .mapboxgl-canvas-container {
   height: 100% !important;
 }
@@ -236,7 +227,6 @@
 
 }
 .chef-popup-overlay {
-  backdrop-filter: blur(10px);
   transition: opacity 0.5s ease-in-out;
   opacity: 1;
   scale: 1;
@@ -308,9 +298,6 @@
   .chef-popup-container,
   .chef-popup-portrait img {
     transition: none;
-  }
-
-  .chef-popup-container {
     animation: none;
   }
 }
@@ -515,28 +502,14 @@
 }
 
 #carousel-container {
-  position: relative;
-  transform-style: preserve-3d;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .restaurant-item {
-  position: absolute;
   width: var(--carousel-item-size);
   height: var(--carousel-item-size);
-  border-radius: 50%;
-  /* border: var(--carousel-border-width) solid transparent; */
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
 }
 
 .restaurant-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  transition: all 1.8s cubic-bezier(0.4, 0, 0.2, 1);
   filter: brightness(0.6) saturate(0.8);
 }
 
@@ -561,9 +534,6 @@
 }
 
 /* Logo System */
-#logo-display {
-  position: relative;
-}
 
 
 
@@ -592,28 +562,13 @@
   }
 }
 
-/* Dish Popup Styles */
-/* .dish-popup-overlay {
-  backdrop-filter: blur(10px);
-  transition: opacity 0.5s ease-in-out;
-  opacity: 1;
-  scale: 1;
-} */
-
-/* #dish-popup.hidden .dish-popup-overlay {
-  opacity: 0;
-  scale: 0.9;
-} */
-
 .dish-popup-container {
   max-height: 90vh;
   overflow-y: auto;
-  /* GSAP will handle animations, no CSS animations needed */
 }
 
 .dish-popup-header {
   min-height: 250px;
-  position: relative;
   @media (width >= 640px) {
     min-height: 300px;
   }
@@ -635,9 +590,6 @@
 @media (prefers-reduced-motion: reduce) {
   .dish-popup-container {
     transition: none;
-  }
-
-  .dish-popup-container {
     animation: none;
   }
 }
@@ -647,36 +599,9 @@
 
 }
 
-/* Restaurant Dropdown Styles */
-#restaurants-dropdown {
-  position: relative;
-}
-
-#restaurants-dropdown-menu {
-  transform: translateY(-10px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-
-}
-
-#restaurants-dropdown:hover #restaurants-dropdown-menu {
-  transform: translateY(0);
-}
-
 .restaurant-dropdown-link {
-  position: relative;
   /* overflow: hidden; */
   opacity: 0;
-  .restaurant-dropdown-link-name {
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    transform-origin: left center;
-
-  }
-  .restaurant-dropdown-link-chef {
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    transform-origin: left center;
-  }
 }
 
 .restaurant-dropdown-link::before {
@@ -718,18 +643,8 @@
 
 
 
-/* Dropdown Arrow Animation */
-#restaurants-dropdown svg {
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
 #restaurants-dropdown:hover svg {
   transform: rotate(180deg);
-}
-
-/* Mobile Toggle Arrow Animation */
-#mobile-restaurants-toggle svg {
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Enhanced Hover Effects */
@@ -737,7 +652,7 @@
   background-size: 100% 100%;
   scale: 1.8;
   .restaurant-dropdown-link-name {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s var(--ease-smooth);
     transform-origin: left center;
     color: var(--color-irw-sand);
     scale: 1.1;
@@ -756,24 +671,15 @@
   outline-offset: 2px;
 }
 
-/* Smooth Transitions */
-.restaurant-dropdown-link {
-  /* transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); */
-}
-
 
 
 #dish-popup-reservation  {
   span {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
   }
-  svg {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    path {
-      fill: var(--reservation-link-fill);
-      transition: fill 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+  svg path {
+    fill: var(--reservation-link-fill);
+    transition: fill 0.3s var(--ease-smooth);
   }
   &:hover {
     svg {

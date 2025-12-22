@@ -41,22 +41,22 @@ const { restaurants = [] } = Astro.props;
         <div class="hidden md:flex ml-auto space-x-8 font-bold py-4 bg-irw-amber" id="nav-menu">
             <!-- Restaurants Dropdown -->
             <div class="relative group" id="restaurants-dropdown">
-                <a href="#restaurants" class="text-white hover:text-amber-200 transition-colors duration-300 relative group flex items-center">
+                <a href="#restaurants" class="text-white hover:text-amber-200 transition-colors duration-500 relative group flex items-center">
                     Restaurants
-                    <svg class="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="ml-1 w-4 h-4 transition-transform duration-500 ease-smooth group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
-                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-full"></span>
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-500 group-hover:w-full"></span>
                 </a>
                 <!-- Dropdown Menu -->
-                <div class="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50" id="restaurants-dropdown-menu">
+                <div class="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-xl backdrop-blur opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-500 ease-smooth -translate-y-2.5 border border-black/10 z-50" id="restaurants-dropdown-menu">
                     <div class="py-2">
                         <div class="px-4 py-2 text-sm font-semibold text-gray-500 border-b border-gray-200">Choose a Restaurant</div>
                         <div id="restaurant-dropdown-links" class="py-1">
                             {restaurants.map(restaurant => (
-                                <a href="#" class="block px-4 py-3 restaurant-dropdown-link" data-restaurant-id={restaurant.id}>
-                                    <div class="font-bold restaurant-dropdown-link-name">{restaurant.name}</div>
-                                    <div class="text-sm text-gray-500 restaurant-dropdown-link-chef">{restaurant.chef}</div>
+                                <a href="#" class="relative block px-4 py-3 restaurant-dropdown-link" data-restaurant-id={restaurant.id}>
+                                    <div class="font-bold restaurant-dropdown-link-name transition-all duration-1000 ease-smooth origin-left">{restaurant.name}</div>
+                                    <div class="text-sm text-gray-500 restaurant-dropdown-link-chef transition-all duration-1000 ease-smooth origin-left">{restaurant.chef}</div>
                                 </a>
                             ))}
                         </div>
@@ -112,7 +112,7 @@ const { restaurants = [] } = Astro.props;
                 <div class="mobile-restaurants-dropdown">
                     <button class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group flex items-center justify-between w-full" id="mobile-restaurants-toggle">
                         <span>Restaurants</span>
-                        <svg class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 transition-transform duration-300 ease-smooth" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
                     </button>

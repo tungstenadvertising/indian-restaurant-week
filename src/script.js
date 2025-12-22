@@ -386,7 +386,7 @@ async function initializeMap() {
 
             // Add the SVG content
             markerEl.innerHTML = `
-                <svg class="restaurant-marker-svg" xmlns="http://www.w3.org/2000/svg" width="27" height="33" fill="#ffffffaa" viewBox="0 0 27 33" style="width: 100%; height: 100%;">
+                <svg class="restaurant-marker-svg" xmlns="http://www.w3.org/2000/svg" width="27" height="33" fill="#ffffffaa" viewBox="0 0 27 33" style="width: 80%; height: 80%; margin: auto;">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5" d="M24.75 14c0 8.75-11.25 16.25-11.25 16.25S2.25 22.75 2.25 14a11.25 11.25 0 1 1 22.5 0Z"/>
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5" d="M13.5 17.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z"/>
                 </svg>
@@ -1437,8 +1437,7 @@ class ChefPopup {
 
         if (overlay) {
             gsap.set(overlay, {
-                opacity: 0,
-                backdropFilter: 'blur(0px)'
+                opacity: 0
             });
         }
 
@@ -1505,7 +1504,6 @@ class ChefPopup {
         // Animate overlay first with smoother transition
         tl.to(overlay, {
             opacity: 1,
-            backdropFilter: 'blur(10px)',
             duration: 0.3,
             ease: "power2.out"
         })
@@ -1614,7 +1612,6 @@ class ChefPopup {
         // Animate overlay out
         .to(overlay, {
             opacity: 0,
-            backdropFilter: 'blur(0px)',
             duration: 0.2,
             ease: "power2.in"
         }, "<50%");
@@ -1819,7 +1816,7 @@ class RestaurantCarousel {
 
     createRestaurantItem(restaurant, index) {
         const item = document.createElement('div');
-        item.className = 'restaurant-item';
+        item.className = 'restaurant-item absolute rounded-full cursor-pointer transition-all duration-1000 ease-smooth';
         item.setAttribute('data-restaurant-id', restaurant.id);
         item.setAttribute('data-index', index);
 
@@ -1860,6 +1857,7 @@ class RestaurantCarousel {
         img.width = 220; // Intrinsic width for layout calculation
         img.height = 220; // Intrinsic height for layout calculation
         img.sizes = '(max-width: 420px) 105px, (max-width: 580px) 140px, (max-width: 768px) 160px, (max-width: 1024px) 180px, 220px'; // Responsive sizes matching carousel breakpoints
+        img.className = 'w-full h-full object-contain transition-all duration-[1800ms] ease-smooth';
 
         // Add error handling for images
         img.onerror = () => {
@@ -2584,8 +2582,7 @@ class DishPopup {
 
         if (overlay) {
             gsap.set(overlay, {
-                opacity: 0,
-                backdropFilter: 'blur(0px)'
+                opacity: 0
             });
         }
 
@@ -2644,7 +2641,6 @@ class DishPopup {
         // Animate overlay first with smoother transition
         tl.to(overlay, {
             opacity: 1,
-            backdropFilter: 'blur(10px)',
             duration: 0.3,
             ease: "power2.inOut"
         })
@@ -2743,7 +2739,6 @@ class DishPopup {
         // Animate overlay out
         .to(overlay, {
             opacity: 0,
-            backdropFilter: 'blur(0px)',
             duration: 0.3,
             ease: "power1.inOut"
         }, "-=0.2");
@@ -2769,13 +2764,6 @@ class RestaurantDropdown {
         await this.waitForRestaurantsData();
 
         if (this.restaurants.length > 0) {
-            // Only populate if not already pre-rendered by Astro
-            const desktopLinksContainer = document.getElementById('restaurant-dropdown-links');
-            const hasPrerenderedContent = desktopLinksContainer && desktopLinksContainer.children.length > 0;
-
-            if (!hasPrerenderedContent) {
-                this.populateDropdowns();
-            }
             this.addEventListeners();
         }
     }
@@ -2792,29 +2780,6 @@ class RestaurantDropdown {
             };
             checkData();
         });
-    }
-
-    populateDropdowns() {
-        // Populate desktop dropdown
-        const desktopLinksContainer = document.getElementById('restaurant-dropdown-links');
-        if (desktopLinksContainer) {
-            desktopLinksContainer.innerHTML = this.restaurants.map(restaurant => `
-                <a href="#" class="block px-4 py-3 restaurant-dropdown-link" data-restaurant-id="${restaurant.id}">
-                    <div class="font-bold restaurant-dropdown-link-name">${restaurant.name}</div>
-                    <div class="text-sm text-gray-500 restaurant-dropdown-link-chef">${restaurant.chef}</div>
-                </a>
-            `).join('');
-        }
-
-        // Populate mobile dropdown
-        if (this.mobileDropdown) {
-            this.mobileDropdown.innerHTML = this.restaurants.map(restaurant => `
-                <a href="#" class="block text-white hover:text-amber-200 mobile-restaurant-link" data-restaurant-id="${restaurant.id}">
-                    <div class="font-semibold text-lg mobile-restaurant-link-name">${restaurant.name}</div>
-                    <div class="text-sm text-white/70 mobile-restaurant-link-chef">${restaurant.chef}</div>
-                </a>
-            `).join('');
-        }
     }
 
     addEventListeners() {
