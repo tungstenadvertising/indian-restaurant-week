@@ -3,9 +3,6 @@
 /* Custom Font Family - @font-face is inlined in Layout.astro for faster rendering */
 @layer base {
 
-  body {
-    color: #1c1c1c;
-  }
 }
 
 @theme {
@@ -78,8 +75,14 @@
 }
 
 .page-texture {
-    background-image: url('/images/global/page-texture.webp');
+    background-image: none;
     background-size: 30%;
+}
+
+@media (min-width: 1280px) {
+    .page-texture {
+        background-image: url('/images/global/page-texture.webp');
+    }
 }
 
 #candles-img {

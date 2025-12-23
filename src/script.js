@@ -340,8 +340,15 @@ async function initializeMap() {
             container: 'map',
             style: 'mapbox://styles/mapbox/streets-v12', // Using a stable Mapbox style
             center: [-122.4142, 37.7894], // San Francisco center
-            zoom: 12
+            zoom: 12,
+
+            antialias: false,
+            fadeDuration: 0,
+            trackResize: false,
+            renderWorldCopies: false
+
         });
+
 
     // Add error handling for map loading
     map.on('error', (e) => {
@@ -365,6 +372,8 @@ async function initializeMap() {
         canvas.style.height = '100%';
         canvas.style.width = '100%';
     });
+
+
 
     // Use already loaded restaurant data
     if (restaurants.length === 0) {
