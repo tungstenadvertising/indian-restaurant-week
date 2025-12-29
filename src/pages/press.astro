@@ -192,6 +192,25 @@ const restaurants = restaurantsJson.restaurants;
             <p class="text-gray-600 mt-4">© 2025 Indian Restaurant Week. All rights reserved.</p>
         </div>
     </section>
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-6 right-6 z-[9999] transform translate-x-[150%] transition-transform duration-500 ease-out">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 flex items-start gap-4 max-w-sm border-l-4 border-green-500">
+            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <div>
+                <h4 class="font-bold text-gray-900">Message Sent!</h4>
+                <p class="text-gray-600 text-sm">Thank you for your inquiry. We'll get back to you soon.</p>
+            </div>
+            <button id="toast-close" class="text-gray-400 hover:text-gray-600 ml-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
 </Layout>
 
 <style>
@@ -199,6 +218,67 @@ const restaurants = restaurantsJson.restaurants;
     input:focus, textarea:focus {
         box-shadow: 0 0 0 3px rgba(231, 136, 36, 0.2);
     }
+    
+    /* Toast animation */
+    #toast.show {
+        transform: translateX(0);
+    }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('press-form');
+        const toast = document.getElementById('toast');
+        const toastClose = document.getElementById('toast-close');
+
+        function showToast() {
+            toast.classList.add('show');
+            // Auto-hide after 5 seconds
+            setTimeout(() => hideToast(), 5000);
+        }
+
+        function hideToast() {
+            toast.classList.remove('show');
+        }
+
+        toastClose?.addEventListener('click', hideToast);
+
+        form?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            const submitButton = form.querySelector('button[type="submit"]');
+            const buttonText = submitButton.querySelector('span');
+            const originalText = buttonText.textContent;
+            
+            // Show loading state
+            submitButton.disabled = true;
+            buttonText.textContent = 'Sending...';
+
+            try {
+                const response = await fetch('/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams(formData).toString()
+                });
+
+                if (response.ok) {
+                    // Show success toast
+                    showToast();
+                    // Reset form
+                    form.reset();
+                } else {
+                    throw new Error('Submission failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('There was an error. Please try again.');
+            } finally {
+                submitButton.disabled = false;
+                buttonText.textContent = originalText;
+            }
+        });
+    });
+</script>
 
 
