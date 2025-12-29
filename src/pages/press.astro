@@ -131,6 +131,7 @@ const restaurants = restaurantsJson.restaurants;
                     class="bg-white rounded-3xl p-8 md:p-12 shadow-2xl"
                     id="press-form"
                 >
+                    <input type="hidden" name="form-name" value="press-inquiry" />
                     <!-- Name -->
                     <div class="mb-6">
                         <label for="name" class="block text-sm font-bold text-gray-700 mb-2">Name *</label>
@@ -192,9 +193,10 @@ const restaurants = restaurantsJson.restaurants;
             <p class="text-gray-600 mt-4">© 2025 Indian Restaurant Week. All rights reserved.</p>
         </div>
     </section>
+
     <!-- Toast Notification -->
-    <div id="toast" class="fixed top-6 right-6 z-[9999] transform translate-x-[150%] transition-transform duration-500 ease-out">
-        <div class="bg-white rounded-2xl shadow-2xl p-6 flex items-start gap-4 max-w-sm border-l-4 border-green-500">
+    <div id="toast" class="fixed top-6 right-6 z-[9999] transform translate-x-[150%] transition-transform duration-500 ease-out pointer-events-none">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 flex items-start gap-4 max-w-sm border-l-4 border-green-500 pointer-events-auto">
             <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
                 <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
@@ -204,7 +206,7 @@ const restaurants = restaurantsJson.restaurants;
                 <h4 class="font-bold text-gray-900">Message Sent!</h4>
                 <p class="text-gray-600 text-sm">Thank you for your inquiry. We'll get back to you soon.</p>
             </div>
-            <button id="toast-close" class="text-gray-400 hover:text-gray-600 ml-2">
+            <button id="toast-close" class="text-gray-400 hover:text-gray-600 -mt-1 -mr-1">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
@@ -219,9 +221,10 @@ const restaurants = restaurantsJson.restaurants;
         box-shadow: 0 0 0 3px rgba(231, 136, 36, 0.2);
     }
     
-    /* Toast animation */
+    /* Toast show state */
     #toast.show {
         transform: translateX(0);
+        pointer-events: auto;
     }
 </style>
 
@@ -232,13 +235,16 @@ const restaurants = restaurantsJson.restaurants;
         const toastClose = document.getElementById('toast-close');
 
         function showToast() {
-            toast.classList.add('show');
-            // Auto-hide after 5 seconds
-            setTimeout(() => hideToast(), 5000);
+            if (toast) {
+                toast.classList.add('show');
+                setTimeout(() => hideToast(), 5000);
+            }
         }
 
         function hideToast() {
-            toast.classList.remove('show');
+            if (toast) {
+                toast.classList.remove('show');
+            }
         }
 
         toastClose?.addEventListener('click', hideToast);
@@ -248,12 +254,12 @@ const restaurants = restaurantsJson.restaurants;
             
             const formData = new FormData(form);
             const submitButton = form.querySelector('button[type="submit"]');
-            const buttonText = submitButton.querySelector('span');
-            const originalText = buttonText.textContent;
+            const buttonSpan = submitButton?.querySelector('span');
+            const originalText = buttonSpan?.textContent || 'Send Inquiry';
             
             // Show loading state
-            submitButton.disabled = true;
-            buttonText.textContent = 'Sending...';
+            if (submitButton) submitButton.disabled = true;
+            if (buttonSpan) buttonSpan.textContent = 'Sending...';
 
             try {
                 const response = await fetch('/', {
@@ -263,19 +269,17 @@ const restaurants = restaurantsJson.restaurants;
                 });
 
                 if (response.ok) {
-                    // Show success toast
                     showToast();
-                    // Reset form
                     form.reset();
                 } else {
                     throw new Error('Submission failed');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('There was an error. Please try again.');
+                alert('There was an error sending your message. Please try again.');
             } finally {
-                submitButton.disabled = false;
-                buttonText.textContent = originalText;
+                if (submitButton) submitButton.disabled = false;
+                if (buttonSpan) buttonSpan.textContent = originalText;
             }
         });
     });
