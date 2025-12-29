@@ -122,14 +122,30 @@ const restaurants = restaurantsJson.restaurants;
                 </p>
             </div>
 
+            <!-- Success Message (shown after form submission) -->
+            <div id="success-message" class="hidden max-w-2xl mx-auto bg-white rounded-3xl p-8 md:p-12 shadow-2xl text-center">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">Thank You!</h3>
+                <p class="text-gray-600 mb-6">Your message has been sent successfully. We'll get back to you soon.</p>
+                <a href="/press" class="inline-flex items-center px-6 py-3 bg-irw-red text-white font-bold rounded-full hover:bg-irw-orange transition-colors">
+                    Send Another Message
+                </a>
+            </div>
+
             <!-- Contact Form -->
-            <div class="max-w-2xl mx-auto">
+            <div id="contact-form-container" class="max-w-2xl mx-auto">
                 <form
                     name="press-inquiry"
                     method="POST"
                     data-netlify="true"
                     netlify-honeypot="bot-field"
+                    action="/press/?success=true"
                     class="bg-white rounded-3xl p-8 md:p-12 shadow-2xl"
+                    id="press-form"
                 >
                     <!-- Hidden field for Netlify -->
                     <input type="hidden" name="form-name" value="press-inquiry" />
@@ -208,4 +224,20 @@ const restaurants = restaurantsJson.restaurants;
         box-shadow: 0 0 0 3px rgba(231, 136, 36, 0.2);
     }
 </style>
+
+<script>
+    // Check if form was successfully submitted
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success') === 'true') {
+            const successMessage = document.getElementById('success-message');
+            const formContainer = document.getElementById('contact-form-container');
+            
+            if (successMessage && formContainer) {
+                successMessage.classList.remove('hidden');
+                formContainer.classList.add('hidden');
+            }
+        }
+    });
+</script>
 
