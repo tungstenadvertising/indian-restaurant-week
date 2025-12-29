@@ -1,0 +1,277 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import WaveDivider from '../components/WaveDivider.astro';
+import restaurantsJson from '../../public/data/restaurants.json';
+
+const restaurants = restaurantsJson.restaurants;
+---
+
+<Layout title="Press Room - Indian Restaurant Week">
+    <Navigation restaurants={restaurants} />
+
+    <!-- Hero Section -->
+    <section class="min-h-[50vh] flex flex-col justify-center items-center text-center text-white relative z-0 pb-24 px-5 overflow-hidden">
+        <div class="relative z-20 max-w-4xl mx-auto">
+            <h1 class="irw-title text-white font-bold mb-4">Press Room</h1>
+            <p class="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto text-pretty">
+                Media inquiries, press kits, and resources for covering Indian Restaurant Week
+            </p>
+        </div>
+
+        <!-- Gradient Overlay -->
+        <div class="absolute flex flex-col inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div>
+        <div class="hero-texture bg-repeat bg-center absolute z-0 w-full h-full inset-0"></div>
+
+        <div class="mt-auto px-6 md:px-10 absolute z-50 w-full bottom-0 translate-y-1">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 1049 118" class="w-full max-w-6xl mx-auto">
+                <path fill="#FDEFDA" d="M524.135.78c91.48 85.165 274.074 49.854 410.928 42.791 96.277-4.836 112.097 44.633 113.157 74.21H.48c1.044-29.708 17.12-78.933 113.091-74.21C250.426 50.634 432.655 85.945 524.135.781Z"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Press Kit Section -->
+    <section id="press-kit" class="relative z-10 bg-irw-sand">
+        <div class="max-w-7xl mx-auto px-6 md:px-8 lg:px-16 py-16 lg:py-24">
+            <!-- Section Title -->
+            <div class="text-center mb-12">
+                <div class="flex items-center justify-center gap-6 mb-4">
+                    <div class="flex-1 max-w-[200px] overflow-hidden relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="320" height="19" fill="currentColor" viewBox="0 0 320 19" class="text-irw-red w-full">
+                            <path fill="currentColor" d="m.214 9.39 8.66 8.66 8.66-8.66L8.875.73.215 9.39Zm8.66 0v1.5h320.001v-3h-320v1.5Z"/>
+                        </svg>
+                    </div>
+                    <h2 class="irw-title text-irw-red font-bold whitespace-nowrap">Press Kit</h2>
+                    <div class="flex-1 max-w-[200px] overflow-hidden relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="320" height="19" fill="currentColor" viewBox="0 0 320 19" class="text-irw-red w-full" style="transform: scaleX(-1)">
+                            <path fill="currentColor" d="m.214 9.39 8.66 8.66 8.66-8.66L8.875.73.215 9.39Zm8.66 0v1.5h320.001v-3h-320v1.5Z"/>
+                        </svg>
+                    </div>
+                </div>
+                <p class="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto">
+                    Download official assets and materials for media coverage
+                </p>
+            </div>
+
+            <!-- Press Kit Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                <!-- Logo Package -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg text-center hover:shadow-xl transition-shadow duration-300">
+                    <div class="w-16 h-16 bg-irw-amber/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-irw-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Logo Package</h3>
+                    <p class="text-gray-600 mb-4 text-sm">Official logos in various formats (PNG, SVG, EPS)</p>
+                    <a href="#" class="inline-flex items-center text-irw-red font-bold hover:text-irw-orange transition-colors">
+                        Download
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- Photo Gallery -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg text-center hover:shadow-xl transition-shadow duration-300">
+                    <div class="w-16 h-16 bg-irw-amber/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-irw-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Photo Gallery</h3>
+                    <p class="text-gray-600 mb-4 text-sm">High-resolution images of chefs, dishes, and events</p>
+                    <a href="#" class="inline-flex items-center text-irw-red font-bold hover:text-irw-orange transition-colors">
+                        Download
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- Press Release -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg text-center hover:shadow-xl transition-shadow duration-300">
+                    <div class="w-16 h-16 bg-irw-amber/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-irw-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Press Release</h3>
+                    <p class="text-gray-600 mb-4 text-sm">Official announcements and event information</p>
+                    <a href="#" class="inline-flex items-center text-irw-red font-bold hover:text-irw-orange transition-colors">
+                        Download
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section id="contact" class="relative z-10 bg-irw-amber">
+        <WaveDivider flip class="top-1" />
+        <div class="max-w-7xl mx-auto px-6 md:px-8 lg:px-16 py-16 lg:py-24">
+            <!-- Section Title -->
+            <div class="text-center mb-12">
+                <h2 class="irw-title text-white font-bold mb-4">Media Inquiries</h2>
+                <p class="text-xl text-white/90 max-w-2xl mx-auto">
+                    For press inquiries, interview requests, or additional information, please fill out the form below
+                </p>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="max-w-2xl mx-auto">
+                <form
+                    name="press-inquiry"
+                    method="POST"
+                    data-netlify="true"
+                    netlify-honeypot="bot-field"
+                    class="bg-white rounded-3xl p-8 md:p-12 shadow-2xl"
+                >
+                    <!-- Hidden field for Netlify -->
+                    <input type="hidden" name="form-name" value="press-inquiry" />
+
+                    <!-- Honeypot field for spam protection -->
+                    <p class="hidden">
+                        <label>Don't fill this out: <input name="bot-field" /></label>
+                    </p>
+
+                    <!-- Name Fields -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="first-name" class="block text-sm font-bold text-gray-700 mb-2">First Name *</label>
+                            <input
+                                type="text"
+                                id="first-name"
+                                name="first-name"
+                                required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-irw-amber focus:outline-none transition-colors duration-300"
+                                placeholder="John"
+                            />
+                        </div>
+                        <div>
+                            <label for="last-name" class="block text-sm font-bold text-gray-700 mb-2">Last Name *</label>
+                            <input
+                                type="text"
+                                id="last-name"
+                                name="last-name"
+                                required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-irw-amber focus:outline-none transition-colors duration-300"
+                                placeholder="Doe"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-6">
+                        <label for="email" class="block text-sm font-bold text-gray-700 mb-2">Email Address *</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            required
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-irw-amber focus:outline-none transition-colors duration-300"
+                            placeholder="john@example.com"
+                        />
+                    </div>
+
+                    <!-- Organization -->
+                    <div class="mb-6">
+                        <label for="organization" class="block text-sm font-bold text-gray-700 mb-2">Organization / Publication</label>
+                        <input
+                            type="text"
+                            id="organization"
+                            name="organization"
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-irw-amber focus:outline-none transition-colors duration-300"
+                            placeholder="SF Chronicle, Eater SF, etc."
+                        />
+                    </div>
+
+                    <!-- Inquiry Type -->
+                    <div class="mb-6">
+                        <label for="inquiry-type" class="block text-sm font-bold text-gray-700 mb-2">Inquiry Type *</label>
+                        <select
+                            id="inquiry-type"
+                            name="inquiry-type"
+                            required
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-irw-amber focus:outline-none transition-colors duration-300 bg-white"
+                        >
+                            <option value="">Select an option</option>
+                            <option value="interview">Interview Request</option>
+                            <option value="press-pass">Press Pass Request</option>
+                            <option value="photos">Photo/Video Permission</option>
+                            <option value="partnership">Partnership Inquiry</option>
+                            <option value="general">General Press Inquiry</option>
+                        </select>
+                    </div>
+
+                    <!-- Message -->
+                    <div class="mb-8">
+                        <label for="message" class="block text-sm font-bold text-gray-700 mb-2">Message *</label>
+                        <textarea
+                            id="message"
+                            name="message"
+                            rows="5"
+                            required
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-irw-amber focus:outline-none transition-colors duration-300 resize-none"
+                            placeholder="Tell us about your inquiry..."
+                        ></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-center">
+                        <button
+                            type="submit"
+                            class="inline-flex items-center px-10 py-4 bg-irw-red text-white font-bold rounded-full hover:bg-irw-orange transition-all duration-300 ease-smooth transform hover:scale-105 shadow-lg hover:shadow-xl text-lg"
+                        >
+                            <span>Send Inquiry</span>
+                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Direct Contact Info -->
+                <div class="mt-12 text-center text-white/90">
+                    <p class="mb-2">For urgent inquiries, contact us directly:</p>
+                    <a href="mailto:press@indianrestaurantweek.com" class="text-white font-bold hover:text-irw-sand transition-colors text-lg">
+                        press@indianrestaurantweek.com
+                    </a>
+                </div>
+            </div>
+        </div>
+        <WaveDivider class="-top-1" />
+    </section>
+
+    <!-- Footer -->
+    <section class="relative z-10 bg-irw-sand py-16">
+        <div class="text-center">
+            <a href="/" class="inline-block">
+                <img src="/images/global/irw-logo.svg" alt="Indian Restaurant Week" class="w-24 h-24 mx-auto" loading="lazy">
+            </a>
+            <p class="text-gray-600 mt-4">© 2025 Indian Restaurant Week. All rights reserved.</p>
+        </div>
+    </section>
+</Layout>
+
+<style>
+    /* Form input focus ring */
+    input:focus, select:focus, textarea:focus {
+        box-shadow: 0 0 0 3px rgba(231, 136, 36, 0.2);
+    }
+
+    /* Custom select arrow */
+    select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23999'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1.5em;
+        padding-right: 3rem;
+    }
+</style>
+
