@@ -143,7 +143,6 @@ const restaurants = restaurantsJson.restaurants;
                     method="POST"
                     data-netlify="true"
                     netlify-honeypot="bot-field"
-                    action="/press/?success=true"
                     class="bg-white rounded-3xl p-8 md:p-12 shadow-2xl"
                     id="press-form"
                 >
@@ -226,17 +225,58 @@ const restaurants = restaurantsJson.restaurants;
 </style>
 
 <script>
-    // Check if form was successfully submitted
     document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('press-form');
+        const successMessage = document.getElementById('success-message');
+        const formContainer = document.getElementById('contact-form-container');
+
+        // Check if returning from successful submission
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('success') === 'true') {
-            const successMessage = document.getElementById('success-message');
-            const formContainer = document.getElementById('contact-form-container');
-            
             if (successMessage && formContainer) {
                 successMessage.classList.remove('hidden');
                 formContainer.classList.add('hidden');
             }
+        }
+
+        // Handle form submission
+        if (form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                const submitButton = form.querySelector('button[type="submit"]');
+                const originalText = submitButton.innerHTML;
+                
+                // Show loading state
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<span>Sending...</span>';
+
+                try {
+                    const response = await fetch('/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams(formData).toString()
+                    });
+
+                    if (response.ok) {
+                        // Show success message
+                        if (successMessage && formContainer) {
+                            successMessage.classList.remove('hidden');
+                            formContainer.classList.add('hidden');
+                        }
+                        // Update URL without reload
+                        window.history.pushState({}, '', '/press/?success=true');
+                    } else {
+                        throw new Error('Form submission failed');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('There was an error sending your message. Please try again.');
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalText;
+                }
+            });
         }
     });
 </script>
