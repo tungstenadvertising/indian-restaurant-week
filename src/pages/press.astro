@@ -122,38 +122,15 @@ const restaurants = restaurantsJson.restaurants;
                 </p>
             </div>
 
-            <!-- Success Message (shown after form submission) -->
-            <div id="success-message" class="hidden max-w-2xl mx-auto bg-white rounded-3xl p-8 md:p-12 shadow-2xl text-center">
-                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-4">Thank You!</h3>
-                <p class="text-gray-600 mb-6">Your message has been sent successfully. We'll get back to you soon.</p>
-                <a href="/press" class="inline-flex items-center px-6 py-3 bg-irw-red text-white font-bold rounded-full hover:bg-irw-orange transition-colors">
-                    Send Another Message
-                </a>
-            </div>
-
             <!-- Contact Form -->
-            <div id="contact-form-container" class="max-w-2xl mx-auto">
+            <div class="max-w-2xl mx-auto">
                 <form
                     name="press-inquiry"
                     method="POST"
-                    data-netlify="true"
-                    netlify-honeypot="bot-field"
+                    netlify
                     class="bg-white rounded-3xl p-8 md:p-12 shadow-2xl"
                     id="press-form"
                 >
-                    <!-- Hidden field for Netlify -->
-                    <input type="hidden" name="form-name" value="press-inquiry" />
-
-                    <!-- Honeypot field for spam protection -->
-                    <p class="hidden">
-                        <label>Don't fill this out: <input name="bot-field" /></label>
-                    </p>
-
                     <!-- Name -->
                     <div class="mb-6">
                         <label for="name" class="block text-sm font-bold text-gray-700 mb-2">Name *</label>
@@ -224,60 +201,4 @@ const restaurants = restaurantsJson.restaurants;
     }
 </style>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('press-form');
-        const successMessage = document.getElementById('success-message');
-        const formContainer = document.getElementById('contact-form-container');
-
-        // Check if returning from successful submission
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('success') === 'true') {
-            if (successMessage && formContainer) {
-                successMessage.classList.remove('hidden');
-                formContainer.classList.add('hidden');
-            }
-        }
-
-        // Handle form submission
-        if (form) {
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const formData = new FormData(form);
-                const submitButton = form.querySelector('button[type="submit"]');
-                const originalText = submitButton.innerHTML;
-                
-                // Show loading state
-                submitButton.disabled = true;
-                submitButton.innerHTML = '<span>Sending...</span>';
-
-                try {
-                    const response = await fetch('/', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams(formData).toString()
-                    });
-
-                    if (response.ok) {
-                        // Show success message
-                        if (successMessage && formContainer) {
-                            successMessage.classList.remove('hidden');
-                            formContainer.classList.add('hidden');
-                        }
-                        // Update URL without reload
-                        window.history.pushState({}, '', '/press/?success=true');
-                    } else {
-                        throw new Error('Form submission failed');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('There was an error sending your message. Please try again.');
-                    submitButton.disabled = false;
-                    submitButton.innerHTML = originalText;
-                }
-            });
-        }
-    });
-</script>
 
