@@ -790,20 +790,21 @@ function setupChefsAnimations() {
 
 
 
-gsap.to('.meet-chefs-title-shape', {
-       opacity: 1,
-       maxWidth: '100%',
-       duration: 1.3,
-       ease: "power1.inOut",
+// Only run chefs title animation if element exists (not on all pages)
+if (document.querySelector('.meet-chefs-title-shape') && document.querySelector('#chefs')) {
+    gsap.to('.meet-chefs-title-shape', {
+        opacity: 1,
+        maxWidth: '100%',
+        duration: 1.3,
+        ease: "power1.inOut",
         scrollTrigger: {
             trigger: '#chefs',
             start: "top 95%",
             toggleActions: "play none none none",
             once: true
-
         }
-    }
-);
+    });
+}
 
 
 
@@ -1140,13 +1141,17 @@ class ChefPopup {
             }
         });
 
-        // Close popup events
-        this.closeBtn.addEventListener('click', () => this.hidePopupWithURL());
-        this.overlay.addEventListener('click', (e) => {
-            if (e.target === this.overlay) {
-                this.hidePopupWithURL();
-            }
-        });
+        // Close popup events (only if elements exist)
+        if (this.closeBtn) {
+            this.closeBtn.addEventListener('click', () => this.hidePopupWithURL());
+        }
+        if (this.overlay) {
+            this.overlay.addEventListener('click', (e) => {
+                if (e.target === this.overlay) {
+                    this.hidePopupWithURL();
+                }
+            });
+        }
 
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
@@ -1524,11 +1529,11 @@ class ChefPopup {
             borderRadius: '0%',
             duration: 0.6,
             ease: "power2.out"
-        }, "-=0.14")
+        }, "<50%")
         .to(header, {
             height: 'auto',
             duration: 0.5,
-            ease: "power2.inOut"
+            ease: "power2.out"
         }, "<20%")
         .to(headerImage, {
             opacity: 1,
@@ -1676,7 +1681,7 @@ function formatChefStory(content) {
 function populateChefsList() {
     const chefsList = document.getElementById('chefs-list');
     if (!chefsList) {
-        console.error('Chefs list element not found');
+        // Silently return - element doesn't exist on this page
         return;
     }
 
@@ -2223,9 +2228,8 @@ class DishPopup {
         this.overlay = document.querySelector('.dish-popup-overlay');
         this.currentRestaurant = null;
 
-        // Check if required elements exist
+        // Check if required elements exist (silently return if not - element doesn't exist on this page)
         if (!this.popup || !this.closeBtn || !this.overlay) {
-            console.error('DishPopup: Required DOM elements not found');
             return;
         }
 
@@ -2997,17 +3001,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof restaurants !== 'undefined' && restaurants.length > 0) {
             populateChefsList();
 
-            window.chefPopup = new ChefPopup();
+            // Only initialize popups if their elements exist (index page only)
+            if (document.getElementById('chef-popup')) {
+                window.chefPopup = new ChefPopup();
+            }
 
-            window.dishPopup = new DishPopup();
+            if (document.getElementById('dish-popup')) {
+                window.dishPopup = new DishPopup();
+            }
 
-            window.restaurantCarousel = new RestaurantCarousel();
+            if (document.getElementById('restaurant-carousel')) {
+                window.restaurantCarousel = new RestaurantCarousel();
+            }
 
-            // Initialize restaurant dropdown
+            // Initialize restaurant dropdown (works on all pages with nav)
             window.restaurantDropdown = new RestaurantDropdown();
 
-            // Initialize the popup router AFTER popup systems are ready
-            window.popupRouter = new PopupRouter();
+            // Initialize the popup router AFTER popup systems are ready (only if popups exist)
+            if (window.chefPopup || window.dishPopup) {
+                window.popupRouter = new PopupRouter();
+            }
         } else {
             console.error('Restaurants data not available for chef popup initialization');
         }
