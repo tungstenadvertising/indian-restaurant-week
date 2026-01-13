@@ -1,0 +1,266 @@
+---
+/**
+ * Admin Login Page
+ * Handles authentication for the admin panel
+ */
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin Login | Indian Restaurant Week</title>
+  <link rel="icon" type="image/svg+xml" href="/images/global/irw-logo.svg">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      padding: 1rem;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 1rem;
+    }
+
+    .login-title {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .login-subtitle {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.875rem;
+    }
+
+    .login-card {
+      background: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: #9ca3af;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .error-message {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.875rem;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    .dev-notice {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #fef3c7;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      color: #92400e;
+    }
+
+    .dev-notice strong {
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.5rem;
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <img src="/images/global/irw-logo.svg" alt="IRW" class="login-logo">
+      <h1 class="login-title">Admin Panel</h1>
+      <p class="login-subtitle">Indian Restaurant Week Content Management</p>
+    </div>
+
+    <div class="login-card">
+      <div class="error-message" id="error-message"></div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label for="email" class="form-label">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="form-input"
+            placeholder="admin@example.com"
+            required
+            autocomplete="email"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="form-input"
+            placeholder="••••••••"
+            required
+            autocomplete="current-password"
+          >
+        </div>
+
+        <button type="submit" class="btn-submit" id="submit-btn">
+          Sign In
+        </button>
+      </form>
+
+      <div class="dev-notice" id="dev-notice">
+        <strong>Admin Login</strong>
+        Email: admin@indianrestaurantweek.com<br>
+        Password: Admin123!IRW
+      </div>
+    </div>
+
+    <a href="/" class="back-link">← Back to Website</a>
+  </div>
+
+  <script>
+    import { signIn, isAuthenticated } from '../../lib/auth.js';
+
+    // Redirect if already authenticated
+    if (isAuthenticated()) {
+      window.location.href = '/admin';
+    }
+
+    // Form submission
+    document.getElementById('login-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const submitBtn = document.getElementById('submit-btn');
+      const errorEl = document.getElementById('error-message');
+
+      // Reset error
+      errorEl.classList.remove('show');
+      errorEl.textContent = '';
+
+      // Disable button
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Signing in...';
+
+      try {
+        const result = await signIn(email, password);
+
+        if (result.success) {
+          window.location.href = '/admin';
+        } else {
+          errorEl.textContent = result.error || 'Authentication failed';
+          errorEl.classList.add('show');
+        }
+      } catch (error) {
+        errorEl.textContent = 'An error occurred. Please try again.';
+        errorEl.classList.add('show');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign In';
+      }
+    });
+  </script>
+</body>
+</html>

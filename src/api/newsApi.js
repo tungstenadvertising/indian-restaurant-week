@@ -1,9 +1,13 @@
 /**
  * News API Module
- * Currently using fake/mock data - replace with real API endpoint in production
+ * Fetches articles from AWS backend or uses mock data in development
  */
 
-// Mock news articles data
+// API Configuration - set PUBLIC_API_URL in environment to use real API
+const API_URL = import.meta.env.PUBLIC_API_URL || '';
+const USE_MOCK_DATA = !API_URL;
+
+// Mock news articles data (used in development)
 const mockNewsArticles = [
   {
     id: 1,
@@ -86,8 +90,26 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
  * @param {string} options.category - Filter by category
  * @returns {Promise<Array>} Array of news articles
  */
-export async function fetchNewsArticles({ limit = 6, category = null } = {}) {
-  // Simulate network delay (remove in production)
+export async function fetchNewsArticles({ limit = 20, category = null } = {}) {
+  // Use real API if configured
+  if (!USE_MOCK_DATA) {
+    try {
+      const params = new URLSearchParams();
+      if (limit) params.set('limit', limit);
+      if (category) params.set('category', category);
+      
+      const response = await fetch(`${API_URL}/articles?${params}`);
+      if (!response.ok) throw new Error('API request failed');
+      
+      const data = await response.json();
+      return data.articles || [];
+    } catch (error) {
+      console.error('Failed to fetch from API, falling back to mock data:', error);
+      // Fall through to mock data
+    }
+  }
+
+  // Use mock data (development or fallback)
   await delay(300);
 
   let articles = [...mockNewsArticles];
@@ -111,6 +133,18 @@ export async function fetchNewsArticles({ limit = 6, category = null } = {}) {
  * @returns {Promise<Object|null>} Article object or null if not found
  */
 export async function fetchNewsArticleById(id) {
+  if (!USE_MOCK_DATA) {
+    try {
+      const response = await fetch(`${API_URL}/articles/${id}`);
+      if (!response.ok) throw new Error('API request failed');
+      
+      const data = await response.json();
+      return data.article || null;
+    } catch (error) {
+      console.error('Failed to fetch article from API:', error);
+    }
+  }
+
   await delay(200);
   return mockNewsArticles.find(article => article.id === id) || null;
 }
@@ -120,8 +154,8 @@ export async function fetchNewsArticleById(id) {
  * @returns {Promise<Array<string>>} Array of category names
  */
 export async function fetchCategories() {
-  await delay(100);
-  const categories = [...new Set(mockNewsArticles.map(article => article.category))];
+  const articles = await fetchNewsArticles({ limit: 100 });
+  const categories = [...new Set(articles.map(article => article.category))];
   return categories;
 }
 
@@ -139,6 +173,6 @@ export function formatArticleDate(dateString) {
   });
 }
 
-// Export mock data for SSR/build-time use
+// Export mock data for SSR/build-time use and admin panel
 export { mockNewsArticles };
 

@@ -3,10 +3,9 @@ import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
 import WaveDivider from '../components/WaveDivider.astro';
 import restaurantsJson from '../../public/data/restaurants.json';
-import { mockNewsArticles, formatArticleDate } from '../api/newsApi.js';
 
 const restaurants = restaurantsJson.restaurants;
-const newsArticles = mockNewsArticles;
+const apiUrl = import.meta.env.PUBLIC_API_URL || '';
 ---
 
 <Layout title="Media - Indian Restaurant Week">
@@ -57,73 +56,34 @@ const newsArticles = mockNewsArticles;
 
             <!-- News Articles Grid -->
             <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {newsArticles.map((article, index) => (
-                    <article
-                        class="news-card group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 ease-smooth transform hover:-translate-y-2"
-                        data-article-id={article.id}
-                    >
-                        <!-- Article Image -->
-                        <div class="relative h-48 overflow-hidden bg-gradient-to-br from-irw-amber to-irw-orange">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10"></div>
-                            <!-- Placeholder pattern when no image -->
-                            <div class="absolute inset-0 opacity-20">
-                                <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                                    <defs>
-                                        <pattern id={`pattern-${article.id}`} x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                                            <circle cx="10" cy="10" r="2" fill="white"/>
-                                        </pattern>
-                                    </defs>
-                                    <rect width="100" height="100" fill={`url(#pattern-${article.id})`}/>
-                                </svg>
-                            </div>
-                            <!-- Category Badge -->
-                            <span class="absolute top-4 left-4 z-20 bg-irw-red text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
-                                {article.category}
-                            </span>
-                            <!-- Decorative element -->
-                            <div class="absolute bottom-0 left-0 right-0 z-10">
-                                <svg viewBox="0 0 400 30" class="w-full" preserveAspectRatio="none">
-                                    <path d="M0,30 L0,20 Q200,0 400,20 L400,30 Z" fill="white"/>
-                                </svg>
-                            </div>
-                        </div>
-
-                        <!-- Article Content -->
-                        <div class="p-6">
-                            <!-- Source and Date -->
-                            <div class="flex items-center justify-between text-sm text-gray-500 mb-3">
-                                <span class="font-semibold text-irw-amber">{article.source}</span>
-                                <span>{formatArticleDate(article.date)}</span>
-                            </div>
-
-                            <!-- Title -->
-                            <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-irw-red transition-colors duration-300 line-clamp-2">
-                                {article.title}
-                            </h3>
-
-                            <!-- Excerpt -->
-                            <p class="text-gray-600 mb-4 line-clamp-3">
-                                {article.excerpt}
-                            </p>
-
-                            <!-- Read More Link -->
-                            <div class="flex items-center justify-between">
-                                <a
-                                    href={article.sourceUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="inline-flex items-center text-irw-red font-bold hover:text-irw-orange transition-colors duration-300 group/link"
-                                >
-                                    Read Article
-                                    <svg class="w-4 h-4 ml-2 transform group-hover/link:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                                    </svg>
-                                </a>
-                                <span class="text-sm text-gray-400">{article.readTime}</span>
-                            </div>
-                        </div>
-                    </article>
-                ))}
+                <!-- Loading skeleton -->
+                <div class="loading-skeleton animate-pulse">
+                    <div class="bg-gray-200 h-48 rounded-t-2xl"></div>
+                    <div class="bg-white p-6 rounded-b-2xl">
+                        <div class="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                        <div class="h-6 bg-gray-200 rounded mb-3"></div>
+                        <div class="h-4 bg-gray-200 rounded mb-2"></div>
+                        <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                </div>
+                <div class="loading-skeleton animate-pulse hidden md:block">
+                    <div class="bg-gray-200 h-48 rounded-t-2xl"></div>
+                    <div class="bg-white p-6 rounded-b-2xl">
+                        <div class="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                        <div class="h-6 bg-gray-200 rounded mb-3"></div>
+                        <div class="h-4 bg-gray-200 rounded mb-2"></div>
+                        <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                </div>
+                <div class="loading-skeleton animate-pulse hidden lg:block">
+                    <div class="bg-gray-200 h-48 rounded-t-2xl"></div>
+                    <div class="bg-white p-6 rounded-b-2xl">
+                        <div class="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                        <div class="h-6 bg-gray-200 rounded mb-3"></div>
+                        <div class="h-4 bg-gray-200 rounded mb-2"></div>
+                        <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                </div>
             </div>
 
             <!-- Load More Button (for future pagination) -->
@@ -209,4 +169,116 @@ const newsArticles = mockNewsArticles;
         }
     }
 </style>
+
+<script define:vars={{ apiUrl }}>
+    const API_URL = apiUrl;
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
+    function createArticleCard(article, index) {
+        const category = article.category || 'News';
+        const source = article.source || 'IRW';
+        const date = article.publishedAt || article.date || article.createdAt || article.created_at;
+        const readTime = article.readTime || '3 min read';
+        const sourceUrl = article.sourceUrl || '#';
+        const featuredImage = article.featuredImage || article.featured_image;
+
+        return `
+            <article
+                class="news-card group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 ease-smooth transform hover:-translate-y-2"
+                data-article-id="${article.id}"
+                style="animation-delay: ${(index + 1) * 0.1}s"
+            >
+                <div class="relative h-48 overflow-hidden bg-gradient-to-br from-irw-amber to-irw-orange">
+                    ${featuredImage ? `<img src="${featuredImage}" alt="${article.title}" class="absolute inset-0 w-full h-full object-cover z-0">` : ''}
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10"></div>
+                    <div class="absolute inset-0 opacity-20">
+                        <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <defs>
+                                <pattern id="pattern-${article.id}" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                                    <circle cx="10" cy="10" r="2" fill="white"/>
+                                </pattern>
+                            </defs>
+                            <rect width="100" height="100" fill="url(#pattern-${article.id})"/>
+                        </svg>
+                    </div>
+                    <span class="absolute top-4 left-4 z-20 bg-irw-red text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        ${category}
+                    </span>
+                    <div class="absolute bottom-0 left-0 right-0 z-10 translate-y-0.25">
+                        <svg viewBox="0 0 400 30" class="w-full" preserveAspectRatio="none">
+                            <path d="M0,30 L0,20 Q200,0 400,20 L400,30 Z" fill="white"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center justify-between text-sm text-gray-500 mb-3">
+                        <span class="font-semibold text-irw-amber">${source}</span>
+                        <span>${formatDate(date)}</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-irw-red transition-colors duration-300 line-clamp-2">
+                        ${article.title}
+                    </h3>
+                    <p class="text-gray-600 mb-4 line-clamp-3">
+                        ${article.excerpt || ''}
+                    </p>
+                    <div class="flex items-center justify-between">
+                        <a
+                            href="${sourceUrl}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center text-irw-red font-bold hover:text-irw-orange transition-colors duration-300 group/link"
+                        >
+                            Read Article
+                            <svg class="w-4 h-4 ml-2 transform group-hover/link:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                            </svg>
+                        </a>
+                        <span class="text-sm text-gray-400">${readTime}</span>
+                    </div>
+                </div>
+            </article>
+        `;
+    }
+
+    async function loadArticles() {
+        const grid = document.getElementById('news-grid');
+
+        try {
+            const response = await fetch(`${API_URL}/articles?status=published`);
+            if (!response.ok) throw new Error('Failed to fetch');
+
+            const data = await response.json();
+            const articles = data.articles || [];
+
+            if (articles.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <p class="text-gray-500 text-lg">No articles yet. Check back soon!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = articles.map((article, index) => createArticleCard(article, index)).join('');
+        } catch (error) {
+            console.error('Error loading articles:', error);
+            grid.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <p class="text-gray-500 text-lg">Unable to load articles. Please try again later.</p>
+                </div>
+            `;
+        }
+    }
+
+    // Load articles when page is ready
+    document.addEventListener('DOMContentLoaded', loadArticles);
+</script>
 

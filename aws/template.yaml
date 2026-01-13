@@ -1,0 +1,186 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: IRW News CMS Backend
+
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: nodejs18.x
+    MemorySize: 256
+    Environment:
+      Variables:
+        ARTICLES_TABLE: !Ref ArticlesTable
+        S3_BUCKET: !Ref MediaBucket
+        ADMIN_API_KEY: !Ref AdminApiKey
+
+Parameters:
+  AdminApiKey:
+    Type: String
+    Default: irw-admin-secret-2024
+    Description: API key for admin authentication
+    NoEcho: true
+
+Resources:
+  # DynamoDB Table
+  ArticlesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: irw-articles
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: slug
+          AttributeType: S
+        - AttributeName: status
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: slug-index
+          KeySchema:
+            - AttributeName: slug
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: status-index
+          KeySchema:
+            - AttributeName: status
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  # S3 Bucket for media uploads
+  MediaBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: irw-media-uploads
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - GET
+              - PUT
+              - POST
+            AllowedOrigins:
+              - https://indianrestaurantweeksf.com
+              - http://localhost:3000
+              - http://localhost:4321
+            ExposedHeaders:
+              - ETag
+
+  # S3 Bucket Policy for public read
+  MediaBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref MediaBucket
+      PolicyDocument:
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: '*'
+            Action: s3:GetObject
+            Resource: !Sub ${MediaBucket.Arn}/*
+
+  # API Gateway (API Key auth handled in Lambda)
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,Authorization,X-Api-Key'"
+        AllowOrigin: "'*'"
+
+  # Lambda Functions
+  ArticlesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: irw-articles
+      CodeUri: lambda/articles/
+      Handler: index.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ArticlesTable
+      Events:
+        # Public endpoints (no auth needed)
+        GetArticles:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /articles
+            Method: GET
+        GetArticleBySlug:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /articles/{slug}
+            Method: GET
+        # Admin endpoints (API key auth handled in Lambda)
+        AdminGetArticles:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /admin/articles
+            Method: GET
+        AdminGetArticle:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /admin/articles/{id}
+            Method: GET
+        AdminCreateArticle:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /admin/articles
+            Method: POST
+        AdminUpdateArticle:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /admin/articles/{id}
+            Method: PUT
+        AdminDeleteArticle:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /admin/articles/{id}
+            Method: DELETE
+
+  UploadFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: irw-upload
+      CodeUri: lambda/upload/
+      Handler: index.handler
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref MediaBucket
+      Events:
+        GetUploadUrl:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /admin/upload
+            Method: POST
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/prod
+
+  MediaBucketName:
+    Description: S3 Media Bucket Name
+    Value: !Ref MediaBucket
+
+  AdminApiKeyInfo:
+    Description: Admin API Key (set in environment)
+    Value: "Use PUBLIC_ADMIN_API_KEY environment variable"

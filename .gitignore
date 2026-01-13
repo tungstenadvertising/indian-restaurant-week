@@ -91,3 +91,4 @@ temp/
 # DynamoDB Local files
 .dynamodb/
 .astro/
+.astro
