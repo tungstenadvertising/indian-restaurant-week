@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
 import WaveDivider from '../components/WaveDivider.astro';
+import ContactForm from '../components/ContactForm.astro';
 import restaurantsJson from '../../public/data/restaurants.json';
 
 const restaurants = restaurantsJson.restaurants;
@@ -124,53 +125,7 @@ const restaurants = restaurantsJson.restaurants;
 
             <!-- Contact Form -->
             <div class="max-w-2xl mx-auto">
-                <form
-                    name="press-inquiry"
-                    method="POST"
-                    netlify
-                    class="bg-white rounded-3xl p-8 md:p-12 shadow-2xl"
-                    id="press-form"
-                >
-                    <input type="hidden" name="form-name" value="press-inquiry" />
-                    <!-- Name -->
-                    <div class="mb-6">
-                        <label for="name" class="block text-sm font-bold text-gray-700 mb-2">Name *</label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            required
-                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-irw-amber focus:outline-none transition-colors duration-300"
-                            placeholder="Your name"
-                        />
-                    </div>
-
-                    <!-- Message -->
-                    <div class="mb-8">
-                        <label for="message" class="block text-sm font-bold text-gray-700 mb-2">Message *</label>
-                        <textarea
-                            id="message"
-                            name="message"
-                            rows="5"
-                            required
-                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-irw-amber focus:outline-none transition-colors duration-300 resize-none"
-                            placeholder="Tell us about your inquiry..."
-                        ></textarea>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div class="text-center">
-                        <button
-                            type="submit"
-                            class="inline-flex items-center px-10 py-4 bg-irw-red text-white font-bold rounded-full hover:bg-irw-orange transition-all duration-300 ease-smooth transform hover:scale-105 shadow-lg hover:shadow-xl text-lg"
-                        >
-                            <span>Send Inquiry</span>
-                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                            </svg>
-                        </button>
-                    </div>
-                </form>
+                <ContactForm formName="press-inquiry" formId="press-form" source="press-room" />
 
                 <!-- Direct Contact Info -->
                 <div class="mt-12 text-center text-white/90">
@@ -215,17 +170,9 @@ const restaurants = restaurantsJson.restaurants;
     </div>
 </Layout>
 
-<style>
-    /* Form input focus ring */
-    input:focus, textarea:focus {
-        box-shadow: 0 0 0 3px rgba(231, 136, 36, 0.2);
-    }
-</style>
-
-
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('press-form');
+        const form = document.getElementById('press-form') as HTMLFormElement;
         const toast = document.getElementById('toast');
         const toastClose = document.getElementById('toast-close');
 
@@ -252,17 +199,17 @@ const restaurants = restaurantsJson.restaurants;
             const formData = new FormData(form);
             const submitButton = form.querySelector('button[type="submit"]');
             const buttonSpan = submitButton?.querySelector('span');
-            const originalText = buttonSpan?.textContent || 'Send Inquiry';
+            const originalText = buttonSpan?.textContent || 'Send Message';
 
             // Show loading state
-            if (submitButton) submitButton.disabled = true;
+            if (submitButton) (submitButton as HTMLButtonElement).disabled = true;
             if (buttonSpan) buttonSpan.textContent = 'Sending...';
 
             try {
                 const response = await fetch('/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams(formData).toString()
+                    body: new URLSearchParams(formData as any).toString()
                 });
 
                 if (response.ok) {
@@ -275,11 +222,9 @@ const restaurants = restaurantsJson.restaurants;
                 console.error('Error:', error);
                 alert('There was an error sending your message. Please try again.');
             } finally {
-                if (submitButton) submitButton.disabled = false;
+                if (submitButton) (submitButton as HTMLButtonElement).disabled = false;
                 if (buttonSpan) buttonSpan.textContent = originalText;
             }
         });
     });
 </script>
-
-
