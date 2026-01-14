@@ -1,6 +1,7 @@
 ---
 // Navigation Component
 // Handles both desktop and mobile navigation
+import ContactPopup from './ContactPopup.astro';
 
 interface Restaurant {
     id: string;
@@ -71,14 +72,14 @@ const { restaurants = [] } = Astro.props;
                 Location
                 <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-full"></span>
             </a>
-            <a href="/press" class="text-white hover:text-amber-100 transition-colors duration-300 relative group">
+            <a href="/press-room" class="text-white hover:text-amber-100 transition-colors duration-300 relative group">
                 Press
                 <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-full"></span>
             </a>
-            <a href="mailto:mbakshi@tungstenadvertising.com" target="_blank" class="text-white hover:text-amber-100 transition-colors duration-300 relative group">
+            <button type="button" id="contact-nav-btn" class="text-white hover:text-amber-100 transition-colors duration-300 relative group cursor-pointer">
                 Contact
                 <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-full"></span>
-            </a>
+            </button>
         </div>
 
         <!-- Mobile Menu Toggle -->
@@ -135,14 +136,40 @@ const { restaurants = [] } = Astro.props;
                 <a href="#location" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
                     Location
                 </a>
-                <a href="/press" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
+                <a href="/press-room" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
                     Press
                 </a>
-                <a href="mailto:mbakshi@tungstenadvertising.com" target="_blank" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
+                <button type="button" id="contact-mobile-btn" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group text-left cursor-pointer">
                     Contact
-                </a>
+                </button>
             </div>
         </div>
     </div>
 </nav>
 
+<!-- Contact Popup -->
+<ContactPopup />
+
+<script>
+    // Contact button click handlers
+    document.addEventListener('DOMContentLoaded', () => {
+        const contactNavBtn = document.getElementById('contact-nav-btn');
+        const contactMobileBtn = document.getElementById('contact-mobile-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        const openContact = () => {
+            // Close mobile menu if open
+            if (mobileMenu?.classList.contains('translate-x-0')) {
+                mobileMenu.classList.remove('translate-x-0');
+                mobileMenu.classList.add('-translate-x-full');
+            }
+            // Open contact popup
+            if ((window as any).openContactPopup) {
+                (window as any).openContactPopup();
+            }
+        };
+
+        contactNavBtn?.addEventListener('click', openContact);
+        contactMobileBtn?.addEventListener('click', openContact);
+    });
+</script>

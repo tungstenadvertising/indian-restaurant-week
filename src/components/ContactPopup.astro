@@ -1,0 +1,186 @@
+---
+// Contact Popup Component
+// Modal overlay with contact form, triggered from Navigation
+// Uses same overlay style as chef/dish popups
+import ContactForm from './ContactForm.astro';
+---
+
+<!-- Contact Popup Overlay -->
+<div id="contact-popup" class="fixed inset-0 z-[9999] hidden" aria-hidden="true">
+    <!-- Overlay (matching chef/dish popups) -->
+    <div class="contact-popup-overlay fixed inset-0 z-0 backdrop-blur bg-[#341818]/95" data-close-popup></div>
+
+    <!-- Modal Container -->
+    <div class="contact-popup-container z-10 relative flex items-center justify-center min-h-screen p-4 md:p-8">
+        <!-- Close Button (matching chef/dish popups) -->
+        <div class="absolute z-20 top-4 right-4 md:top-6 md:right-6 flex flex-col items-center">
+            <button
+                class="size-13 bg-irw-red/80 border-irw-amber border-4 text-white rounded-full text-2xl font-light hover:bg-irw-amber cursor-pointer transition-colors duration-300 shadow-lg flex items-center justify-center"
+                data-close-popup
+                aria-label="Close contact form"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 18 18">
+                    <path d="M0 2.5 2.5 0l15 15-2.5 2.5L0 2.5Z"/>
+                    <path d="m15 0 2.5 2.5L2.5 18 0 15.5 15 0Z"/>
+                </svg>
+            </button>
+            <span class="text-white mt-1 font-bold text-xs">Close</span>
+        </div>
+
+        <!-- Form Card (matching press page size) -->
+        <div class="contact-popup-content w-full max-w-2xl transform scale-95 opacity-0 transition-all duration-300 ease-out">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h2 class="irw-title text-white font-bold mb-4">Get in Touch</h2>
+                <p class="text-xl text-white/90 max-w-xl mx-auto">
+                    Have a question or want to learn more? We'd love to hear from you.
+                </p>
+            </div>
+
+            <!-- Reusable Contact Form -->
+            <ContactForm formId="contact-popup-form" source="contact-popup" />
+
+            <!-- Direct Contact Info -->
+            <div class="mt-8 text-center text-white/90">
+                <p class="mb-2">For urgent inquiries, contact us directly:</p>
+                <a href="mailto:info@indianrestaurantweek.com" class="text-white font-bold hover:text-irw-sand transition-colors text-lg">
+                    info@indianrestaurantweek.com
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification for Popup Form -->
+<div id="contact-popup-toast" class="fixed top-6 right-6 z-[10000] transition-transform duration-500 ease-out pointer-events-none" style="transform: translateX(150%)">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 flex items-start gap-4 max-w-sm border-l-4 border-green-500 pointer-events-auto">
+        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+        </div>
+        <div>
+            <h4 class="font-bold text-gray-900">Message Sent!</h4>
+            <p class="text-gray-600 text-sm">Thank you for reaching out. We'll get back to you soon.</p>
+        </div>
+        <button class="contact-popup-toast-close text-gray-400 hover:text-gray-600 -mt-1 -mr-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<style>
+    #contact-popup.open {
+        display: block;
+    }
+
+    #contact-popup.open .contact-popup-content {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    #contact-popup.open .contact-popup-overlay {
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+</style>
+
+<script>
+    // Contact Popup Controller
+    document.addEventListener('DOMContentLoaded', () => {
+        const popup = document.getElementById('contact-popup');
+        const form = document.getElementById('contact-popup-form') as HTMLFormElement;
+        const toast = document.getElementById('contact-popup-toast');
+        const toastClose = document.querySelector('.contact-popup-toast-close');
+
+        // Open popup function (exposed globally)
+        (window as any).openContactPopup = () => {
+            if (popup) {
+                popup.classList.add('open');
+                popup.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            }
+        };
+
+        // Close popup function
+        const closePopup = () => {
+            if (popup) {
+                popup.classList.remove('open');
+                popup.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+        };
+
+        // Close on backdrop click or close button
+        popup?.querySelectorAll('[data-close-popup]').forEach(el => {
+            el.addEventListener('click', closePopup);
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && popup?.classList.contains('open')) {
+                closePopup();
+            }
+        });
+
+        // Toast functions
+        const showToast = () => {
+            if (toast) {
+                toast.style.transform = 'translateX(0)';
+                toast.style.pointerEvents = 'auto';
+                setTimeout(() => hideToast(), 5000);
+            }
+        };
+
+        const hideToast = () => {
+            if (toast) {
+                toast.style.transform = 'translateX(150%)';
+                toast.style.pointerEvents = 'none';
+            }
+        };
+
+        toastClose?.addEventListener('click', hideToast);
+
+        // Form submission
+        form?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const submitButton = form.querySelector('button[type="submit"]');
+            const buttonSpan = submitButton?.querySelector('span');
+            const originalText = buttonSpan?.textContent || 'Send Message';
+
+            // Show loading state
+            if (submitButton) (submitButton as HTMLButtonElement).disabled = true;
+            if (buttonSpan) buttonSpan.textContent = 'Sending...';
+
+            try {
+                const response = await fetch('/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams(formData as any).toString()
+                });
+
+                if (response.ok) {
+                    closePopup();
+                    showToast();
+                    form.reset();
+                } else {
+                    throw new Error('Submission failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('There was an error sending your message. Please try again.');
+            } finally {
+                if (submitButton) (submitButton as HTMLButtonElement).disabled = false;
+                if (buttonSpan) buttonSpan.textContent = originalText;
+            }
+        });
+    });
+</script>
