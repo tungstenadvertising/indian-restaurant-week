@@ -1,31 +1,322 @@
 ---
 /**
- * Admin Subscribers Page (Placeholder)
- * Email subscription management - Coming Soon
+ * Admin Submissions + Subscribers
+ * Uses Netlify Forms submissions for press inquiries
  */
 import AdminLayout from '../../components/admin/AdminLayout.astro';
 ---
 
-<AdminLayout title="Subscribers" activeSection="subscribers">
-  <div class="coming-soon">
-    <div class="coming-soon-icon">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-      </svg>
-    </div>
-    <h2>Email Subscribers</h2>
-    <p>This feature is coming soon. You'll be able to:</p>
-    <ul>
-      <li>View all email subscribers</li>
-      <li>Export subscriber list</li>
-      <li>Manage subscription status</li>
-      <li>Send newsletters (with email service integration)</li>
-    </ul>
-    <a href="/admin" class="btn-back">← Back to Dashboard</a>
+<AdminLayout title="Submissions" activeSection="submissions">
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="submissions">Form Submissions</button>
+    <button class="tab-btn" data-tab="subscribers">Subscribers</button>
   </div>
+
+  <section class="tab-panel" data-panel="submissions">
+    <div class="panel-header">
+      <div>
+        <h2>Form Submissions</h2>
+        <p class="panel-subtitle">Press room + contact popup</p>
+      </div>
+      <div class="panel-meta">
+        <span class="count" id="submissions-count">-</span>
+        <span class="count-label">shown</span>
+      </div>
+    </div>
+
+    <div class="filters">
+      <div class="filter-group">
+        <label for="search-input">Search</label>
+        <input id="search-input" type="text" placeholder="Search name or message">
+      </div>
+      <div class="filter-group">
+        <label for="source-filter">Source</label>
+        <select id="source-filter">
+          <option value="">All sources</option>
+          <option value="press-room">Press room</option>
+          <option value="contact-popup">Contact popup</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="per-page">Per page</label>
+        <select id="per-page">
+          <option value="10">10</option>
+          <option value="20" selected>20</option>
+          <option value="50">50</option>
+        </select>
+      </div>
+      <button class="btn-secondary" id="clear-filters">Clear</button>
+    </div>
+
+    <div class="submissions-table" id="submissions-table">
+      <div class="loading">Loading submissions...</div>
+    </div>
+
+    <div class="pagination">
+      <button class="btn-secondary" id="prev-page">Previous</button>
+      <span id="page-info">Page 1</span>
+      <button class="btn-secondary" id="next-page">Next</button>
+    </div>
+  </section>
+
+  <section class="tab-panel hidden" data-panel="subscribers">
+    <div class="coming-soon">
+      <div class="coming-soon-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <h2>Email Subscribers</h2>
+      <p>This feature is coming soon. You'll be able to:</p>
+      <ul>
+        <li>View all email subscribers</li>
+        <li>Export subscriber list</li>
+        <li>Manage subscription status</li>
+        <li>Send newsletters (with email service integration)</li>
+      </ul>
+      <a href="/admin" class="btn-back">← Back to Dashboard</a>
+    </div>
+  </section>
 </AdminLayout>
 
-<style>
+<style is:global>
+  .tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .tab-btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 999px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: #64748b;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tab-btn.active {
+    background: #f59e0b;
+    border-color: #f59e0b;
+    color: white;
+  }
+
+  .tab-panel.hidden {
+    display: none;
+  }
+
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .panel-header h2 {
+    font-size: 1.5rem;
+    color: #1e293b;
+  }
+
+  .panel-subtitle {
+    color: #64748b;
+    font-size: 0.875rem;
+  }
+
+  .panel-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    color: #64748b;
+    font-weight: 600;
+  }
+
+  .count {
+    font-size: 1.25rem;
+    color: #1e293b;
+  }
+
+  .filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    align-items: end;
+    margin-bottom: 1.5rem;
+    background: white;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .filter-group label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    margin-bottom: 0.4rem;
+  }
+
+  .filter-group input,
+  .filter-group select {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+    font-size: 0.9rem;
+  }
+
+  .btn-secondary {
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #64748b;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+  }
+
+  .submissions-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .submission-row {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid #f1f5f9;
+  }
+
+  .submission-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .submission-summary {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .submission-name {
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.35rem;
+  }
+
+  .submission-message {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .submission-meta {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
+  .submission-row {
+    transition: background 0.15s;
+  }
+
+  .submission-row:hover {
+    background: #f8fafc;
+  }
+
+  .submission-source {
+    background: #fef3c7;
+    color: #b45309;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+
+  .submission-toggle {
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #475569;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .submission-toggle:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+  }
+
+  .submission-details {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.2s ease;
+  }
+
+  .submission-row.is-open .submission-details {
+    max-height: 500px;
+    opacity: 1;
+    margin-top: 0.75rem;
+  }
+
+  .detail-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 0.75rem;
+    padding: 0.4rem 0;
+    border-top: 1px solid #f1f5f9;
+    font-size: 0.85rem;
+    color: #475569;
+  }
+
+  .detail-label {
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.7rem;
+    color: #94a3b8;
+  }
+
+  .detail-value {
+    color: #1e293b;
+    white-space: pre-wrap;
+  }
+
+  .pagination {
+    margin-top: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: flex-end;
+  }
+
+  .loading,
+  .empty-state,
+  .error-state {
+    padding: 2rem;
+    text-align: center;
+    color: #64748b;
+    background: white;
+    border-radius: 0.75rem;
+    border: 1px dashed #e2e8f0;
+  }
+
   .coming-soon {
     max-width: 500px;
     margin: 0 auto;
@@ -53,30 +344,30 @@ import AdminLayout from '../../components/admin/AdminLayout.astro';
     color: #d97706;
   }
 
-  h2 {
+  .coming-soon h2 {
     font-size: 1.5rem;
     color: #1e293b;
     margin-bottom: 0.5rem;
   }
 
-  p {
+  .coming-soon p {
     color: #64748b;
     margin-bottom: 1rem;
   }
 
-  ul {
+  .coming-soon ul {
     text-align: left;
     max-width: 300px;
     margin: 0 auto 2rem;
     color: #64748b;
   }
 
-  li {
+  .coming-soon li {
     padding: 0.5rem 0;
     border-bottom: 1px solid #f1f5f9;
   }
 
-  li:last-child {
+  .coming-soon li:last-child {
     border-bottom: none;
   }
 
@@ -95,4 +386,242 @@ import AdminLayout from '../../components/admin/AdminLayout.astro';
     background: #e2e8f0;
     color: #1e293b;
   }
+
+  @media (max-width: 640px) {
+    .panel-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .pagination {
+      justify-content: space-between;
+    }
+  }
 </style>
+
+<script>
+  import { getApiKey } from '../../lib/auth.js';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const tabButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('.tab-btn'));
+    const tabPanels = Array.from(document.querySelectorAll<HTMLElement>('.tab-panel'));
+
+    const submissionsTable = document.getElementById('submissions-table') as HTMLElement | null;
+    const countEl = document.getElementById('submissions-count') as HTMLElement | null;
+    const pageInfo = document.getElementById('page-info') as HTMLElement | null;
+    const prevBtn = document.getElementById('prev-page') as HTMLButtonElement | null;
+    const nextBtn = document.getElementById('next-page') as HTMLButtonElement | null;
+    const searchInput = document.getElementById('search-input') as HTMLInputElement | null;
+    const sourceFilter = document.getElementById('source-filter') as HTMLSelectElement | null;
+    const perPageSelect = document.getElementById('per-page') as HTMLSelectElement | null;
+    const clearFiltersBtn = document.getElementById('clear-filters') as HTMLButtonElement | null;
+
+    const state = {
+      page: 1,
+      perPage: 20,
+      search: '',
+      source: '',
+    };
+
+    type SubmissionEntry = {
+      name?: string;
+      message?: string;
+      source?: string;
+      createdAt?: string;
+    };
+
+    const formatDate = (value: string | undefined) => {
+      if (!value) return 'Unknown date';
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? 'Unknown date' : date.toLocaleString();
+    };
+
+    const renderSubmissions = (submissions: SubmissionEntry[]) => {
+      if (!submissionsTable) return;
+      submissionsTable.innerHTML = '';
+
+      if (!submissions.length) {
+        submissionsTable.innerHTML = '<div class="empty-state">No submissions found.</div>';
+        return;
+      }
+
+      const buildDetailRow = (label: string, value: string) => {
+        const row = document.createElement('div');
+        row.className = 'detail-row';
+
+        const labelEl = document.createElement('div');
+        labelEl.className = 'detail-label';
+        labelEl.textContent = label;
+
+        const valueEl = document.createElement('div');
+        valueEl.className = 'detail-value';
+        valueEl.textContent = value;
+
+        row.append(labelEl, valueEl);
+        return row;
+      };
+
+      submissions.forEach((entry) => {
+        const row = document.createElement('div');
+        row.className = 'submission-row';
+
+        const header = document.createElement('div');
+        header.className = 'submission-header';
+
+        const summary = document.createElement('div');
+        summary.className = 'submission-summary';
+
+        const name = document.createElement('div');
+        name.className = 'submission-name';
+        name.textContent = entry.name || 'Anonymous';
+
+        const preview = document.createElement('div');
+        preview.className = 'submission-message';
+        const messageText = entry.message || 'No message provided.';
+        preview.textContent = messageText;
+
+        const meta = document.createElement('div');
+        meta.className = 'submission-meta';
+
+        const source = document.createElement('span');
+        source.className = 'submission-source';
+        source.textContent = entry.source || 'unknown';
+
+        const date = document.createElement('span');
+        date.className = 'submission-date';
+        date.textContent = formatDate(entry.createdAt);
+
+        meta.append(source, date);
+        summary.append(name, preview, meta);
+
+        const toggleBtn = document.createElement('button');
+        toggleBtn.type = 'button';
+        toggleBtn.className = 'submission-toggle';
+        toggleBtn.textContent = 'Details';
+        toggleBtn.setAttribute('aria-expanded', 'false');
+
+        header.append(summary, toggleBtn);
+
+        const details = document.createElement('div');
+        details.className = 'submission-details';
+        details.append(
+          buildDetailRow('Message', messageText),
+          buildDetailRow('Source', entry.source || 'unknown'),
+          buildDetailRow('Received', formatDate(entry.createdAt))
+        );
+
+        toggleBtn.addEventListener('click', () => {
+          row.classList.toggle('is-open');
+          const expanded = row.classList.contains('is-open');
+          toggleBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+          toggleBtn.textContent = expanded ? 'Hide' : 'Details';
+        });
+
+        row.append(header, details);
+        submissionsTable.appendChild(row);
+      });
+    };
+
+    const loadSubmissions = async () => {
+      if (!submissionsTable) return;
+      submissionsTable.innerHTML = '<div class="loading">Loading submissions...</div>';
+
+      const params = new URLSearchParams({
+        page: String(state.page),
+        perPage: String(state.perPage),
+      });
+
+      if (state.search) params.set('search', state.search);
+      if (state.source) params.set('source', state.source);
+
+      try {
+        const apiKey = getApiKey();
+        const response = await fetch(`/api/admin/form-submissions?${params.toString()}`, {
+          headers: {
+            'X-Api-Key': apiKey || '',
+          },
+        });
+
+        if (!response.ok) throw new Error('Failed to load submissions.');
+        const data = await response.json();
+        const submissions = Array.isArray(data.submissions) ? data.submissions : [];
+
+        renderSubmissions(submissions);
+
+        if (countEl) countEl.textContent = String(data.count ?? submissions.length ?? 0);
+        if (pageInfo) pageInfo.textContent = `Page ${state.page}`;
+        if (prevBtn) prevBtn.disabled = state.page <= 1;
+        if (nextBtn) nextBtn.disabled = submissions.length < state.perPage;
+      } catch (error) {
+        submissionsTable.innerHTML = '<div class="error-state">Failed to load submissions.</div>';
+      }
+    };
+
+    const setTab = (tabId: string) => {
+      tabButtons.forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.tab === tabId);
+      });
+      tabPanels.forEach((panel) => {
+        panel.classList.toggle('hidden', panel.dataset.panel !== tabId);
+      });
+
+      if (tabId === 'submissions') {
+        loadSubmissions();
+      }
+    };
+
+    tabButtons.forEach((btn) => {
+      btn.addEventListener('click', () => setTab(btn.dataset.tab || 'submissions'));
+    });
+
+    let searchTimeout: ReturnType<typeof setTimeout> | undefined;
+    const getTargetValue = (event: Event) => {
+      const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+      return target?.value ?? '';
+    };
+
+    searchInput?.addEventListener('input', (event) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        state.search = getTargetValue(event).trim();
+        state.page = 1;
+        loadSubmissions();
+      }, 300);
+    });
+
+    sourceFilter?.addEventListener('change', (event) => {
+      state.source = getTargetValue(event);
+      state.page = 1;
+      loadSubmissions();
+    });
+
+    perPageSelect?.addEventListener('change', (event) => {
+      state.perPage = Number.parseInt(getTargetValue(event), 10) || 20;
+      state.page = 1;
+      loadSubmissions();
+    });
+
+    clearFiltersBtn?.addEventListener('click', () => {
+      state.search = '';
+      state.source = '';
+      state.page = 1;
+      if (searchInput) searchInput.value = '';
+      if (sourceFilter) sourceFilter.value = '';
+      loadSubmissions();
+    });
+
+    prevBtn?.addEventListener('click', () => {
+      if (state.page > 1) {
+        state.page -= 1;
+        loadSubmissions();
+      }
+    });
+
+    nextBtn?.addEventListener('click', () => {
+      state.page += 1;
+      loadSubmissions();
+    });
+
+    setTab('submissions');
+  });
+</script>

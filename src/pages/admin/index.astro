@@ -50,6 +50,18 @@ const apiKey = import.meta.env.PUBLIC_ADMIN_API_KEY || 'irw-admin-secret-2024';
       </div>
 
       <div class="stat-card">
+        <div class="stat-icon submissions">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+          </svg>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value" id="recent-submissions-count">-</div>
+          <div class="stat-label">New Submissions (7d)</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
         <div class="stat-icon categories">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
@@ -115,6 +127,17 @@ const apiKey = import.meta.env.PUBLIC_ADMIN_API_KEY || 'irw-admin-secret-2024';
         <div class="loading">Loading articles...</div>
       </div>
     </div>
+
+    <!-- Recent Submissions -->
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Recent Submissions</h2>
+        <a href="/admin/subscribers" class="view-all">View All →</a>
+      </div>
+      <div class="recent-submissions" id="recent-submissions">
+        <div class="loading">Loading submissions...</div>
+      </div>
+    </div>
   </div>
 </AdminLayout>
 
@@ -173,6 +196,11 @@ const apiKey = import.meta.env.PUBLIC_ADMIN_API_KEY || 'irw-admin-secret-2024';
   .stat-icon.categories {
     background: #ede9fe;
     color: #7c3aed;
+  }
+
+  .stat-icon.submissions {
+    background: #fee2e2;
+    color: #dc2626;
   }
 
   .stat-value {
@@ -279,6 +307,51 @@ const apiKey = import.meta.env.PUBLIC_ADMIN_API_KEY || 'irw-admin-secret-2024';
     border-radius: 0.75rem;
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .recent-submissions {
+    background: white;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .submission-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .submission-row:last-child {
+    border-bottom: none;
+  }
+
+  .submission-name {
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .submission-message {
+    color: #64748b;
+    font-size: 0.9rem;
+  }
+
+  .submission-meta {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    color: #94a3b8;
+  }
+
+  .submission-source {
+    background: #fef3c7;
+    color: #b45309;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    font-weight: 600;
   }
 
   .loading {
@@ -416,6 +489,7 @@ const apiKey = import.meta.env.PUBLIC_ADMIN_API_KEY || 'irw-admin-secret-2024';
   const API_URL = apiUrl;
   const API_KEY = apiKey;
   const USE_MOCK = !API_URL;
+  const ADMIN_KEY_STORAGE = 'irw_admin_api_key';
 
   async function fetchAdminArticles() {
     const response = await fetch(`${API_URL}/admin/articles`, {
@@ -424,6 +498,26 @@ const apiKey = import.meta.env.PUBLIC_ADMIN_API_KEY || 'irw-admin-secret-2024';
     if (!response.ok) throw new Error('Failed to fetch');
     return response.json();
   }
+
+  const getAdminKey = () => localStorage.getItem(ADMIN_KEY_STORAGE) || API_KEY || '';
+
+  async function fetchFormSubmissions(params = {}) {
+    const query = new URLSearchParams(params).toString();
+    const response = await fetch(`/api/admin/form-submissions${query ? `?${query}` : ''}`, {
+      headers: { 'X-Api-Key': getAdminKey() },
+    });
+    if (!response.ok) throw new Error('Failed to fetch submissions');
+    return response.json();
+  }
+
+  const escapeHtml = (value = '') =>
+    value.replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+    }[char]));
 
   async function loadDashboard() {
     try {
@@ -478,6 +572,53 @@ const apiKey = import.meta.env.PUBLIC_ADMIN_API_KEY || 'irw-admin-secret-2024';
           </div>
         `;
       }).join('');
+
+      const submissionsContainer = document.getElementById('recent-submissions');
+      const submissionsCountEl = document.getElementById('recent-submissions-count');
+      try {
+        const submissionResponse = await fetchFormSubmissions({ page: 1, perPage: 50 });
+        const submissions = Array.isArray(submissionResponse.submissions)
+          ? submissionResponse.submissions
+          : [];
+        const recentSubmissions = submissions.slice(0, 5);
+
+        if (submissionsCountEl) {
+          const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+          const recentCount = submissions.filter((entry) => {
+            if (!entry.createdAt) return false;
+            return new Date(entry.createdAt).getTime() >= sevenDaysAgo;
+          }).length;
+          submissionsCountEl.textContent = String(recentCount);
+        }
+
+        if (submissionsContainer) {
+          if (recentSubmissions.length === 0) {
+            submissionsContainer.innerHTML = `
+              <div class="empty-state">
+                No submissions yet. <a href="/press-room">View the form</a>
+              </div>
+            `;
+          } else {
+            submissionsContainer.innerHTML = recentSubmissions.map((entry) => `
+              <div class="submission-row">
+                <div class="submission-name">${escapeHtml(entry.name || 'Anonymous')}</div>
+                <div class="submission-message">${escapeHtml(entry.message || 'No message provided.')}</div>
+                <div class="submission-meta">
+                  <span class="submission-source">${escapeHtml(entry.source || 'unknown')}</span>
+                  <span>${entry.createdAt ? new Date(entry.createdAt).toLocaleDateString() : 'Unknown date'}</span>
+                </div>
+              </div>
+            `).join('');
+          }
+        }
+      } catch (error) {
+        if (submissionsContainer) {
+          submissionsContainer.innerHTML = `
+            <div class="empty-state">Failed to load submissions.</div>
+          `;
+        }
+        if (submissionsCountEl) submissionsCountEl.textContent = '-';
+      }
 
     } catch (error) {
       console.error('Failed to load dashboard:', error);
