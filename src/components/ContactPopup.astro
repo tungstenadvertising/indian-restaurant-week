@@ -13,7 +13,7 @@ import ContactForm from './ContactForm.astro';
     <!-- Modal Container -->
     <div class="contact-popup-container z-10 relative flex items-center justify-center min-h-screen p-4 md:p-8">
         <!-- Close Button (matching chef/dish popups) -->
-        <div class="absolute z-20 top-4 right-4 md:top-6 md:right-6 flex flex-col items-center">
+        <div class="contact-popup-close absolute z-20 top-4 right-4 md:top-6 md:right-6 flex flex-col items-center">
             <button
                 class="size-13 bg-irw-red/80 border-irw-amber border-4 text-white rounded-full text-2xl font-light hover:bg-irw-amber cursor-pointer transition-colors duration-300 shadow-lg flex items-center justify-center"
                 data-close-popup
@@ -85,9 +85,18 @@ import ContactForm from './ContactForm.astro';
         animation-delay: 0.1s;
     }
 
+    #contact-popup.open .contact-popup-close {
+        animation: fadeIn 0.4s ease-out forwards;
+        animation-delay: 0.6s;
+    }
+
     .contact-popup-content {
         opacity: 0;
         transform: translateY(30px) scale(0.97);
+    }
+
+    .contact-popup-close {
+        opacity: 0;
     }
 
     @keyframes fadeInBlur {
@@ -109,6 +118,15 @@ import ContactForm from './ContactForm.astro';
         to {
             opacity: 1;
             transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
         }
     }
 </style>
