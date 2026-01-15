@@ -557,7 +557,7 @@ import AdminLayout from '../../components/admin/AdminLayout.astro';
 
       try {
         const apiKey = getApiKey();
-        const response = await fetch(`/api/admin/form-submissions?${params.toString()}`, {
+        const response = await fetch(`/.netlify/functions/form-submissions?${params.toString()}`, {
           headers: {
             'X-Api-Key': apiKey || '',
           },

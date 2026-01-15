@@ -6,27 +6,22 @@ interface Props {
     formName?: string;
     formId?: string;
     source?: string; // Track where submission came from
-    action?: string;
 }
 
 const {
     formName = 'press-inquiry',
     formId = 'contact-form',
-    source = 'press-room',
-    action = '/press-room'
+    source = 'press-room'
 } = Astro.props;
 ---
 
 <form
     name={formName}
     method="POST"
-    action={action}
     data-netlify="true"
-    netlify-honeypot="bot-field"
     class="bg-white shadow-2xl rounded-3xl p-8 md:p-12"
     id={formId}
 >
-    <input type="hidden" name="bot-field" />
     <input type="hidden" name="form-name" value={formName} />
     <input type="hidden" name="source" value={source} />
 

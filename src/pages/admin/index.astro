@@ -503,7 +503,7 @@ const apiKey = import.meta.env.PUBLIC_ADMIN_API_KEY || 'irw-admin-secret-2024';
 
   async function fetchFormSubmissions(params = {}) {
     const query = new URLSearchParams(params).toString();
-    const response = await fetch(`/api/admin/form-submissions${query ? `?${query}` : ''}`, {
+    const response = await fetch(`/.netlify/functions/form-submissions${query ? `?${query}` : ''}`, {
       headers: { 'X-Api-Key': getAdminKey() },
     });
     if (!response.ok) throw new Error('Failed to fetch submissions');
