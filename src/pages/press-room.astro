@@ -170,44 +170,61 @@ const restaurants = restaurantsJson.restaurants;
     </div>
 </Layout>
 
-<script is:inline>
-    // Form submission is handled by ContactForm.astro - we just listen for events
-    (function() {
-        function setup() {
-            var form = document.getElementById('press-form');
-            var toast = document.getElementById('toast');
-            var toastClose = document.getElementById('toast-close');
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('press-form') as HTMLFormElement;
+        const toast = document.getElementById('toast');
+        const toastClose = document.getElementById('toast-close');
 
-            function showToast() {
-                if (toast) {
-                    toast.style.transform = 'translateX(0)';
-                    toast.style.pointerEvents = 'auto';
-                    setTimeout(hideToast, 5000);
-                }
+        function showToast() {
+            if (toast) {
+                toast.style.transform = 'translateX(0)';
+                toast.style.pointerEvents = 'auto';
+                setTimeout(() => hideToast(), 5000);
             }
+        }
 
-            function hideToast() {
-                if (toast) {
-                    toast.style.transform = 'translateX(150%)';
-                    toast.style.pointerEvents = 'none';
-                }
+        function hideToast() {
+            if (toast) {
+                toast.style.transform = 'translateX(150%)';
+                toast.style.pointerEvents = 'none';
             }
+        }
 
-            if (toastClose) toastClose.addEventListener('click', hideToast);
+        toastClose?.addEventListener('click', hideToast);
 
-            // Listen for form events (dispatched by ContactForm.astro)
-            if (form) {
-                form.addEventListener('form:success', showToast);
-                form.addEventListener('form:error', function() {
-                    alert('There was an error sending your message. Please try again.');
+        form?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const submitButton = form.querySelector('button[type="submit"]');
+            const buttonSpan = submitButton?.querySelector('span');
+            const originalText = buttonSpan?.textContent || 'Send Message';
+
+            // Show loading state
+            if (submitButton) (submitButton as HTMLButtonElement).disabled = true;
+            if (buttonSpan) buttonSpan.textContent = 'Sending...';
+
+            try {
+                const response = await fetch('/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams(formData as any).toString()
                 });
-            }
-        }
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', setup);
-        } else {
-            setup();
-        }
-    })();
+                if (response.ok) {
+                    showToast();
+                    form.reset();
+                } else {
+                    throw new Error('Submission failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('There was an error sending your message. Please try again.');
+            } finally {
+                if (submitButton) (submitButton as HTMLButtonElement).disabled = false;
+                if (buttonSpan) buttonSpan.textContent = originalText;
+            }
+        });
+    });
 </script>

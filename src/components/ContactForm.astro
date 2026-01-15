@@ -18,7 +18,7 @@ const {
 <form
     name={formName}
     method="POST"
-    data-netlify="true"
+    netlify
     class="bg-white shadow-2xl rounded-3xl p-8 md:p-12"
     id={formId}
 >
@@ -71,58 +71,3 @@ const {
         box-shadow: 0 0 0 3px rgba(231, 136, 36, 0.2);
     }
 </style>
-
-<script is:inline>
-    // Form submission handler
-    // Dispatches custom events: 'form:success' and 'form:error' for parent components to handle
-    (function initNetlifyForms() {
-        function setupForms() {
-            document.querySelectorAll('form[data-netlify="true"]').forEach(function(form) {
-                // Skip if already initialized
-                if (form.dataset.initialized) return;
-                form.dataset.initialized = 'true';
-
-                form.addEventListener('submit', async function(e) {
-                    e.preventDefault();
-
-                    const formData = new FormData(form);
-                    const submitButton = form.querySelector('button[type="submit"]');
-                    const buttonSpan = submitButton ? submitButton.querySelector('span') : null;
-                    const originalText = buttonSpan ? buttonSpan.textContent : 'Send Message';
-
-                    // Show loading state
-                    if (submitButton) submitButton.disabled = true;
-                    if (buttonSpan) buttonSpan.textContent = 'Sending...';
-
-                    try {
-                        const response = await fetch('/', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                            body: new URLSearchParams(formData).toString()
-                        });
-
-                        if (response.ok) {
-                            form.reset();
-                            form.dispatchEvent(new CustomEvent('form:success', { bubbles: true }));
-                        } else {
-                            throw new Error('Submission failed');
-                        }
-                    } catch (error) {
-                        console.error('Form submission error:', error);
-                        form.dispatchEvent(new CustomEvent('form:error', { bubbles: true, detail: error }));
-                    } finally {
-                        if (submitButton) submitButton.disabled = false;
-                        if (buttonSpan) buttonSpan.textContent = originalText;
-                    }
-                });
-            });
-        }
-
-        // Run immediately if DOM ready, otherwise wait
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', setupForms);
-        } else {
-            setupForms();
-        }
-    })();
-</script>

@@ -6,7 +6,7 @@
 
 interface Props {
   title: string;
-  activeSection?: 'dashboard' | 'articles' | 'comments' | 'submissions' | 'settings';
+  activeSection?: 'dashboard' | 'articles' | 'comments' | 'subscribers' | 'settings';
 }
 
 const { title, activeSection = 'dashboard' } = Astro.props;
@@ -15,7 +15,7 @@ const navItems = [
   { id: 'dashboard', label: 'Dashboard', href: '/admin', icon: 'dashboard' },
   { id: 'articles', label: 'Articles', href: '/admin/articles', icon: 'article' },
   { id: 'comments', label: 'Comments', href: '/admin/comments', icon: 'comment', badge: 'Coming Soon' },
-  { id: 'submissions', label: 'Submissions', href: '/admin/subscribers', icon: 'email' },
+  { id: 'subscribers', label: 'Subscribers', href: '/admin/subscribers', icon: 'email', badge: 'Coming Soon' },
 ];
 ---
 
