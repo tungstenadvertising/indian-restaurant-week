@@ -29,7 +29,7 @@ import AdminLayout from '../../components/admin/AdminLayout.astro';
         <label for="search-input">Search</label>
         <input id="search-input" type="text" placeholder="Search name or message">
       </div>
-      <div class="filter-group">
+      <div class="filter-group filter-group-compact">
         <label for="source-filter">Source</label>
         <select id="source-filter">
           <option value="">All sources</option>
@@ -37,7 +37,7 @@ import AdminLayout from '../../components/admin/AdminLayout.astro';
           <option value="contact-popup">Contact popup</option>
         </select>
       </div>
-      <div class="filter-group">
+      <div class="filter-group filter-group-compact filter-group-tiny">
         <label for="per-page">Per page</label>
         <select id="per-page">
           <option value="10">10</option>
@@ -45,7 +45,7 @@ import AdminLayout from '../../components/admin/AdminLayout.astro';
           <option value="50">50</option>
         </select>
       </div>
-      <button class="btn-secondary" id="clear-filters">Clear</button>
+      <button class="btn-secondary btn-wide" id="clear-filters">Clear filters</button>
     </div>
 
     <div class="submissions-table" id="submissions-table">
@@ -140,7 +140,7 @@ import AdminLayout from '../../components/admin/AdminLayout.astro';
 
   .filters {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: minmax(240px, 1fr) auto auto auto;
     gap: 1rem;
     align-items: end;
     margin-bottom: 1.5rem;
@@ -159,6 +159,26 @@ import AdminLayout from '../../components/admin/AdminLayout.astro';
     margin-bottom: 0.4rem;
   }
 
+  .filter-group-compact {
+    max-width: 220px;
+    min-width: 160px;
+  }
+
+  .filter-group-tiny {
+    max-width: 80px;
+    min-width: 70px;
+  }
+
+  .filter-group-tiny select {
+    text-align: center;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .btn-wide {
+    min-width: 120px;
+  }
+
   .filter-group input,
   .filter-group select {
     width: 100%;
@@ -166,6 +186,7 @@ import AdminLayout from '../../components/admin/AdminLayout.astro';
     border-radius: 0.5rem;
     border: 1px solid #e2e8f0;
     font-size: 0.9rem;
+    box-sizing: border-box;
   }
 
   .btn-secondary {

@@ -92,3 +92,6 @@ temp/
 .dynamodb/
 .astro/
 .astro
+
+# Local Netlify folder
+.netlify
