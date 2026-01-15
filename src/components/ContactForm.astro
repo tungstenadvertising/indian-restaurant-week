@@ -72,50 +72,57 @@ const {
     }
 </style>
 
-<script>
+<script is:inline>
     // Form submission handler
     // Dispatches custom events: 'form:success' and 'form:error' for parent components to handle
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('form[data-netlify="true"]').forEach((form) => {
-            const htmlForm = form as HTMLFormElement;
-            
-            // Skip if already initialized
-            if (htmlForm.dataset.initialized) return;
-            htmlForm.dataset.initialized = 'true';
+    (function initNetlifyForms() {
+        function setupForms() {
+            document.querySelectorAll('form[data-netlify="true"]').forEach(function(form) {
+                // Skip if already initialized
+                if (form.dataset.initialized) return;
+                form.dataset.initialized = 'true';
 
-            htmlForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
 
-                const formData = new FormData(htmlForm);
-                const submitButton = htmlForm.querySelector('button[type="submit"]');
-                const buttonSpan = submitButton?.querySelector('span');
-                const originalText = buttonSpan?.textContent || 'Send Message';
+                    const formData = new FormData(form);
+                    const submitButton = form.querySelector('button[type="submit"]');
+                    const buttonSpan = submitButton ? submitButton.querySelector('span') : null;
+                    const originalText = buttonSpan ? buttonSpan.textContent : 'Send Message';
 
-                // Show loading state
-                if (submitButton) (submitButton as HTMLButtonElement).disabled = true;
-                if (buttonSpan) buttonSpan.textContent = 'Sending...';
+                    // Show loading state
+                    if (submitButton) submitButton.disabled = true;
+                    if (buttonSpan) buttonSpan.textContent = 'Sending...';
 
-                try {
-                    const response = await fetch('/', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams(formData as any).toString()
-                    });
+                    try {
+                        const response = await fetch('/', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: new URLSearchParams(formData).toString()
+                        });
 
-                    if (response.ok) {
-                        htmlForm.reset();
-                        htmlForm.dispatchEvent(new CustomEvent('form:success', { bubbles: true }));
-                    } else {
-                        throw new Error('Submission failed');
+                        if (response.ok) {
+                            form.reset();
+                            form.dispatchEvent(new CustomEvent('form:success', { bubbles: true }));
+                        } else {
+                            throw new Error('Submission failed');
+                        }
+                    } catch (error) {
+                        console.error('Form submission error:', error);
+                        form.dispatchEvent(new CustomEvent('form:error', { bubbles: true, detail: error }));
+                    } finally {
+                        if (submitButton) submitButton.disabled = false;
+                        if (buttonSpan) buttonSpan.textContent = originalText;
                     }
-                } catch (error) {
-                    console.error('Form submission error:', error);
-                    htmlForm.dispatchEvent(new CustomEvent('form:error', { bubbles: true, detail: error }));
-                } finally {
-                    if (submitButton) (submitButton as HTMLButtonElement).disabled = false;
-                    if (buttonSpan) buttonSpan.textContent = originalText;
-                }
+                });
             });
-        });
-    });
+        }
+
+        // Run immediately if DOM ready, otherwise wait
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupForms);
+        } else {
+            setupForms();
+        }
+    })();
 </script>

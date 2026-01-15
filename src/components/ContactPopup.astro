@@ -131,71 +131,83 @@ import ContactForm from './ContactForm.astro';
     }
 </style>
 
-<script>
+<script is:inline>
     // Contact Popup Controller
     // Form submission is handled by ContactForm.astro - we just listen for events
-    document.addEventListener('DOMContentLoaded', () => {
-        const popup = document.getElementById('contact-popup');
-        const form = document.getElementById('contact-popup-form');
-        const toast = document.getElementById('contact-popup-toast');
-        const toastClose = document.querySelector('.contact-popup-toast-close');
+    (function() {
+        function setup() {
+            var popup = document.getElementById('contact-popup');
+            var form = document.getElementById('contact-popup-form');
+            var toast = document.getElementById('contact-popup-toast');
+            var toastClose = document.querySelector('.contact-popup-toast-close');
 
-        // Open popup function (exposed globally)
-        (window as any).openContactPopup = () => {
+            // Open popup function (exposed globally)
+            window.openContactPopup = function() {
+                if (popup) {
+                    popup.classList.add('open');
+                    popup.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+                }
+            };
+
+            // Close popup function
+            function closePopup() {
+                if (popup) {
+                    popup.classList.remove('open');
+                    popup.setAttribute('aria-hidden', 'true');
+                    document.body.style.overflow = '';
+                }
+            }
+
+            // Close on backdrop click or close button
             if (popup) {
-                popup.classList.add('open');
-                popup.setAttribute('aria-hidden', 'false');
-                document.body.style.overflow = 'hidden';
+                popup.querySelectorAll('[data-close-popup]').forEach(function(el) {
+                    el.addEventListener('click', closePopup);
+                });
             }
-        };
 
-        // Close popup function
-        const closePopup = () => {
-            if (popup) {
-                popup.classList.remove('open');
-                popup.setAttribute('aria-hidden', 'true');
-                document.body.style.overflow = '';
+            // Close on Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && popup && popup.classList.contains('open')) {
+                    closePopup();
+                }
+            });
+
+            // Toast functions
+            function showToast() {
+                if (toast) {
+                    toast.style.transform = 'translateX(0)';
+                    toast.style.pointerEvents = 'auto';
+                    setTimeout(hideToast, 5000);
+                }
             }
-        };
 
-        // Close on backdrop click or close button
-        popup?.querySelectorAll('[data-close-popup]').forEach(el => {
-            el.addEventListener('click', closePopup);
-        });
-
-        // Close on Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && popup?.classList.contains('open')) {
-                closePopup();
+            function hideToast() {
+                if (toast) {
+                    toast.style.transform = 'translateX(150%)';
+                    toast.style.pointerEvents = 'none';
+                }
             }
-        });
 
-        // Toast functions
-        const showToast = () => {
-            if (toast) {
-                toast.style.transform = 'translateX(0)';
-                toast.style.pointerEvents = 'auto';
-                setTimeout(() => hideToast(), 5000);
+            if (toastClose) toastClose.addEventListener('click', hideToast);
+
+            // Listen for form events (dispatched by ContactForm.astro)
+            if (form) {
+                form.addEventListener('form:success', function() {
+                    closePopup();
+                    showToast();
+                });
+
+                form.addEventListener('form:error', function() {
+                    alert('There was an error sending your message. Please try again.');
+                });
             }
-        };
+        }
 
-        const hideToast = () => {
-            if (toast) {
-                toast.style.transform = 'translateX(150%)';
-                toast.style.pointerEvents = 'none';
-            }
-        };
-
-        toastClose?.addEventListener('click', hideToast);
-
-        // Listen for form events (dispatched by ContactForm.astro)
-        form?.addEventListener('form:success', () => {
-            closePopup();
-            showToast();
-        });
-
-        form?.addEventListener('form:error', () => {
-            alert('There was an error sending your message. Please try again.');
-        });
-    });
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setup);
+        } else {
+            setup();
+        }
+    })();
 </script>

@@ -170,37 +170,44 @@ const restaurants = restaurantsJson.restaurants;
     </div>
 </Layout>
 
-<script>
+<script is:inline>
     // Form submission is handled by ContactForm.astro - we just listen for events
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('press-form');
-        const toast = document.getElementById('toast');
-        const toastClose = document.getElementById('toast-close');
+    (function() {
+        function setup() {
+            var form = document.getElementById('press-form');
+            var toast = document.getElementById('toast');
+            var toastClose = document.getElementById('toast-close');
 
-        function showToast() {
-            if (toast) {
-                toast.style.transform = 'translateX(0)';
-                toast.style.pointerEvents = 'auto';
-                setTimeout(() => hideToast(), 5000);
+            function showToast() {
+                if (toast) {
+                    toast.style.transform = 'translateX(0)';
+                    toast.style.pointerEvents = 'auto';
+                    setTimeout(hideToast, 5000);
+                }
+            }
+
+            function hideToast() {
+                if (toast) {
+                    toast.style.transform = 'translateX(150%)';
+                    toast.style.pointerEvents = 'none';
+                }
+            }
+
+            if (toastClose) toastClose.addEventListener('click', hideToast);
+
+            // Listen for form events (dispatched by ContactForm.astro)
+            if (form) {
+                form.addEventListener('form:success', showToast);
+                form.addEventListener('form:error', function() {
+                    alert('There was an error sending your message. Please try again.');
+                });
             }
         }
 
-        function hideToast() {
-            if (toast) {
-                toast.style.transform = 'translateX(150%)';
-                toast.style.pointerEvents = 'none';
-            }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setup);
+        } else {
+            setup();
         }
-
-        toastClose?.addEventListener('click', hideToast);
-
-        // Listen for form events (dispatched by ContactForm.astro)
-        form?.addEventListener('form:success', () => {
-            showToast();
-        });
-
-        form?.addEventListener('form:error', () => {
-            alert('There was an error sending your message. Please try again.');
-        });
-    });
+    })();
 </script>
