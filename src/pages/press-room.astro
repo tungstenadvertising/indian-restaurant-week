@@ -200,13 +200,14 @@ const restaurants = restaurantsJson.restaurants;
             const submitButton = form.querySelector('button[type="submit"]');
             const buttonSpan = submitButton?.querySelector('span');
             const originalText = buttonSpan?.textContent || 'Send Message';
+            const formAction = form.getAttribute('action') || '/press-room';
 
             // Show loading state
             if (submitButton) (submitButton as HTMLButtonElement).disabled = true;
             if (buttonSpan) buttonSpan.textContent = 'Sending...';
 
             try {
-                const response = await fetch('/', {
+                const response = await fetch(formAction, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: new URLSearchParams(formData as any).toString()
