@@ -146,9 +146,9 @@ const handler: Handler = async (event: HandlerEvent) => {
       id: sub.id,
       number: sub.number,
       name: sub.data?.name || sub.name || "Anonymous",
+      email: sub.data?.email || sub.email || "",
       message: sub.data?.message || sub.body || "",
       source: sub.data?.source || "unknown",
-      page: sub.data?.page || "/",
       createdAt: sub.created_at,
       formName: sub.form_name,
     }));

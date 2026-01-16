@@ -450,49 +450,49 @@ import AdminLayout from '../../components/admin/AdminLayout.astro';
     {
       id: '1',
       name: 'Priya Sharma',
+      email: 'priya.sharma@timesofindia.com',
       message: 'Hi! I\'m a food journalist with The Times of India and would love to cover Indian Restaurant Week. Can you share more details about participating restaurants and any exclusive chef interviews?',
       source: 'contact-popup',
-      page: '/',
       createdAt: new Date(Date.now() - 1000 * 60 * 30).toISOString() // 30 min ago
     },
     {
       id: '2',
       name: 'Michael Chen',
+      email: 'michael@culinarymagazine.com',
       message: 'Interested in partnership opportunities for our culinary magazine. We reach 500k+ readers monthly.',
       source: 'press-room',
-      page: '/press-room',
       createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString() // 2 hours ago
     },
     {
       id: '3',
       name: 'Sarah Johnson',
+      email: 'sarah.j@plantbasedguide.com',
       message: 'Quick question - are there any vegetarian-focused restaurants participating this year? Working on a plant-based dining guide.',
       source: 'contact-popup',
-      page: '/media',
       createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString() // 1 day ago
     },
     {
       id: '4',
       name: 'Raj Patel',
+      email: 'raj@foodbloggers.network',
       message: 'I represent a group of food bloggers and influencers. We\'d like to discuss potential collaboration for promoting IRW on social media. Our combined reach is over 2 million followers.',
       source: 'contact-popup',
-      page: '/',
       createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString() // 2 days ago
     },
     {
       id: '5',
       name: 'Emily Watson',
+      email: 'ewatson@foodandwine.com',
       message: 'Press inquiry: Looking for high-res images and press kit for upcoming feature in Food & Wine magazine.',
       source: 'press-room',
-      page: '/press-room',
       createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString() // 3 days ago
     },
     {
       id: '6',
       name: 'Anonymous',
+      email: 'test@example.com',
       message: 'Test submission from homepage',
       source: 'unknown',
-      page: '/',
       createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString() // 5 days ago
     }
   ];
@@ -607,9 +607,9 @@ import AdminLayout from '../../components/admin/AdminLayout.astro';
                          sub.source === 'press-room' ? 'Press Room' : sub.source || 'Unknown';
 
       const name = sub.name || 'Anonymous';
+      const email = sub.email || '';
       const message = sub.message || '';
       const preview = message.length > 60 ? message.substring(0, 60) + '...' : message;
-      const page = sub.page || '/';
 
       const date = new Date(sub.createdAt);
       const dateStr = date.toLocaleDateString('en-US', {
@@ -647,16 +647,16 @@ import AdminLayout from '../../components/admin/AdminLayout.astro';
               <span class="detail-value">${escapeHtml(name)}</span>
             </div>
             <div class="detail-row">
+              <span class="detail-label">Email</span>
+              <span class="detail-value">${email ? `<a href="mailto:${escapeHtml(email)}" style="color: #2563eb; text-decoration: none;">${escapeHtml(email)}</a>` : '-'}</span>
+            </div>
+            <div class="detail-row">
               <span class="detail-label">Message</span>
               <span class="detail-value message">${escapeHtml(message)}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Source</span>
               <span class="detail-value"><span class="meta-source ${sourceClass}">${sourceLabel}</span></span>
-            </div>
-            <div class="detail-row">
-              <span class="detail-label">Page</span>
-              <span class="detail-value">${escapeHtml(page)}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Received</span>
