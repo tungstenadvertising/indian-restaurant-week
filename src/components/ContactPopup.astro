@@ -37,8 +37,8 @@ import ContactForm from './ContactForm.astro';
                 </p>
             </div>
 
-            <!-- Reusable Contact Form (handles its own submission + toast) -->
-            <ContactForm formId="contact-popup-form" source="contact-popup" />
+            <!-- Contact Form (using custom success handler - popup manages its own toast) -->
+            <ContactForm formId="contact-popup-form" source="contact-popup" onSuccess="custom" />
 
             <!-- Direct Contact Info -->
             <div class="mt-8 text-center text-white/90">
@@ -48,6 +48,26 @@ import ContactForm from './ContactForm.astro';
                 </a>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Toast Notification (OUTSIDE popup so it remains visible after popup closes) -->
+<div id="contact-popup-toast" class="fixed top-6 right-6 z-[10001] pointer-events-none opacity-0 invisible">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 flex items-start gap-4 max-w-sm border-l-4 border-green-500 pointer-events-auto">
+        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+        </div>
+        <div>
+            <h4 class="font-bold text-gray-900">Message Sent!</h4>
+            <p class="text-gray-600 text-sm">Thank you for reaching out. We'll get back to you soon.</p>
+        </div>
+        <button id="contact-popup-toast-close" class="text-gray-400 hover:text-gray-600 -mt-1 -mr-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
     </div>
 </div>
 
@@ -113,9 +133,31 @@ import ContactForm from './ContactForm.astro';
 
 <script>
     // Contact Popup Controller
-    // Only handles open/close - form submission is handled by ContactForm
     const popup = document.getElementById('contact-popup');
     const form = document.getElementById('contact-popup-form');
+    const toast = document.getElementById('contact-popup-toast');
+    const toastClose = document.getElementById('contact-popup-toast-close');
+
+    // Toast functions
+    const showToast = () => {
+        if (toast) {
+            toast.classList.remove('opacity-0', 'invisible');
+            toast.classList.add('opacity-100', 'transition-all', 'duration-500', 'ease-out');
+            toast.style.pointerEvents = 'auto';
+            setTimeout(() => hideToast(), 5000);
+        }
+    };
+
+    const hideToast = () => {
+        if (toast) {
+            toast.classList.remove('opacity-100');
+            toast.classList.add('opacity-0');
+            toast.style.pointerEvents = 'none';
+            setTimeout(() => toast.classList.add('invisible'), 500);
+        }
+    };
+
+    toastClose?.addEventListener('click', hideToast);
 
     // Open popup function (exposed globally for Navigation)
     (window as any).openContactPopup = () => {
@@ -147,8 +189,9 @@ import ContactForm from './ContactForm.astro';
         }
     });
 
-    // Close popup on successful form submission (form dispatches this event)
+    // On form success: close popup AND show toast (toast is outside popup)
     form?.addEventListener('form:success', () => {
         closePopup();
+        showToast();
     });
 </script>
