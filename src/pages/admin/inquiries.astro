@@ -1,0 +1,519 @@
+---
+/**
+ * Admin Inquiries Page
+ * Displays form submissions from Netlify Forms
+ */
+import AdminLayout from '../../components/admin/AdminLayout.astro';
+---
+
+<AdminLayout title="Inquiries" activeSection="inquiries">
+  <div class="inquiries-page">
+    <!-- Header -->
+    <div class="page-header">
+      <div class="header-info">
+        <p class="header-desc">Contact form submissions from the website</p>
+      </div>
+      <button class="btn-refresh" id="refresh-btn">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="refresh-icon">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        Refresh
+      </button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-badge">
+        <span class="stat-value" id="total-count">-</span>
+        <span class="stat-label">Total Inquiries</span>
+      </div>
+      <div class="stat-badge">
+        <span class="stat-value" id="popup-count">-</span>
+        <span class="stat-label">From Popup</span>
+      </div>
+      <div class="stat-badge">
+        <span class="stat-value" id="page-count">-</span>
+        <span class="stat-label">From Press Room</span>
+      </div>
+    </div>
+
+    <!-- Submissions Table -->
+    <div class="submissions-container">
+      <div class="submissions-table" id="submissions-table">
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading submissions...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State (hidden by default) -->
+    <div class="empty-state" id="empty-state" style="display: none;">
+      <div class="empty-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+        </svg>
+      </div>
+      <h3>No submissions yet</h3>
+      <p>Form submissions will appear here once visitors start sending inquiries.</p>
+    </div>
+
+    <!-- Error State (hidden by default) -->
+    <div class="error-state" id="error-state" style="display: none;">
+      <div class="error-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+      </div>
+      <h3>Unable to load submissions</h3>
+      <p id="error-message">Please check your configuration and try again.</p>
+      <button class="btn-retry" id="retry-btn">Try Again</button>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .inquiries-page {
+    max-width: 1200px;
+  }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+  }
+
+  .header-desc {
+    color: #64748b;
+    font-size: 0.875rem;
+  }
+
+  .btn-refresh {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    color: #64748b;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-refresh:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #1e293b;
+  }
+
+  .btn-refresh:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .refresh-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .btn-refresh.loading .refresh-icon {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Stats */
+  .stats-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-badge {
+    background: white;
+    padding: 1rem 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f59e0b;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    color: #64748b;
+  }
+
+  /* Table Container */
+  .submissions-container {
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  .submissions-table {
+    min-height: 200px;
+  }
+
+  /* Loading State */
+  .loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    color: #64748b;
+  }
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #f59e0b;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+  }
+
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .empty-icon {
+    width: 64px;
+    height: 64px;
+    background: #f1f5f9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+  }
+
+  .empty-icon svg {
+    width: 32px;
+    height: 32px;
+    color: #94a3b8;
+  }
+
+  .empty-state h3 {
+    font-size: 1.125rem;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-state p {
+    color: #64748b;
+    font-size: 0.875rem;
+  }
+
+  /* Error State */
+  .error-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .error-icon {
+    width: 64px;
+    height: 64px;
+    background: #fef2f2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+  }
+
+  .error-icon svg {
+    width: 32px;
+    height: 32px;
+    color: #ef4444;
+  }
+
+  .error-state h3 {
+    font-size: 1.125rem;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+  }
+
+  .error-state p {
+    color: #64748b;
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-retry {
+    padding: 0.625rem 1.25rem;
+    background: #f59e0b;
+    border: none;
+    border-radius: 0.5rem;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-retry:hover {
+    background: #d97706;
+  }
+
+  /* Submission Row */
+  .submission-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr 120px 100px 140px;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+    align-items: start;
+    transition: background 0.15s;
+  }
+
+  .submission-row:last-child {
+    border-bottom: none;
+  }
+
+  .submission-row:hover {
+    background: #f8fafc;
+  }
+
+  .submission-row.header {
+    background: #f8fafc;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    padding: 0.875rem 1.5rem;
+  }
+
+  .submission-row.header:hover {
+    background: #f8fafc;
+  }
+
+  .submission-name {
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .submission-message {
+    color: #475569;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    max-height: 4.5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .submission-source {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    display: inline-block;
+    text-align: center;
+  }
+
+  .submission-source.popup {
+    background: #dbeafe;
+    color: #2563eb;
+  }
+
+  .submission-source.page {
+    background: #d1fae5;
+    color: #059669;
+  }
+
+  .submission-source.unknown {
+    background: #f1f5f9;
+    color: #64748b;
+  }
+
+  .submission-page {
+    font-size: 0.8rem;
+    color: #64748b;
+    font-family: monospace;
+  }
+
+  .submission-date {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    text-align: right;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .submission-row {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+    .submission-row.header {
+      display: none;
+    }
+
+    .submission-message {
+      max-height: none;
+    }
+  }
+</style>
+
+<script>
+  const tableEl = document.getElementById('submissions-table');
+  const emptyEl = document.getElementById('empty-state');
+  const errorEl = document.getElementById('error-state');
+  const errorMsgEl = document.getElementById('error-message');
+  const refreshBtn = document.getElementById('refresh-btn');
+  const retryBtn = document.getElementById('retry-btn');
+
+  const totalCountEl = document.getElementById('total-count');
+  const popupCountEl = document.getElementById('popup-count');
+  const pageCountEl = document.getElementById('page-count');
+
+  async function loadSubmissions() {
+    // Reset UI
+    if (tableEl) tableEl.style.display = 'block';
+    if (emptyEl) emptyEl.style.display = 'none';
+    if (errorEl) errorEl.style.display = 'none';
+
+    // Show loading
+    if (tableEl) {
+      tableEl.innerHTML = `
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading submissions...</p>
+        </div>
+      `;
+    }
+
+    // Disable refresh button
+    if (refreshBtn) {
+      refreshBtn.disabled = true;
+      refreshBtn.classList.add('loading');
+    }
+
+    try {
+      const response = await fetch('/.netlify/functions/form-submissions');
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch submissions');
+      }
+
+      const { submissions, total } = data;
+
+      // Update stats
+      const popupCount = submissions.filter((s: any) => s.source === 'contact-popup').length;
+      const pageCount = submissions.filter((s: any) => s.source === 'press-room').length;
+
+      if (totalCountEl) totalCountEl.textContent = String(total);
+      if (popupCountEl) popupCountEl.textContent = String(popupCount);
+      if (pageCountEl) pageCountEl.textContent = String(pageCount);
+
+      if (submissions.length === 0) {
+        if (tableEl) tableEl.style.display = 'none';
+        if (emptyEl) emptyEl.style.display = 'block';
+        return;
+      }
+
+      // Render table
+      renderTable(submissions);
+
+    } catch (error) {
+      console.error('Error loading submissions:', error);
+      if (tableEl) tableEl.style.display = 'none';
+      if (errorEl) errorEl.style.display = 'block';
+      if (errorMsgEl) {
+        errorMsgEl.textContent = error instanceof Error ? error.message : 'Unknown error occurred';
+      }
+
+      // Reset stats
+      if (totalCountEl) totalCountEl.textContent = '-';
+      if (popupCountEl) popupCountEl.textContent = '-';
+      if (pageCountEl) pageCountEl.textContent = '-';
+
+    } finally {
+      if (refreshBtn) {
+        refreshBtn.disabled = false;
+        refreshBtn.classList.remove('loading');
+      }
+    }
+  }
+
+  function renderTable(submissions: any[]) {
+    if (!tableEl) return;
+
+    const headerRow = `
+      <div class="submission-row header">
+        <div>Name</div>
+        <div>Message</div>
+        <div>Source</div>
+        <div>Page</div>
+        <div>Date</div>
+      </div>
+    `;
+
+    const rows = submissions.map((sub) => {
+      const sourceClass = sub.source === 'contact-popup' ? 'popup' :
+                         sub.source === 'press-room' ? 'page' : 'unknown';
+      const sourceLabel = sub.source === 'contact-popup' ? 'Popup' :
+                         sub.source === 'press-room' ? 'Press Room' : sub.source;
+
+      const date = new Date(sub.createdAt);
+      const dateStr = date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+      const timeStr = date.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit'
+      });
+
+      return `
+        <div class="submission-row">
+          <div class="submission-name">${escapeHtml(sub.name)}</div>
+          <div class="submission-message">${escapeHtml(sub.message)}</div>
+          <div><span class="submission-source ${sourceClass}">${sourceLabel}</span></div>
+          <div class="submission-page">${escapeHtml(sub.page || '/')}</div>
+          <div class="submission-date">${dateStr}<br>${timeStr}</div>
+        </div>
+      `;
+    }).join('');
+
+    tableEl.innerHTML = headerRow + rows;
+  }
+
+  function escapeHtml(text: string): string {
+    const div = document.createElement('div');
+    div.textContent = text || '';
+    return div.innerHTML;
+  }
+
+  // Event listeners
+  refreshBtn?.addEventListener('click', loadSubmissions);
+  retryBtn?.addEventListener('click', loadSubmissions);
+
+  // Initial load
+  loadSubmissions();
+</script>
