@@ -31,6 +31,7 @@ const toastId = `${formId}-toast`;
 >
     <input type="hidden" name="form-name" value={formName} />
     <input type="hidden" name="source" value={source} />
+    <input type="hidden" name="page" value="" class="contact-form-page" />
 
     <!-- Name -->
     <div class="mb-6">
@@ -136,6 +137,10 @@ const toastId = `${formId}-toast`;
         // Form submission
         formEl.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            // Capture current page URL before submission
+            const pageInput = formEl.querySelector('.contact-form-page') as HTMLInputElement;
+            if (pageInput) pageInput.value = window.location.pathname;
 
             const formData = new FormData(formEl);
             const submitButton = formEl.querySelector('button[type="submit"]');
