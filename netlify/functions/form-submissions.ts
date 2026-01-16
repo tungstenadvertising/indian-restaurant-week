@@ -2,7 +2,8 @@ import type { Handler, HandlerEvent } from "@netlify/functions";
 
 /**
  * Netlify Function: Form Submissions
- * Fetches form submissions from Netlify API
+ * GET - Fetches form submissions from Netlify API
+ * DELETE - Removes a submission by ID
  *
  * Required environment variables:
  * - NETLIFY_ACCESS_TOKEN: Personal access token from Netlify dashboard
@@ -50,22 +51,13 @@ const handler: Handler = async (event: HandlerEvent) => {
   const headers = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "Content-Type, X-Api-Key",
-    "Access-Control-Allow-Methods": "GET, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, DELETE, OPTIONS",
     "Content-Type": "application/json",
   };
 
   // Handle preflight
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 204, headers, body: "" };
-  }
-
-  // Only allow GET
-  if (event.httpMethod !== "GET") {
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ error: "Method not allowed" }),
-    };
   }
 
   const NETLIFY_TOKEN = process.env.NETLIFY_ACCESS_TOKEN;
@@ -90,6 +82,60 @@ const handler: Handler = async (event: HandlerEvent) => {
         error: "SITE_ID not available",
         hint: "This should be auto-available when deployed to Netlify"
       }),
+    };
+  }
+
+  // Handle DELETE request
+  if (event.httpMethod === "DELETE") {
+    const submissionId = event.queryStringParameters?.id;
+
+    if (!submissionId) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: "Missing submission ID" }),
+      };
+    }
+
+    try {
+      const deleteResponse = await fetch(
+        `https://api.netlify.com/api/v1/submissions/${submissionId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${NETLIFY_TOKEN}`,
+          },
+        }
+      );
+
+      if (!deleteResponse.ok) {
+        throw new Error(`Failed to delete: ${deleteResponse.status}`);
+      }
+
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ success: true, deletedId: submissionId }),
+      };
+    } catch (error) {
+      console.error("Error deleting submission:", error);
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({
+          error: "Failed to delete submission",
+          details: error instanceof Error ? error.message : "Unknown error"
+        }),
+      };
+    }
+  }
+
+  // Handle GET request
+  if (event.httpMethod !== "GET") {
+    return {
+      statusCode: 405,
+      headers,
+      body: JSON.stringify({ error: "Method not allowed" }),
     };
   }
 
@@ -149,6 +195,8 @@ const handler: Handler = async (event: HandlerEvent) => {
       email: sub.data?.email || sub.email || "",
       message: sub.data?.message || sub.body || "",
       source: sub.data?.source || "unknown",
+      ip: sub.data?.ip || "",
+      userAgent: sub.data?.user_agent || "",
       createdAt: sub.created_at,
       formName: sub.form_name,
     }));
