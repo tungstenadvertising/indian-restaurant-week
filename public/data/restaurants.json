@@ -230,6 +230,15 @@
           "menuNameColor": "hsl(5, 65%, 45%)",
           "menuImage": "chefs/ranjan-dey/menu-image.jpg",
           "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Appetizer</h4><p>Alu Chat Croustade</p><p>Harra Keebab</p><p>Bengali Piyaju</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Mains</h4><p><strong>Bengali Fish Curry</strong> - Salmon with potatoes, eggplant, seasoned with Bengali five-spice blend</p><p><strong>Bengali Kosha Mangsho</strong> - Lamb curry delicacy from Kolkata cooked in mustard oil with potatoes</p><p><strong>Alu Phulkopi</strong> - Cauliflower & Potatoes seasoned with onion seeds served with Basmati Saffron Rice and Luchi (Poori)</p><p>Tomato Chutney</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Dessert</h4><p>Bengali Roshogolla</p></div>"
+        },
+        "seasonalMenus": {
+          "holi": {
+            "menuName": "Dol Jatra – Festival of Colors",
+            "menuPrice": "75",
+            "menuNameColor": "hsl(5, 65%, 45%)",
+            "menuImage": "chefs/ranjan-dey/menu-image.jpg",
+            "content": "<div class='space-y-4'><p class='text-center italic text-gray-600 mb-4'>A Bengali Springtime Multi-Course Feast</p><h4 class='font-bold text-lg text-irw-red'>Welcome Drink</h4><p><strong>Doi with Mishti Jhol</strong> – Light sweet yogurt infused with cardamom</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Shubho Aarombho (Starters)</h4><p><strong>Basanti Pulao Arancini</strong> – Crisp saffron-scented rice balls with a hint of cashew and raisin</p><p><strong>Koraishutir Kochuri</strong> – Flaky stuffed breads with green peas and Bengali garam masala</p><p class='italic text-sm'>Served with Tetul-Khejur Chaatni – Tamarind and date chutney with dry roasted spices</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Mains</h4><p><strong>Basanti Pulao</strong> – Fragrant yellow rice with ghee, saffron, and nuts</p><p><strong>Koshaa Mangsho</strong> – Slow-cooked goat curry with caramelized onions and garam masala</p><p><strong>Chingri Malaikari</strong> – Prawns simmered in coconut milk with bay leaf and whole spices</p><p><strong>Dhokar Dalna</strong> – Pan-fried lentil cakes in a tomato-ginger gravy</p><p><strong>Begun Bhaja</strong> – Crisp fried eggplant, simple, nostalgic, essential</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Mishti Mukh (Desserts)</h4><p><strong>Malpua with Rabri</strong> – Soft fritters soaked in syrup, served with warm sweetened condensed milk</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>After-Meal Ritual</h4><p><strong>Gondhoraj Lebu Chaa</strong> – Tea scented with fragrant Bengali lime, cleansing and uplifting</p></div>"
+          }
         }
       }
     },
