@@ -285,6 +285,37 @@ async function loadRestaurantData() {
     return getRestaurantData();
 }
 
+// Get active season from global (injected at build time)
+function getActiveSeason() {
+    return window.__ACTIVE_SEASON__ || null;
+}
+
+// Get the active menu for a restaurant (seasonal or default)
+function getActiveMenu(restaurantData) {
+    const activeSeason = getActiveSeason();
+    
+    // Check if there's a seasonal menu for the active season
+    if (activeSeason && restaurantData.popup?.seasonalMenus?.[activeSeason]) {
+        return restaurantData.popup.seasonalMenus[activeSeason];
+    }
+    
+    // Fall back to the default menu
+    return restaurantData.popup?.menu || null;
+}
+
+// Get menu price - check seasonal menu first, then popup level
+function getActiveMenuPrice(restaurantData) {
+    const activeMenu = getActiveMenu(restaurantData);
+    
+    // If the active menu has its own price, use it
+    if (activeMenu?.menuPrice) {
+        return activeMenu.menuPrice;
+    }
+    
+    // Fall back to popup-level price
+    return restaurantData.popup?.menuPrice || 'Price';
+}
+
 // Function to set up location section animations with ScrollTrigger
 function setupLocationAnimations() {
     const locationListItems = document.querySelectorAll('.location-list-item .location-list-item-container');
@@ -2354,18 +2385,20 @@ class DishPopup {
             locationElement.textContent = restaurantData.area || restaurantData.address.split(',')[restaurantData.address.split(',').length - 1].trim();
         }
 
-        // Update special menu name
+        // Update special menu name (supports seasonal menus)
         const menuNameElement = document.getElementById('dish-popup-menu-name');
+        const activeMenu = getActiveMenu(restaurantData);
+        
         if (menuNameElement) {
-            menuNameElement.textContent = restaurantData.popup?.menu?.menuName || 'Special Diwali Menu';
+            menuNameElement.textContent = activeMenu?.menuName || 'Special Menu';
 
             // Apply color from JSON
-            if (restaurantData.popup?.menu?.menuNameColor && restaurantData.popup.menu.menuNameColor.trim() !== '') {
+            if (activeMenu?.menuNameColor && activeMenu.menuNameColor.trim() !== '') {
                 // Remove any existing color classes that might interfere
                 menuNameElement.classList.remove('text-teal-800', 'text-gray-800', 'text-black');
 
                 // Apply the color with !important
-                menuNameElement.style.setProperty('color', restaurantData.popup.menu.menuNameColor);
+                menuNameElement.style.setProperty('color', activeMenu.menuNameColor);
 
             } else {
             }
@@ -2410,13 +2443,13 @@ class DishPopup {
             }
         }
 
-        // Update menu image - use menu image from menu structure
+        // Update menu image - use menu image from active menu (seasonal or default)
         const menuImageElement = document.getElementById('dish-popup-menu-image');
-        if (menuImageElement && restaurantData.popup?.menu?.menuImage) {
+        if (menuImageElement && activeMenu?.menuImage) {
             const isDev = import.meta.env.DEV;
-            const imagePath = isDev ? `/images/${restaurantData.popup.menu.menuImage}` : `/images/${convertToWebP(restaurantData.popup.menu.menuImage)}`;
+            const imagePath = isDev ? `/images/${activeMenu.menuImage}` : `/images/${convertToWebP(activeMenu.menuImage)}`;
             menuImageElement.src = imagePath;
-            menuImageElement.alt = `${restaurantData.name} - ${restaurantData.popup.menu.menuName}`;
+            menuImageElement.alt = `${restaurantData.name} - ${activeMenu.menuName || 'Special Menu'}`;
         } else if (menuImageElement && restaurantData.images && restaurantData.images.dish) {
             // Fallback to dish image if menu image not available
             const isDev = import.meta.env.DEV;
@@ -2452,9 +2485,12 @@ class DishPopup {
         const menuContent = document.getElementById('dish-popup-menu-content');
         if (!menuContent) return;
 
-        // Use menu content from the new menu structure
-        if (restaurantData.popup?.menu?.content) {
-            menuContent.innerHTML = restaurantData.popup.menu.content;
+        // Get active menu (seasonal or default)
+        const activeMenu = getActiveMenu(restaurantData);
+        
+        // Use menu content from the active menu
+        if (activeMenu?.content) {
+            menuContent.innerHTML = activeMenu.content;
         } else {
             // Fallback content
             menuContent.innerHTML = `
@@ -2492,8 +2528,8 @@ class DishPopup {
 
         if (!menuPriceElement || !menuPriceShape) return;
 
-        // Get the price and color from restaurant data
-        const menuPrice = restaurantData.popup?.menuPrice || 'Price';
+        // Get the price from active menu (seasonal or default) or popup level
+        const menuPrice = getActiveMenuPrice(restaurantData);
         const menuPriceColor = restaurantData.popup?.menuPriceColor || '#1E2A78';
 
         // Format the price with dynamic $ signs

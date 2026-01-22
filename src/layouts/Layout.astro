@@ -8,8 +8,9 @@ interface Props {
 
 const { title = "Indian Restaurant Week - Celebrate Holi" } = Astro.props;
 
-// Extract restaurants array for injection
+// Extract restaurants array and active season for injection
 const restaurants = restaurantsJson.restaurants;
+const activeSeason = restaurantsJson.activeSeason || null;
 ---
 
 <!DOCTYPE html>
@@ -48,8 +49,9 @@ const restaurants = restaurantsJson.restaurants;
     <!-- hero-texture uses LQIP blur-up, no preload needed -->
 
     <!-- Inject restaurant data at build time for instant access -->
-    <script is:inline define:vars={{ restaurants }}>
+    <script is:inline define:vars={{ restaurants, activeSeason }}>
         window.__RESTAURANTS__ = restaurants;
+        window.__ACTIVE_SEASON__ = activeSeason;
     </script>
 </head>
 <body class="text-gray-800 text-lg leading-relaxed overflow-x-hidden scroll-smooth">

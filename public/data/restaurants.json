@@ -1,4 +1,5 @@
 {
+  "activeSeason": "holi",
   "restaurants": [
     {
       "id": "ashish_rooh",
@@ -45,6 +46,15 @@
           "menuNameColor": "hsl(230, 55%, 25%)",
           "menuImage": "chefs/ashish-tiwari/menu-image.jpg",
           "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Amuse Bouche</h4><p>Enchilada Bites – Enchilada tart topped with desi guacamole and a trio of zesty sauces</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course One (Vegetarian)</h4><p>Aloo Tikki Benedict – Spiced potato cakes topped with tempered vermicelli and Spinach & lime mousse</p><p><strong>OR</strong></p><p>Tofu Koliwada – Crispy Tofu with curry leaf-tomato pachdi, podi masala, and pickled chili</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course One (Non-Vegetarian)</h4><p>Coastal Balchao – Fiery Goan-style prawns, Naan wafer</p><p><strong>OR</strong></p><p>Tandoori Korma Chops – lamb Chops glazed in korma Sauce, masala aloo, dosa crisp</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course Two (Vegetarian)</h4><p>Quinoa & Spinach Kofta Curry – Soft koftas in a rich gravy, paired with paneer roulade</p><p><strong>OR</strong></p><p>Lentil Cake – Steamed lentil cakes, tangy yogurt sauce</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course Two (Non-Vegetarian)</h4><p>Butter Chicken – char-grilled chicken, Classic creamy smoked tomato curry</p><p><strong>OR</strong></p><p>Rangoon Shrimp Curry – Butter-tossed shrimp, peanut butter salan, bonito flakes</p><p><strong>Sides:</strong> Saffron rice, Rooh dal, and assorted Indian breads</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Dessert</h4><p>Kheer Cheesecake – A fusion of creamy cheesecake and traditional Indian rice pudding</p></div>"
+        },
+        "seasonalMenus": {
+          "holi": {
+            "menuName": "HOLI – The Festival of Color",
+            "menuPrice": "85",
+            "menuNameColor": "hsl(230, 55%, 25%)",
+            "menuImage": "chefs/ashish-tiwari/menu-image.jpg",
+            "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Amuse-Bouche</h4><p>Thandai Espuma with Saffron Caviar & Almond Crumble <span class='text-sm text-gray-500'>(D)</span> – Aromatic thandai mousse topped with edible flowers and almond dust, a chilled start to the festival of colors</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Appetizer (Choice of One)</h4><p>Awadhi Mushroom Éclair <span class='text-sm text-gray-500'>(D)(G)</span> – A delicate cardamom-scented choux shell filled with melt-in-the-mouth mushroom galouti, finished with dehydrated curry leaf dust</p><p><strong>OR</strong></p><p>Duck Galouti Éclair <span class='text-sm text-gray-500'>(D)(G)</span> – A delicate cardamom-scented choux shell filled with melt-in-the-mouth duck galouti, finished with dehydrated curry leaf dust</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Palate Cleanser</h4><p>Guava Chili Sorbet with Kala Namak Air – A playful nod to Holi street flavors, guava, chili, and black salt balanced in a refreshing sorbet</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Entrée (Choice of One)</h4><p>Jackfruit & Morel Kofta with Kashmiri Chili Walnut Sauce <span class='text-sm text-gray-500'>(G)(N)(D)</span> – Crisp kofta stuffed with morel chunks & dust, served over silky chili walnut emulsion and beetroot crisps</p><p><strong>OR</strong></p><p>Seabass Moilee with Gunpowder Crumb – Pan-seared seabass glazed in Alleppey moilee, finished with curry leaf oil and crisp gunpowder crumbs</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Dessert</h4><p>Bhang Panna Cotta with Betel Leaf Dust & Fennel Meringue – A subtle and sophisticated twist on traditional Holi flavors</p><hr class='my-4'><p class='text-sm text-gray-500 italic'>D - Dairy | G - Gluten | N - Nuts</p></div>"
+          }
         }
       }
     },
