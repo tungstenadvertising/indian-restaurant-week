@@ -172,6 +172,55 @@ Resources:
             Path: /admin/upload
             Method: POST
 
+  # Press Kit Management Function
+  PressKitFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: irw-press-kit
+      CodeUri: lambda/press-kit/
+      Handler: index.handler
+      Timeout: 300  # 5 minutes for large ZIP generation
+      MemorySize: 1024  # 1GB for handling large files
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref MediaBucket
+      Events:
+        # List files in a category
+        ListFiles:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /admin/press-kit/files
+            Method: GET
+        # Delete a file
+        DeleteFile:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /admin/press-kit/files
+            Method: DELETE
+        # Get presigned URL for upload
+        UploadFile:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /admin/press-kit/upload
+            Method: POST
+        # Generate ZIP for a category
+        GenerateZip:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /admin/press-kit/generate-zip
+            Method: POST
+        # Get metadata (public - for press room page)
+        GetMetadata:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /admin/press-kit/metadata
+            Method: GET
+
 Outputs:
   ApiUrl:
     Description: API Gateway endpoint URL

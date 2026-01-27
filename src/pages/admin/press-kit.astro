@@ -1,0 +1,936 @@
+---
+/**
+ * Admin Press Kit Management
+ * Upload, delete, and manage press kit assets (photos, logos, press releases)
+ */
+import AdminLayout from '../../components/admin/AdminLayout.astro';
+
+const apiUrl = import.meta.env.PUBLIC_API_URL || '';
+const apiKey = import.meta.env.PUBLIC_ADMIN_API_KEY || 'irw-admin-secret-2024';
+const s3Bucket = import.meta.env.PUBLIC_S3_BUCKET || 'irw-media-uploads';
+---
+
+<AdminLayout title="Press Kit" activeSection="press-kit">
+  <div class="press-kit-manager">
+    <!-- Category Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-category="photos">
+        <svg class="tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        Photo Gallery
+      </button>
+      <button class="tab" data-category="logos">
+        <svg class="tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+        </svg>
+        Logos
+      </button>
+      <button class="tab" data-category="press-releases">
+        <svg class="tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        Press Releases
+      </button>
+    </div>
+
+    <!-- Subcategory Pills (for Photos only) -->
+    <div class="subcategories" id="subcategories">
+      <button class="subcategory-pill active" data-subcategory="interior">Interior Photos</button>
+      <button class="subcategory-pill" data-subcategory="food">Food Photos</button>
+      <button class="subcategory-pill" data-subcategory="chefs">Chef Photos</button>
+    </div>
+
+    <!-- Upload Zone -->
+    <div class="upload-zone" id="upload-zone">
+      <div class="upload-content">
+        <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+        </svg>
+        <p class="upload-text">Drag & drop files here, or <span class="upload-browse">browse</span></p>
+        <p class="upload-hint">Supported: JPG, PNG, WebP, GIF, PDF, SVG</p>
+      </div>
+      <input type="file" id="file-input" multiple accept="image/*,.pdf,.svg,.avif" hidden>
+    </div>
+
+    <!-- Upload Progress -->
+    <div class="upload-progress" id="upload-progress" style="display: none;">
+      <div class="progress-header">
+        <span>Uploading files...</span>
+        <span id="upload-count">0/0</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <!-- Files List -->
+    <div class="files-section">
+      <div class="files-header">
+        <h3 class="files-title">Files</h3>
+        <div class="files-actions">
+          <button class="btn-secondary" id="refresh-btn">
+            <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            Refresh
+          </button>
+        </div>
+      </div>
+      
+      <div class="files-list" id="files-list">
+        <div class="loading">Loading files...</div>
+      </div>
+    </div>
+
+    <!-- ZIP Status & Actions -->
+    <div class="zip-section">
+      <div class="zip-info">
+        <div class="zip-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+          </svg>
+        </div>
+        <div class="zip-details">
+          <div class="zip-name" id="zip-name">photos.zip</div>
+          <div class="zip-meta" id="zip-meta">
+            <span id="zip-size">--</span> • 
+            <span id="zip-updated">Not generated yet</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn-primary" id="generate-zip-btn">
+        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+        </svg>
+        Generate ZIP
+      </button>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+  </div>
+</AdminLayout>
+
+<style is:global>
+  .press-kit-manager {
+    max-width: 1000px;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    background: white;
+    padding: 0.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+  }
+
+  .tab:hover {
+    background: #f1f5f9;
+    color: #1e293b;
+  }
+
+  .tab.active {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+  }
+
+  .tab-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Subcategories */
+  .subcategories {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .subcategories.hidden {
+    display: none;
+  }
+
+  .subcategory-pill {
+    padding: 0.5rem 1rem;
+    border: 2px solid #e2e8f0;
+    background: white;
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 9999px;
+    transition: all 0.2s;
+  }
+
+  .subcategory-pill:hover {
+    border-color: #f59e0b;
+    color: #f59e0b;
+  }
+
+  .subcategory-pill.active {
+    background: #fef3c7;
+    border-color: #f59e0b;
+    color: #d97706;
+  }
+
+  /* Upload Zone */
+  .upload-zone {
+    background: white;
+    border: 2px dashed #e2e8f0;
+    border-radius: 1rem;
+    padding: 2.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 1.5rem;
+  }
+
+  .upload-zone:hover,
+  .upload-zone.dragover {
+    border-color: #f59e0b;
+    background: #fffbeb;
+  }
+
+  .upload-icon {
+    width: 48px;
+    height: 48px;
+    color: #f59e0b;
+    margin: 0 auto 1rem;
+  }
+
+  .upload-text {
+    color: #64748b;
+    margin-bottom: 0.5rem;
+  }
+
+  .upload-browse {
+    color: #f59e0b;
+    font-weight: 600;
+  }
+
+  .upload-hint {
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
+
+  /* Upload Progress */
+  .upload-progress {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    color: #64748b;
+  }
+
+  .progress-bar {
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    border-radius: 4px;
+    transition: width 0.3s;
+    width: 0%;
+  }
+
+  /* Files Section */
+  .files-section {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+
+  .files-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .files-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .files-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .files-list {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .loading {
+    padding: 2rem;
+    text-align: center;
+    color: #64748b;
+  }
+
+  .empty-state {
+    padding: 3rem;
+    text-align: center;
+    color: #94a3b8;
+  }
+
+  .empty-state svg {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 1rem;
+    opacity: 0.5;
+  }
+
+  /* File Row */
+  .file-row {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+    gap: 1rem;
+    transition: background 0.15s;
+  }
+
+  .file-row:last-child {
+    border-bottom: none;
+  }
+
+  .file-row:hover {
+    background: #f8fafc;
+  }
+
+  .file-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 0.5rem;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: #f1f5f9;
+  }
+
+  .file-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 0.5rem;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #64748b;
+  }
+
+  .file-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .file-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .file-name {
+    font-weight: 500;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0.25rem;
+  }
+
+  .file-meta {
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
+
+  .file-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .btn-icon-only {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: #f1f5f9;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #64748b;
+    transition: all 0.2s;
+  }
+
+  .btn-icon-only:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+  }
+
+  .btn-icon-only.delete:hover {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+
+  .btn-icon-only svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* ZIP Section */
+  .zip-section {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .zip-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .zip-icon {
+    width: 48px;
+    height: 48px;
+    background: #dbeafe;
+    color: #2563eb;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .zip-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .zip-name {
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+  }
+
+  .zip-meta {
+    font-size: 0.85rem;
+    color: #64748b;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    border: none;
+    border-radius: 0.5rem;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+  }
+
+  .btn-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 1rem 1.5rem;
+    background: #1e293b;
+    color: white;
+    border-radius: 0.75rem;
+    font-size: 0.9rem;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 1000;
+  }
+
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .toast.error {
+    background: #dc2626;
+  }
+
+  .toast.success {
+    background: #059669;
+  }
+</style>
+
+<script define:vars={{ apiUrl, apiKey, s3Bucket }}>
+  const API_URL = apiUrl;
+  const API_KEY = apiKey;
+  const S3_BUCKET = s3Bucket;
+  const USE_MOCK = !API_URL;
+
+  let currentCategory = 'photos';
+  let currentSubcategory = 'interior';
+
+  // Elements
+  const tabsEl = document.querySelectorAll('.tab');
+  const subcategoriesEl = document.getElementById('subcategories');
+  const subcategoryPillsEl = document.querySelectorAll('.subcategory-pill');
+  const uploadZoneEl = document.getElementById('upload-zone');
+  const fileInputEl = document.getElementById('file-input');
+  const uploadProgressEl = document.getElementById('upload-progress');
+  const uploadCountEl = document.getElementById('upload-count');
+  const progressFillEl = document.getElementById('progress-fill');
+  const filesListEl = document.getElementById('files-list');
+  const refreshBtn = document.getElementById('refresh-btn');
+  const generateZipBtn = document.getElementById('generate-zip-btn');
+  const zipNameEl = document.getElementById('zip-name');
+  const zipSizeEl = document.getElementById('zip-size');
+  const zipUpdatedEl = document.getElementById('zip-updated');
+  const toastEl = document.getElementById('toast');
+
+  // Toast notification
+  function showToast(message, type = 'info') {
+    toastEl.textContent = message;
+    toastEl.className = `toast show ${type}`;
+    setTimeout(() => {
+      toastEl.className = 'toast';
+    }, 3000);
+  }
+
+  // API helper
+  async function apiRequest(endpoint, options = {}) {
+    const url = `${API_URL}${endpoint}`;
+    const headers = {
+      'Content-Type': 'application/json',
+      'X-Api-Key': API_KEY,
+      ...options.headers,
+    };
+
+    const response = await fetch(url, { ...options, headers });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.message || error.error || `HTTP ${response.status}`);
+    }
+    return response.json();
+  }
+
+  // Load files for current category
+  async function loadFiles() {
+    filesListEl.innerHTML = '<div class="loading">Loading files...</div>';
+
+    try {
+      let files = [];
+      
+      if (USE_MOCK) {
+        // Mock data for development
+        await new Promise(r => setTimeout(r, 300));
+        files = getMockFiles();
+      } else {
+        const params = new URLSearchParams({ category: currentCategory });
+        if (currentCategory === 'photos') {
+          params.set('subcategory', currentSubcategory);
+        }
+        const result = await apiRequest(`/admin/press-kit/files?${params}`);
+        files = result.files || [];
+      }
+
+      if (files.length === 0) {
+        filesListEl.innerHTML = `
+          <div class="empty-state">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+            </svg>
+            <p>No files yet. Upload some files to get started.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filesListEl.innerHTML = files.map(file => renderFileRow(file)).join('');
+
+      // Add delete handlers
+      filesListEl.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', () => deleteFile(btn.dataset.key));
+      });
+
+    } catch (error) {
+      console.error('Failed to load files:', error);
+      filesListEl.innerHTML = `<div class="empty-state">Failed to load files. ${error.message}</div>`;
+    }
+  }
+
+  // Render file row
+  function renderFileRow(file) {
+    const isImage = /\.(jpg|jpeg|png|webp|gif)$/i.test(file.name);
+    const isPdf = /\.pdf$/i.test(file.name);
+    const isSvg = /\.svg$/i.test(file.name);
+
+    const thumbnail = isImage 
+      ? `<img src="${file.url || '#'}" alt="" class="file-thumb" loading="lazy">`
+      : `<div class="file-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            ${isPdf 
+              ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>'
+              : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>'}
+          </svg>
+        </div>`;
+
+    const date = file.lastModified ? new Date(file.lastModified).toLocaleDateString() : '--';
+
+    return `
+      <div class="file-row">
+        ${thumbnail}
+        <div class="file-info">
+          <div class="file-name">${file.name}</div>
+          <div class="file-meta">${file.sizeFormatted || '--'} • ${date}</div>
+        </div>
+        <div class="file-actions">
+          <a href="${file.url || '#'}" target="_blank" class="btn-icon-only" title="View">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+            </svg>
+          </a>
+          <button class="btn-icon-only delete btn-delete" data-key="${file.key}" title="Delete">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  // Delete file
+  async function deleteFile(key) {
+    if (!confirm('Are you sure you want to delete this file?')) return;
+
+    try {
+      if (USE_MOCK) {
+        await new Promise(r => setTimeout(r, 300));
+      } else {
+        await apiRequest(`/admin/press-kit/files?key=${encodeURIComponent(key)}`, {
+          method: 'DELETE',
+        });
+      }
+      showToast('File deleted successfully', 'success');
+      loadFiles();
+    } catch (error) {
+      console.error('Failed to delete file:', error);
+      showToast(`Failed to delete: ${error.message}`, 'error');
+    }
+  }
+
+  // Upload files
+  async function uploadFiles(files) {
+    if (files.length === 0) return;
+
+    uploadProgressEl.style.display = 'block';
+    let uploaded = 0;
+    const total = files.length;
+
+    for (const file of files) {
+      try {
+        uploadCountEl.textContent = `${uploaded + 1}/${total}`;
+        progressFillEl.style.width = `${((uploaded + 0.5) / total) * 100}%`;
+
+        if (USE_MOCK) {
+          await new Promise(r => setTimeout(r, 500));
+        } else {
+          // Get presigned URL
+          const uploadData = await apiRequest('/admin/press-kit/upload', {
+            method: 'POST',
+            body: JSON.stringify({
+              category: currentCategory,
+              subcategory: currentCategory === 'photos' ? currentSubcategory : null,
+              fileName: file.name,
+              contentType: file.type,
+            }),
+          });
+
+          // Upload to S3
+          const uploadResponse = await fetch(uploadData.uploadUrl, {
+            method: 'PUT',
+            body: file,
+            headers: { 'Content-Type': file.type },
+          });
+
+          if (!uploadResponse.ok) {
+            throw new Error('S3 upload failed');
+          }
+        }
+
+        uploaded++;
+        progressFillEl.style.width = `${(uploaded / total) * 100}%`;
+      } catch (error) {
+        console.error(`Failed to upload ${file.name}:`, error);
+        showToast(`Failed to upload ${file.name}`, 'error');
+      }
+    }
+
+    uploadProgressEl.style.display = 'none';
+    progressFillEl.style.width = '0%';
+
+    if (uploaded > 0) {
+      showToast(`Uploaded ${uploaded} file(s) successfully`, 'success');
+      loadFiles();
+    }
+  }
+
+  // Generate ZIP
+  async function generateZip() {
+    generateZipBtn.disabled = true;
+    generateZipBtn.innerHTML = `
+      <svg class="btn-icon animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+      </svg>
+      Generating...
+    `;
+
+    try {
+      let result;
+      if (USE_MOCK) {
+        await new Promise(r => setTimeout(r, 2000));
+        result = { zipSize: '5.2 MB', fileCount: 12, zipUrl: '#' };
+      } else {
+        result = await apiRequest('/admin/press-kit/generate-zip', {
+          method: 'POST',
+          body: JSON.stringify({ category: currentCategory }),
+        });
+      }
+
+      zipSizeEl.textContent = result.zipSize || '--';
+      zipUpdatedEl.textContent = `Updated just now (${result.fileCount} files)`;
+      showToast('ZIP generated successfully!', 'success');
+    } catch (error) {
+      console.error('Failed to generate ZIP:', error);
+      showToast(`Failed to generate ZIP: ${error.message}`, 'error');
+    } finally {
+      generateZipBtn.disabled = false;
+      generateZipBtn.innerHTML = `
+        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+        </svg>
+        Generate ZIP
+      `;
+    }
+  }
+
+  // Load metadata (ZIP info)
+  async function loadMetadata() {
+    try {
+      let metadata;
+      if (USE_MOCK) {
+        metadata = {
+          photos: { fileCount: 12, zipSize: '5.2 MB', lastUpdated: '2026-01-25T10:00:00Z' },
+          logos: { fileCount: 3, zipSize: '150 KB', lastUpdated: '2026-01-20T10:00:00Z' },
+          'press-releases': { fileCount: 2, zipSize: '1.2 MB', lastUpdated: '2026-01-15T10:00:00Z' },
+        };
+      } else {
+        const result = await apiRequest('/admin/press-kit/metadata');
+        metadata = result.metadata || {};
+      }
+
+      updateZipInfo(metadata[currentCategory]);
+    } catch (error) {
+      console.error('Failed to load metadata:', error);
+    }
+  }
+
+  // Update ZIP info display
+  function updateZipInfo(categoryMeta) {
+    zipNameEl.textContent = `${currentCategory}.zip`;
+    
+    if (categoryMeta && categoryMeta.lastUpdated) {
+      zipSizeEl.textContent = categoryMeta.zipSize || '--';
+      const date = new Date(categoryMeta.lastUpdated).toLocaleDateString();
+      zipUpdatedEl.textContent = `Updated ${date} (${categoryMeta.fileCount || 0} files)`;
+    } else {
+      zipSizeEl.textContent = '--';
+      zipUpdatedEl.textContent = 'Not generated yet';
+    }
+  }
+
+  // Mock files data
+  function getMockFiles() {
+    const mockData = {
+      photos: {
+        interior: [
+          { key: 'press-kit/photos/interior/restaurant-1.jpg', name: 'restaurant-1.jpg', sizeFormatted: '2.1 MB', lastModified: '2026-01-20', url: '/images/chefs/ranjan-dey/slides/slide-1.jpg' },
+          { key: 'press-kit/photos/interior/restaurant-2.jpg', name: 'restaurant-2.jpg', sizeFormatted: '1.8 MB', lastModified: '2026-01-20', url: '/images/chefs/ranjan-dey/slides/slide-2.jpg' },
+        ],
+        food: [
+          { key: 'press-kit/photos/food/dish-1.jpg', name: 'dish-1.jpg', sizeFormatted: '1.5 MB', lastModified: '2026-01-21', url: '/images/chefs/srijith-gopinathan/slides/slide-1.jpg' },
+        ],
+        chefs: [
+          { key: 'press-kit/photos/chefs/chef-1.jpg', name: 'chef-1.jpg', sizeFormatted: '800 KB', lastModified: '2026-01-19', url: '/images/chefs/ashish-tiwari/profile.png' },
+        ],
+      },
+      logos: [
+        { key: 'press-kit/logos/irw-logo.svg', name: 'irw-logo.svg', sizeFormatted: '12 KB', lastModified: '2026-01-15', url: '/images/global/irw-logo.svg' },
+        { key: 'press-kit/logos/irw-logo-white.svg', name: 'irw-logo-white.svg', sizeFormatted: '12 KB', lastModified: '2026-01-15', url: '/images/global/irw-logo-white.svg' },
+      ],
+      'press-releases': [
+        { key: 'press-kit/press-releases/irw-2026-announcement.pdf', name: 'irw-2026-announcement.pdf', sizeFormatted: '500 KB', lastModified: '2026-01-10', url: '#' },
+      ],
+    };
+
+    if (currentCategory === 'photos') {
+      return mockData.photos[currentSubcategory] || [];
+    }
+    return mockData[currentCategory] || [];
+  }
+
+  // Tab click handlers
+  tabsEl.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabsEl.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentCategory = tab.dataset.category;
+
+      // Show/hide subcategories
+      if (currentCategory === 'photos') {
+        subcategoriesEl.classList.remove('hidden');
+      } else {
+        subcategoriesEl.classList.add('hidden');
+      }
+
+      loadFiles();
+      loadMetadata();
+    });
+  });
+
+  // Subcategory click handlers
+  subcategoryPillsEl.forEach(pill => {
+    pill.addEventListener('click', () => {
+      subcategoryPillsEl.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      currentSubcategory = pill.dataset.subcategory;
+      loadFiles();
+    });
+  });
+
+  // Upload zone handlers
+  uploadZoneEl.addEventListener('click', () => fileInputEl.click());
+  
+  uploadZoneEl.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadZoneEl.classList.add('dragover');
+  });
+
+  uploadZoneEl.addEventListener('dragleave', () => {
+    uploadZoneEl.classList.remove('dragover');
+  });
+
+  uploadZoneEl.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadZoneEl.classList.remove('dragover');
+    uploadFiles(Array.from(e.dataTransfer.files));
+  });
+
+  fileInputEl.addEventListener('change', (e) => {
+    uploadFiles(Array.from(e.target.files));
+    e.target.value = '';
+  });
+
+  // Button handlers
+  refreshBtn.addEventListener('click', loadFiles);
+  generateZipBtn.addEventListener('click', generateZip);
+
+  // Initial load
+  loadFiles();
+  loadMetadata();
+
+  // Add spin animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+  `;
+  document.head.appendChild(style);
+</script>

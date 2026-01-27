@@ -6,6 +6,10 @@ import ContactForm from '../components/ContactForm.astro';
 import restaurantsJson from '../../public/data/restaurants.json';
 
 const restaurants = restaurantsJson.restaurants;
+
+// API config for press kit downloads
+const apiUrl = import.meta.env.PUBLIC_API_URL || '';
+const s3Bucket = import.meta.env.PUBLIC_S3_BUCKET || 'irw-media-uploads';
 ---
 
 <Layout title="Press Room - Indian Restaurant Week">
@@ -65,12 +69,14 @@ const restaurants = restaurantsJson.restaurants;
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-2">Logo Package</h3>
                     <p class="text-gray-600 mb-4 text-sm">Official logos in various formats (PNG, SVG, EPS)</p>
-                    <a href="#" class="inline-flex items-center text-irw-red font-bold hover:text-irw-orange transition-colors">
+                    <p class="text-xs text-gray-400 mb-3" id="logos-meta"></p>
+                    <a href="#" id="logos-download" class="inline-flex items-center text-irw-red font-bold hover:text-irw-orange transition-colors download-link" data-category="logos" style="display: none;">
                         Download
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 ml-1 download-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                         </svg>
                     </a>
+                    <span id="logos-unavailable" class="text-gray-400 text-sm">Coming soon</span>
                 </div>
 
                 <!-- Photo Gallery -->
@@ -83,12 +89,14 @@ const restaurants = restaurantsJson.restaurants;
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-2">Photo Gallery</h3>
                     <p class="text-gray-600 mb-4 text-sm">High-resolution images of chefs, dishes, and events</p>
-                    <a href="#" class="inline-flex items-center text-irw-red font-bold hover:text-irw-orange transition-colors">
+                    <p class="text-xs text-gray-400 mb-3" id="photos-meta"></p>
+                    <a href="#" id="photos-download" class="inline-flex items-center text-irw-red font-bold hover:text-irw-orange transition-colors download-link" data-category="photos" style="display: none;">
                         Download
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 ml-1 download-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                         </svg>
                     </a>
+                    <span id="photos-unavailable" class="text-gray-400 text-sm">Coming soon</span>
                 </div>
 
                 <!-- Press Release -->
@@ -100,12 +108,14 @@ const restaurants = restaurantsJson.restaurants;
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-2">Press Release</h3>
                     <p class="text-gray-600 mb-4 text-sm">Official announcements and event information</p>
-                    <a href="#" class="inline-flex items-center text-irw-red font-bold hover:text-irw-orange transition-colors">
+                    <p class="text-xs text-gray-400 mb-3" id="press-releases-meta"></p>
+                    <a href="#" id="press-releases-download" class="inline-flex items-center text-irw-red font-bold hover:text-irw-orange transition-colors download-link" data-category="press-releases" style="display: none;">
                         Download
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 ml-1 download-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                         </svg>
                     </a>
+                    <span id="press-releases-unavailable" class="text-gray-400 text-sm">Coming soon</span>
                 </div>
             </div>
         </div>
@@ -149,3 +159,77 @@ const restaurants = restaurantsJson.restaurants;
         </div>
     </section>
 </Layout>
+
+<script define:vars={{ apiUrl, s3Bucket }}>
+  /**
+   * Load press kit metadata and update download links
+   */
+  const API_URL = apiUrl;
+  const S3_BUCKET = s3Bucket;
+
+  async function loadPressKitMetadata() {
+    const categories = ['photos', 'logos', 'press-releases'];
+
+    // Initially hide all download links until we check availability
+    categories.forEach(category => {
+      const link = document.getElementById(`${category}-download`);
+      const unavailable = document.getElementById(`${category}-unavailable`);
+      if (link) link.style.display = 'none';
+      if (unavailable) unavailable.style.display = 'inline';
+    });
+
+    if (!API_URL) {
+      // No API - show "coming soon" for all
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/admin/press-kit/metadata`);
+      if (!response.ok) throw new Error('Failed to fetch metadata');
+      
+      const { metadata } = await response.json();
+
+      // Update each category based on availability
+      categories.forEach(category => {
+        const link = document.getElementById(`${category}-download`);
+        const metaEl = document.getElementById(`${category}-meta`);
+        const unavailable = document.getElementById(`${category}-unavailable`);
+        const categoryData = metadata[category];
+
+        // Check if ZIP is available (has been generated)
+        const isAvailable = categoryData && categoryData.lastUpdated && categoryData.zipUrl;
+
+        if (isAvailable) {
+          // Show download link, hide "coming soon"
+          if (link) {
+            link.href = categoryData.zipUrl;
+            link.setAttribute('download', '');
+            link.style.display = 'inline-flex';
+          }
+          if (unavailable) {
+            unavailable.style.display = 'none';
+          }
+
+          // Show metadata
+          if (metaEl) {
+            const parts = [];
+            if (categoryData.fileCount) parts.push(`${categoryData.fileCount} files`);
+            if (categoryData.zipSize) parts.push(categoryData.zipSize);
+            metaEl.textContent = parts.join(' • ');
+          }
+        } else {
+          // Hide download link, show "coming soon"
+          if (link) link.style.display = 'none';
+          if (unavailable) unavailable.style.display = 'inline';
+          if (metaEl) metaEl.textContent = '';
+        }
+      });
+    } catch (error) {
+      console.error('Failed to load press kit metadata:', error);
+      // On error, show "coming soon" for all (already set above)
+    }
+  }
+
+  // Load metadata on page load
+  loadPressKitMetadata();
+</script>
