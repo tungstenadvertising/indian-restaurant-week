@@ -71,6 +71,9 @@ Resources:
               - POST
             AllowedOrigins:
               - https://indianrestaurantweeksf.com
+              - https://www.indianrestaurantweeksf.com
+              - https://dev--indianrestaurantweeksf.netlify.app
+              - https://*.netlify.app
               - http://localhost:3000
               - http://localhost:4321
             ExposedHeaders:
