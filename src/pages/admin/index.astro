@@ -68,12 +68,7 @@ const apiKey = import.meta.env.PUBLIC_ADMIN_API_KEY || 'irw-admin-secret-2024';
           </svg>
         </div>
         <div class="stat-content">
-          <div class="stat-value-row">
-            <span id="total-inquiries">-</span>
-            <span class="new-badge" id="new-inquiries-badge" style="display: none;">
-              <span id="new-inquiries-count">0</span> new
-            </span>
-          </div>
+          <div class="stat-value" id="total-inquiries">-</div>
           <div class="stat-label">Inquiries</div>
         </div>
       </a>
@@ -216,29 +211,6 @@ const apiKey = import.meta.env.PUBLIC_ADMIN_API_KEY || 'irw-admin-secret-2024';
     font-weight: 700;
     color: #1e293b;
     line-height: 1;
-  }
-
-  .stat-value-row {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .stat-value-row span:first-child {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #1e293b;
-    line-height: 1;
-  }
-
-  .new-badge {
-    background: #ef4444;
-    color: white;
-    font-size: 0.65rem;
-    font-weight: 600;
-    padding: 0.125rem 0.375rem;
-    border-radius: 9999px;
-    white-space: nowrap;
   }
 
   .stat-label {
@@ -510,21 +482,10 @@ const apiKey = import.meta.env.PUBLIC_ADMIN_API_KEY || 'irw-admin-secret-2024';
   async function loadInquiriesStats() {
     const data = await fetchInquiries();
     const totalEl = document.getElementById('total-inquiries');
-    const newBadge = document.getElementById('new-inquiries-badge');
-    const newCountEl = document.getElementById('new-inquiries-count');
 
     if (data && data.submissions) {
       const total = data.total || data.submissions.length;
       if (totalEl) totalEl.textContent = total;
-
-      // Count "new" inquiries (last 7 days)
-      const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
-      const newCount = data.submissions.filter(s => new Date(s.createdAt).getTime() > sevenDaysAgo).length;
-
-      if (newCount > 0 && newBadge && newCountEl) {
-        newCountEl.textContent = newCount;
-        newBadge.style.display = 'inline-flex';
-      }
     } else {
       if (totalEl) totalEl.textContent = '0';
     }
