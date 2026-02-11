@@ -211,17 +211,6 @@
     z-index: -1;
 }
 
-/* Fix white gap at bottom */
-#footer img {
-
-    min-height: 100vh;
-    transform: scale(1.05) translate(0, 300px);
-    transform-origin: center bottom;
-    filter: brightness(0) saturate(0) blur(10px);
-}
-
-
-
 
 /* Chef Popup Styles */
 

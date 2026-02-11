@@ -293,12 +293,12 @@ function getActiveSeason() {
 // Get the active menu for a restaurant (seasonal or default)
 function getActiveMenu(restaurantData) {
     const activeSeason = getActiveSeason();
-    
+
     // Check if there's a seasonal menu for the active season
     if (activeSeason && restaurantData.popup?.seasonalMenus?.[activeSeason]) {
         return restaurantData.popup.seasonalMenus[activeSeason];
     }
-    
+
     // Fall back to the default menu
     return restaurantData.popup?.menu || null;
 }
@@ -306,12 +306,12 @@ function getActiveMenu(restaurantData) {
 // Get menu price - check seasonal menu first, then popup level
 function getActiveMenuPrice(restaurantData) {
     const activeMenu = getActiveMenu(restaurantData);
-    
+
     // If the active menu has its own price, use it
     if (activeMenu?.menuPrice) {
         return activeMenu.menuPrice;
     }
-    
+
     // Fall back to popup-level price
     return restaurantData.popup?.menuPrice || 'Price';
 }
@@ -839,50 +839,6 @@ if (document.querySelector('.meet-chefs-title-shape') && document.querySelector(
 
 
 
-// Function to set up footer fixed positioning and parallax
-function setupFooterParallax() {
-    // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (prefersReducedMotion) {
-        console.log('Reduced motion preference detected, skipping footer parallax');
-        return;
-    }
-
-    const footerImg = document.querySelector('#footer img');
-    if (!footerImg) return;
-
-    // Add fixed positioning when footer comes into view
-    ScrollTrigger.create({
-        trigger: "#footer",
-        start: "top bottom",
-        onEnter: () => {
-            footerImg.classList.add('fixed', 'bottom-0', 'left-0', 'right-0');
-        },
-        onLeaveBack: () => {
-            footerImg.classList.remove('fixed', 'bottom-0', 'left-0', 'right-0');
-        }
-    });
-
-    // Create subtle parallax effect using GSAP ScrollTrigger
-    gsap.to(footerImg, {
-        y: 0, // Move up 40px as user scrolls (subtle effect)
-        filter: "brightness(1) saturate(1) blur(0px)",
-        ease: "power2.in",
-        duration: 3,
-        scrollTrigger: {
-            trigger: "body", // Use body as trigger for full page scroll
-            start: "top top",
-            end: "bottom bottom",
-            scrub: 1, // Smooth scrubbing for subtle effect
-            invalidateOnRefresh: true,
-            onUpdate: () => {
-                // Force hardware acceleration
-                footerImg.style.transform = `translateY(${footerImg._gsap.y}px)`;
-            }
-        }
-    });
-}
 
 // Function to set up candles and courses images scroll animations
 function setupImageScrollAnimations() {
@@ -895,24 +851,24 @@ function setupImageScrollAnimations() {
     }
 
     // Animate candles image
-    const candlesImg = document.getElementById('candles-img');
-    if (candlesImg) {
+    const candlesImgContainer = document.getElementById('candles-img-container');
+    if (candlesImgContainer) {
         // Set initial state
-        gsap.set(candlesImg, {
+        gsap.set(candlesImgContainer, {
             opacity: 0,
             y: 10,
             scale: 0.95
         });
 
         // Create scroll trigger animation
-        gsap.to(candlesImg, {
+        gsap.to(candlesImgContainer, {
             opacity: 1,
             y: 0,
             scale: 1,
             duration: 1.2,
             ease: "power2.inOut",
             scrollTrigger: {
-                trigger: candlesImg,
+                trigger: candlesImgContainer,
                 start: "top 80%",
                 toggleActions: "play none none none",
                 once: true
@@ -1772,8 +1728,6 @@ function populateChefsList() {
     // Set up scroll animations for candles and courses images
     setupImageScrollAnimations();
 
-    // Set up footer parallax effect
-    setupFooterParallax();
 
 }
 
@@ -2388,7 +2342,7 @@ class DishPopup {
         // Update special menu name (supports seasonal menus)
         const menuNameElement = document.getElementById('dish-popup-menu-name');
         const activeMenu = getActiveMenu(restaurantData);
-        
+
         if (menuNameElement) {
             menuNameElement.textContent = activeMenu?.menuName || 'Special Menu';
 
@@ -2487,7 +2441,7 @@ class DishPopup {
 
         // Get active menu (seasonal or default)
         const activeMenu = getActiveMenu(restaurantData);
-        
+
         // Use menu content from the active menu
         if (activeMenu?.content) {
             menuContent.innerHTML = activeMenu.content;

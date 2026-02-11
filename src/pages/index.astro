@@ -4,9 +4,9 @@ import Navigation from '../components/Navigation.astro';
 import PopupWrapper from '../components/PopupWrapper.astro';
 import WaveDivider from '../components/WaveDivider.astro';
 import { Image } from 'astro:assets';
-import candlesImg from '../images/global/candles.png';
+import candlesImg from '../images/global/candles-2.png';
 import coursesImg from '../images/global/courses.png';
-import footerImg from '../images/global/footer.jpg';
+import footerImg from '../images/global/footer-2.jpg';
 import restaurantsJson from '../../public/data/restaurants.json';
 
 const restaurants = restaurantsJson.restaurants;
@@ -86,15 +86,18 @@ const restaurants = restaurantsJson.restaurants;
                         <h2 class="text-irw-red font-bold mb-4 text-balance irw-title">6 Chefs. 6 Stories. 1 Week of  Unforgettable Menus.</h2>
                         <p class="mt-4 xl:mt-6 text-lg sm:text-xl lg:text-2xl xl:text-[28px] text-pretty">This Holi, discover Indian fine dining like you've never tasted before.</p>
                     </div>
-                    <div class="md:w-1/3 order-2 md:order-2">
-                        <Image id="candles-img" src={candlesImg} alt="Candles" class="w-full h-auto max-w-xs" loading="lazy" fetchpriority="low" decoding="async" width={615} height={615} format="webp" />
+                    <div id="candles-img-container" class="md:w-1/3 order-2 md:order-2 flex justify-center" style="opacity: 0;">
+                        <div class="relative w-full max-w-xs aspect-square bg-irw-amber rounded-full">
+                            <!-- Image with border -->
+                            <Image id="candles-img" src={candlesImg} alt="Candles" class="relative w-full h-full rounded-full border-8 border-irw-yellow -translate-y-3 object-cover" loading="lazy" fetchpriority="low" decoding="async" width={615} height={615} format="webp" />
+                        </div>
                     </div>
                 </div>
 
                 <!-- Second section with courses image -->
                 <div class="flex flex-col md:flex-row items-center gap-8">
                     <div class="order-2 md:order-1 md:w-1/3">
-                        <Image id="courses-img" src={coursesImg} alt="Courses" class="w-full h-auto" loading="lazy" fetchpriority="low" decoding="async" width={772} height={500} format="webp" />
+                        <Image id="courses-img" src={coursesImg} alt="Courses" class="w-full h-auto" loading="lazy" fetchpriority="low" decoding="async" width={772} height={500} format="webp" style="opacity: 0;" />
                     </div>
                     <div class="flex-1 order-1 md:order-2">
                         <p class="mt-4 xl:mt-6 text-lg sm:text-xl lg:text-2xl xl:text-[28px] text-pretty">San Francisco's top Indian restaurants come together for a weeklong celebration of flavor, memory, and the art of Indian cuisine. Food is how we remember - moments, people,
@@ -169,18 +172,16 @@ const restaurants = restaurantsJson.restaurants;
         <WaveDivider class="-top-1" />
 
     </section>
-    <footer id="footer" class="relative">
+    <footer id="footer" class="relative aspect-video w-full overflow-hidden">
         <Image
             src={footerImg}
             alt="Footer Background"
-            class="w-full h-screen object-cover object-bottom -z-10"
-            style="will-change: transform; backface-visibility: hidden; transform-style: preserve-3d;"
+            class="absolute inset-0 w-full h-full object-cover object-bottom -z-10"
             loading="lazy"
             fetchpriority="low"
             decoding="async"
             width={1920}
             height={1080}
-
             format="webp"
             sizes="100vw"
             layout="constrained"
