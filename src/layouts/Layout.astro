@@ -48,6 +48,9 @@ const activeSeason = restaurantsJson.activeSeason || null;
     <link rel="preload" href="/images/global/irw-logo.svg" as="image" type="image/svg+xml">
     <!-- hero-texture uses LQIP blur-up, no preload needed -->
 
+    <!-- Page-specific head content (e.g. preloads) -->
+    <slot name="head" />
+
     <!-- Inject restaurant data at build time for instant access -->
     <script is:inline define:vars={{ restaurants, activeSeason }}>
         window.__RESTAURANTS__ = restaurants;

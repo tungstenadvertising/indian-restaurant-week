@@ -74,6 +74,28 @@
   filter: blur(0);
 }
 
+/* === SPRING EVENT HERO OVERLAY ===
+   Comment out this entire block to revert to default hero background */
+.hero-texture::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse 50% 50% at 50% 50%,
+      hsla(325, 70%, 82%, 0.9) 0%,
+      hsla(335, 55%, 45%, 0.75) 35%,
+      hsla(340, 45%, 38%, 0.35) 55%,
+      transparent 85%
+    ),
+    hsla(30, 82%, 52%,1);
+  pointer-events: none;
+  opacity: 0.9;
+  background-blend-mode: hue;
+  mix-blend-mode: difference;
+}
+/* === END SPRING EVENT HERO OVERLAY === */
+
 .page-texture {
     background-image: none;
     background-size: 30%;

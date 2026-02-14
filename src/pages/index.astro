@@ -10,9 +10,25 @@ import footerImg from '../images/global/footer-2.jpg';
 import restaurantsJson from '../../public/data/restaurants.json';
 
 const restaurants = restaurantsJson.restaurants;
+
+// Derive first restaurant's chef folder for hero image preload
+const firstDishPath = restaurants[0]?.images?.dish;
+const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
 ---
 
 <Layout>
+    {/* Preload first carousel dish image so it starts downloading immediately */}
+    {firstChefFolder && (
+        <Fragment slot="head">
+            <link
+                rel="preload"
+                as="image"
+                type="image/webp"
+                imagesrcset={`/images/chefs/${firstChefFolder}/dish-105w.webp 105w, /images/chefs/${firstChefFolder}/dish-140w.webp 140w, /images/chefs/${firstChefFolder}/dish-160w.webp 160w, /images/chefs/${firstChefFolder}/dish-180w.webp 180w, /images/chefs/${firstChefFolder}/dish-220w.webp 220w, /images/chefs/${firstChefFolder}/dish-280w.webp 280w, /images/chefs/${firstChefFolder}/dish-350w.webp 350w, /images/chefs/${firstChefFolder}/dish-440w.webp 440w`}
+                imagesizes="(max-width: 420px) 105px, (max-width: 580px) 140px, (max-width: 768px) 160px, (max-width: 1024px) 180px, 220px"
+            />
+        </Fragment>
+    )}
     <Navigation restaurants={restaurants} />
     <!-- Hero Section -->
     <section id="restaurants" class="min-h-screen flex flex-col justify-center items-center text-center text-white relative z-0 py-16 px-5 overflow-hidden">

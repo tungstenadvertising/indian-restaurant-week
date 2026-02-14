@@ -362,9 +362,7 @@ async function initializeMap() {
         // Load Mapbox dynamically
         const mapbox = await loadMapbox();
 
-        // You'll need to get a Mapbox access token from https://mapbox.com
-        // For now, let's use a demo token or you can get your own
-        mapbox.accessToken = 'pk.eyJ1IjoidHVuZ3N0ZW5hZHZlcnRpc2luZyIsImEiOiJja2dsZGNyZjAwMXltMnNqbzNrYTIwb210In0.PFX4yyFsRcpGMyQJV3uOkA';
+        mapbox.accessToken = import.meta.env.PUBLIC_MAPBOX_TOKEN;
 
         // Initialize the map
         map = new mapbox.Map({
@@ -1747,28 +1745,14 @@ class RestaurantCarousel {
         this.init();
     }
 
-    async init() {
-        // Wait for restaurants data to be loaded
-        await this.waitForRestaurantsData();
+    init() {
+        // Restaurant data is already loaded synchronously before this class is instantiated
+        this.restaurants = restaurants;
 
         if (this.restaurants.length > 0) {
             this.createCarousel();
             this.addEventListeners();
         }
-    }
-
-    async waitForRestaurantsData() {
-        return new Promise((resolve) => {
-            const checkData = () => {
-                if (typeof restaurants !== 'undefined' && restaurants.length > 0) {
-                    this.restaurants = restaurants;
-                    resolve();
-                } else {
-                    setTimeout(checkData, 100);
-                }
-            };
-            checkData();
-        });
     }
 
     createCarousel() {
@@ -2762,27 +2746,13 @@ class RestaurantDropdown {
         this.init();
     }
 
-    async init() {
-        // Wait for restaurants data to be loaded
-        await this.waitForRestaurantsData();
+    init() {
+        // Restaurant data is already loaded synchronously before this class is instantiated
+        this.restaurants = restaurants;
 
         if (this.restaurants.length > 0) {
             this.addEventListeners();
         }
-    }
-
-    async waitForRestaurantsData() {
-        return new Promise((resolve) => {
-            const checkData = () => {
-                if (typeof restaurants !== 'undefined' && restaurants.length > 0) {
-                    this.restaurants = restaurants;
-                    resolve();
-                } else {
-                    setTimeout(checkData, 100);
-                }
-            };
-            checkData();
-        });
     }
 
     addEventListeners() {
@@ -2984,39 +2954,35 @@ class RestaurantDropdown {
 
 // Initialize chef popup system when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Restaurant data is injected synchronously at build time via Layout.astro,
+    // so it's available immediately — no delay needed.
+    getRestaurantData();
 
-    // Wait for restaurants data to be loaded first
-    setTimeout(() => {
+    if (restaurants.length > 0) {
+        populateChefsList();
 
-        if (typeof restaurants !== 'undefined' && restaurants.length > 0) {
-            populateChefsList();
-
-            // Only initialize popups if their elements exist (index page only)
-            if (document.getElementById('chef-popup')) {
-                window.chefPopup = new ChefPopup();
-            }
-
-            if (document.getElementById('dish-popup')) {
-                window.dishPopup = new DishPopup();
-            }
-
-            if (document.getElementById('restaurant-carousel')) {
-                window.restaurantCarousel = new RestaurantCarousel();
-            }
-
-            // Initialize restaurant dropdown (works on all pages with nav)
-            window.restaurantDropdown = new RestaurantDropdown();
-
-            // Initialize the popup router AFTER popup systems are ready (only if popups exist)
-            if (window.chefPopup || window.dishPopup) {
-                window.popupRouter = new PopupRouter();
-            }
-        } else {
-            console.error('Restaurants data not available for chef popup initialization');
+        // Only initialize popups if their elements exist (index page only)
+        if (document.getElementById('chef-popup')) {
+            window.chefPopup = new ChefPopup();
         }
-    }, 1000);
 
+        if (document.getElementById('dish-popup')) {
+            window.dishPopup = new DishPopup();
+        }
 
+        if (document.getElementById('restaurant-carousel')) {
+            window.restaurantCarousel = new RestaurantCarousel();
+        }
 
+        // Initialize restaurant dropdown (works on all pages with nav)
+        window.restaurantDropdown = new RestaurantDropdown();
+
+        // Initialize the popup router AFTER popup systems are ready (only if popups exist)
+        if (window.chefPopup || window.dishPopup) {
+            window.popupRouter = new PopupRouter();
+        }
+    } else {
+        console.error('Restaurants data not available for chef popup initialization');
+    }
 });
 
