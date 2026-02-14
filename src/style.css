@@ -27,7 +27,7 @@
 }
 
 #logo-text {
-  font-size: clamp(30px, 5vw, 56px);
+  font-size: clamp(30px, 5vw, 49px);
   line-height: 0.8;
 }
 #ribbon {
