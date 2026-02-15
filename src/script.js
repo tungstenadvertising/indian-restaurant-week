@@ -838,68 +838,6 @@ if (document.querySelector('.meet-chefs-title-shape') && document.querySelector(
 
 
 
-// Function to set up candles and courses images scroll animations
-function setupImageScrollAnimations() {
-    // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (prefersReducedMotion) {
-        console.log('Reduced motion preference detected, skipping image scroll animations');
-        return;
-    }
-
-    // Animate candles image
-    const candlesImgContainer = document.getElementById('candles-img-container');
-    if (candlesImgContainer) {
-        // Set initial state
-        gsap.set(candlesImgContainer, {
-            opacity: 0,
-            y: 10,
-            scale: 0.95
-        });
-
-        // Create scroll trigger animation
-        gsap.to(candlesImgContainer, {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 1.2,
-            ease: "power2.inOut",
-            scrollTrigger: {
-                trigger: candlesImgContainer,
-                start: "top 80%",
-                toggleActions: "play none none none",
-                once: true
-            }
-        });
-    }
-
-    // Animate courses image
-    const coursesImg = document.getElementById('courses-img');
-    if (coursesImg) {
-        // Set initial state
-        gsap.set(coursesImg, {
-            opacity: 0,
-            y: 10,
-            scale: 0.95
-        });
-
-        // Create scroll trigger animation
-        gsap.to(coursesImg, {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 1.2,
-            ease: "power2.inOut",
-            scrollTrigger: {
-                trigger: coursesImg,
-                start: "top 80%",
-                toggleActions: "play none none none",
-                once: true
-            }
-        });
-    }
-}
 
 // URL Routing System for Popups
 class PopupRouter {
@@ -1722,9 +1660,6 @@ function populateChefsList() {
 
     // Set up GSAP animations for chefs after they are populated
     setupChefsAnimations();
-
-    // Set up scroll animations for candles and courses images
-    setupImageScrollAnimations();
 
 
 }
