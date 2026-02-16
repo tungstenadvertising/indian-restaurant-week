@@ -100,7 +100,7 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
             <div class="flow-root mb-8">
                 <h2 class="text-irw-red font-bold mb-4 text-balance irw-title">6 Chefs. 6 Stories. 1 Week of  Unforgettable Menus.</h2>
                 <div id="round-image-container" class="aspect-square bg-irw-yellow rounded-full" style="shape-outside: circle(50%); shape-margin: 20px;">
-                    <Image id="round-image" src={roundImage} alt="Candles" class="w-full h-full rounded-full  border-irw-amber object-cover" loading="lazy" fetchpriority="low" decoding="async" width={615} height={615} format="webp" />
+                    <Image id="round-image" src={roundImage} alt="Candles" class="w-full h-full rounded-full  border-irw-amber object-cover" loading="lazy" fetchpriority="low" decoding="async" widths={[200, 300, 420, 518]} sizes="(max-width: 639px) 60vw, (max-width: 799px) 50vw, (max-width: 1023px) 40vw, (max-width: 1279px) 45vw, 518px" format="webp" />
                 </div>
 
                 <p class="mt-4 xl:mt-6 text-lg sm:text-xl lg:text-2xl xl:text-[28px] text-pretty">This Holi, discover Indian fine dining like you've never tasted before.</p>
@@ -108,7 +108,7 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
 
                 <!-- Second section with courses image -->
                 <p class="mt-4 xl:mt-6 text-lg sm:text-xl lg:text-2xl xl:text-[28px] text-pretty">San Francisco's top Indian restaurants come together for a weeklong celebration of flavor, memory, and the art of Indian cuisine. Food is how we remember - moments, people, places. That's why each menu in Indian Restaurant Week is more than just a meal. It's a personal reflection from each chef rooted in childhood memories, regional heritage, and the spirit of Holi. And because food connects us so deeply to memory, this week isn't just a one-time celebration.</p>
-                <Image id="courses-img" src={coursesImg} alt="Courses" class="w-full h-auto" loading="lazy" fetchpriority="low" decoding="async" width={772} height={500} format="webp"/>
+                <Image id="courses-img" src={coursesImg} alt="Courses" class="w-full h-auto" loading="lazy" fetchpriority="low" decoding="async" widths={[280, 400, 560, 772]} sizes="(max-width: 479px) 70vw, (max-width: 1279px) 60vw, 772px" format="webp"/>
 
                 <!-- Third section with centered content -->
                 <h3 class="text-irw-red font-bold mb-4 irw-title mt-10 sm:mt-12 md:mt-16 lg:mt-30  text-balance text-right">What Is Indian Restaurant Week?</h3>
