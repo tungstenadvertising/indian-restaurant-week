@@ -179,14 +179,14 @@
         "restaurantTitleColor": "hsl(185, 50%, 15%)",
         "reserveTableShapeColor": "hsl(32, 81%, 52%)",
         "reservationLinkFillHover": "hsl(0, 61%, 55%)",
-        "menuPrice": "75 & 95",
+        "menuPrice": "75",
         "menuPriceColor": "hsl(185, 50%, 15%)",
         "chefBio": "Hailing from Kolkata, India, Chef Shibiraj is currently heading the culinary team at Amber India SF. He honed his talent by working at top hotel chains in different parts of India. In his long career he has received numerous culinary awards. We are excited to see what new directions Amber India SF will go toward under his leadership.",
         "menu": {
           "menuName": "Chef Curated Special Diwali Menu",
           "menuNameColor": "hsl(185, 50%, 15%)",
           "menuImage": "chefs/shibiraj-saha/menu-image.jpg",
-          "content": "<p>- 3 Course Menu = $75</p><p>- 4 Course Menu = $95</p>"
+          "content": "<p>- 3 Course Menu = $75</p>"
         }
       }
     },
