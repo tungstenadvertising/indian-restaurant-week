@@ -59,19 +59,34 @@
 }
 
 .hero-texture {
-  background-color: #341818;
-  /* Tiny 20x28 base64 placeholder - loads instantly */
-  background-image: url('data:image/webp;base64,UklGRkIAAABXRUJQVlA4IDYAAAAQAwCdASoUABwAPtFgqU+oJSOiKAgBABoJZQDH5BanFAAA/u+9PDPVpNIqAQm9Mv4XhxfgAAA=');
-  background-size: 125px 172px;
-  background-repeat: repeat;
-  image-rendering: auto;
-  filter: blur(2px);
-  transition: filter 0.4s ease-out;
+  background: var(--hero-bg-color, #fab2b2);
 }
 
-.hero-texture.loaded {
-  background-image: url('/images/global/hero-texture.webp');
-  filter: blur(0);
+.hero-texture::before {
+  content: '';
+  --pattern-size: 125px;
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background-color: var(--hero-pattern-color, #3c0024);
+  -webkit-mask-image: url('/images/global/hero-texture.svg');
+  -webkit-mask-size: var(--pattern-size);
+  -webkit-mask-repeat: repeat;
+  -webkit-mask-position: top;
+  mask-image: url('/images/global/hero-texture.svg');
+  mask-size: var(--pattern-size);
+  mask-repeat: repeat;
+  mask-position: top;
+
+  @media (width > 1024px) {
+    --pattern-size: 125px;
+  }
+  @media (width < 768px) {
+    --pattern-size: 100px;
+  }
+  @media (width < 480px) {
+    --pattern-size: 70px;
+  }
 }
 
 /* === SPRING EVENT HERO OVERLAY ===
@@ -79,10 +94,11 @@
 .hero-texture::after {
   content: '';
   position: absolute;
+  z-index: 1;
   inset: 0;
   background:
     radial-gradient(
-      ellipse 50% 50% at 50% 50%,
+      ellipse 50vw 50vh at 50% 50%,
       hsla(325, 70%, 82%, 0.9) 0%,
       hsla(335, 55%, 45%, 0.75) 35%,
       hsla(340, 45%, 38%, 0.35) 55%,
@@ -90,9 +106,9 @@
     ),
     hsla(30, 82%, 52%,1);
   pointer-events: none;
-  opacity: 0.9;
-  background-blend-mode: hue;
-  mix-blend-mode: difference;
+  opacity: .7;
+  /* background-blend-mode: hue; */
+  mix-blend-mode: overlay;
 }
 /* === END SPRING EVENT HERO OVERLAY === */
 

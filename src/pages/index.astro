@@ -1,12 +1,14 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
+import HeroSection from '../components/HeroSection.astro';
 import PopupWrapper from '../components/PopupWrapper.astro';
 import WaveDivider from '../components/WaveDivider.astro';
 import { Image } from 'astro:assets';
 import roundImage from '../images/global/holi-round-image.png';
 import coursesImg from '../images/global/courses.png';
 import footerImg from '../images/global/footer-2.png';
+import holiExplosion from '../images/global/holi-explosion.png';
 import restaurantsJson from '../../public/data/restaurants.json';
 
 const restaurants = restaurantsJson.restaurants;
@@ -27,12 +29,12 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
                 imagesrcset={`/images/chefs/${firstChefFolder}/dish-105w.webp 105w, /images/chefs/${firstChefFolder}/dish-140w.webp 140w, /images/chefs/${firstChefFolder}/dish-160w.webp 160w, /images/chefs/${firstChefFolder}/dish-180w.webp 180w, /images/chefs/${firstChefFolder}/dish-220w.webp 220w, /images/chefs/${firstChefFolder}/dish-280w.webp 280w, /images/chefs/${firstChefFolder}/dish-350w.webp 350w, /images/chefs/${firstChefFolder}/dish-440w.webp 440w`}
                 imagesizes="(max-width: 420px) 105px, (max-width: 580px) 140px, (max-width: 768px) 160px, (max-width: 1024px) 180px, 220px"
             />
+            <link rel="preload" as="image" type="image/svg+xml" href="/images/global/hero-texture.svg" />
         </Fragment>
     )}
     <Navigation restaurants={restaurants} />
     <!-- Hero Section -->
-    <section id="restaurants" class="min-h-screen flex flex-col justify-center items-center text-center text-white relative z-0 py-16 px-5 overflow-hidden">
-
+    <HeroSection id="restaurants" class="hero-section" overlayClass="hero-shade" waveClass="hero-bottom" patternColor="hsla(29, 27%, 59%, 0.2)" bgColor="linear-gradient(to right, hsla(245, 40%, 51%, 1), hsla(245, 60%, 44%, 1), hsla(245, 40%, 51%, 1))">
         <!-- Restaurant Carousel -->
         <div id="restaurant-carousel" class="relative w-full max-w-4xl mx-auto mb-8 z-30">
             <!-- Central Logo Display -->
@@ -62,35 +64,38 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
             </div>
 
             <!-- Restaurant Images Container -->
-            <div id="carousel-container" class="relative w-full h-full transform-3d transition-transform duration-[800ms] ease-smooth">
+            <div id="carousel-container" class="relative z-15 w-full h-full transform-3d transition-transform duration-[800ms] ease-smooth">
                 <!-- Restaurant images will be dynamically inserted here -->
             </div>
         </div>
-
-        <!-- Gradient Overlay -->
-        <div class="absolute flex flex-col inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10  hero-shade">
-        </div>
-        <div class="hero-texture bg-repeat bg-center absolute z-0 w-full h-full inset-0"></div>
-        <div class="mt-auto px-6 md:px-10 hero-bottom absolute z-50 grid place-items-center w-full bottom-0 translate-y-1">
-            <svg xmlns="http://www.w3.org/2000/svg"  fill="none" viewBox="0 0 1049 118" class="w-full max-w-6xl">
-                <path fill="#FDEFDA" d="M524.135.78c91.48 85.165 274.074 49.854 410.928 42.791 96.277-4.836 112.097 44.633 113.157 74.21H.48c1.044-29.708 17.12-78.933 113.091-74.21C250.426 50.634 432.655 85.945 524.135.781Z"/>
-            </svg>
-            <div
-                class="pointer-events-none absolute top-2/3 translate-y-1"
-                style="
-                    width: 50%;
-                    height: 60px;
-                    z-index: 0;
-                    filter: blur(15px);
-                    opacity: 0.5;
-                    background: radial-gradient(circle at 50% 50%, #A4865B, #FDEFDA);
-                ">
-            </div>
-
-
-        </div>
-
-    </section>
+        <!-- Holi Explosion Background -->
+        <Image
+            src={holiExplosion}
+            alt=""
+            aria-hidden="true"
+            id="holi-explosion-large"
+            class="holi-explosion pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 max-w-none object-contain select-none"
+            widths={[480, 720, 1024]}
+            sizes="(max-width: 480px) 480px, (max-width: 768px) 720px, 1024px"
+            format="webp"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+        />
+        <Image
+            src={holiExplosion}
+            id="holi-explosion-small"
+            alt=""
+            aria-hidden="true"
+            class="holi-explosion pointer-events-none absolute z-10 object-contain select-none"
+            widths={[480, 720, 1024]}
+            sizes="(max-width: 480px) 480px, (max-width: 768px) 720px, 1024px"
+            format="webp"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+        />
+    </HeroSection>
     <!-- Hero Section End -->
 
 
@@ -319,7 +324,40 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
 
 </Layout>
 
+<script>
+    import '../scripts/index-page.js';
+</script>
+
 <style>
+    .holi-explosion {
+        opacity: 0;
+    }
+    #holi-explosion-large {
+        width: 140%;
+        height: auto;
+        rotate: 10deg;
+        @media (width >= 640px) {
+            width: 110%;
+        }
+        @media (width >= 800px) {
+            width: 100%;
+        }
+        @media (width >= 1024px) {
+            width: 90%;
+        }
+        @media (width >= 1280px) {
+            width: 80%;
+        }
+
+    }
+    #holi-explosion-small {
+        width: 30%;
+        left: -13%;
+        bottom: -10%;
+        rotate: -123deg;
+    }
+
+
     #round-image-container {
         float: right;
         max-width: 600px;
@@ -482,6 +520,21 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+
+
+    gsap.fromTo('.holi-explosion', {
+        opacity: 0,
+        scale: 0,
+    }, {
+        opacity: 1,
+        duration: 5,
+        scale: 1,
+        ease: "power4.out",
+        stagger: 0.5,
+        scrollTrigger: {
+            trigger: '.holi-explosion',
+        }
+    });
 
     // Animate content images: sepia/desaturated to saturated
     document.querySelectorAll('#round-image-container, #courses-img').forEach(el => {
