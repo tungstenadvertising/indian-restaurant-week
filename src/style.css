@@ -64,7 +64,7 @@
 
 .hero-texture::before {
   content: '';
-  --pattern-size: 125px;
+  --pattern-size: 70px;
   position: absolute;
   z-index: 0;
   inset: 0;
@@ -78,7 +78,7 @@
   mask-repeat: repeat;
   mask-position: top;
 
-  @media (width > 1024px) {
+  /* @media (width > 1024px) {
     --pattern-size: 125px;
   }
   @media (width < 768px) {
@@ -86,7 +86,7 @@
   }
   @media (width < 480px) {
     --pattern-size: 70px;
-  }
+  } */
 }
 
 /* === SPRING EVENT HERO OVERLAY ===
