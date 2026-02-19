@@ -1,4 +1,5 @@
 {
+  "activeSeason": "holi",
   "restaurants": [
     {
       "id": "ashish_rooh",
@@ -45,6 +46,15 @@
           "menuNameColor": "hsl(230, 55%, 25%)",
           "menuImage": "chefs/ashish-tiwari/menu-image.jpg",
           "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Amuse Bouche</h4><p>Enchilada Bites – Enchilada tart topped with desi guacamole and a trio of zesty sauces</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course One (Vegetarian)</h4><p>Aloo Tikki Benedict – Spiced potato cakes topped with tempered vermicelli and Spinach & lime mousse</p><p><strong>OR</strong></p><p>Tofu Koliwada – Crispy Tofu with curry leaf-tomato pachdi, podi masala, and pickled chili</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course One (Non-Vegetarian)</h4><p>Coastal Balchao – Fiery Goan-style prawns, Naan wafer</p><p><strong>OR</strong></p><p>Tandoori Korma Chops – lamb Chops glazed in korma Sauce, masala aloo, dosa crisp</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course Two (Vegetarian)</h4><p>Quinoa & Spinach Kofta Curry – Soft koftas in a rich gravy, paired with paneer roulade</p><p><strong>OR</strong></p><p>Lentil Cake – Steamed lentil cakes, tangy yogurt sauce</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course Two (Non-Vegetarian)</h4><p>Butter Chicken – char-grilled chicken, Classic creamy smoked tomato curry</p><p><strong>OR</strong></p><p>Rangoon Shrimp Curry – Butter-tossed shrimp, peanut butter salan, bonito flakes</p><p><strong>Sides:</strong> Saffron rice, Rooh dal, and assorted Indian breads</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Dessert</h4><p>Kheer Cheesecake – A fusion of creamy cheesecake and traditional Indian rice pudding</p></div>"
+        },
+        "seasonalMenus": {
+          "holi": {
+            "menuName": "HOLI – The Festival of Color",
+            "menuPrice": "85",
+            "menuNameColor": "hsl(230, 55%, 25%)",
+            "menuImage": "chefs/ashish-tiwari/menu-image.jpg",
+            "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Amuse-Bouche</h4><p>Thandai Espuma with Saffron Caviar & Almond Crumble <span class='text-sm text-gray-500'>(D)</span> – Aromatic thandai mousse topped with edible flowers and almond dust, a chilled start to the festival of colors</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Appetizer (Choice of One)</h4><p>Awadhi Mushroom Éclair <span class='text-sm text-gray-500'>(D)(G)</span> – A delicate cardamom-scented choux shell filled with melt-in-the-mouth mushroom galouti, finished with dehydrated curry leaf dust</p><p><strong>OR</strong></p><p>Duck Galouti Éclair <span class='text-sm text-gray-500'>(D)(G)</span> – A delicate cardamom-scented choux shell filled with melt-in-the-mouth duck galouti, finished with dehydrated curry leaf dust</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Palate Cleanser</h4><p>Guava Chili Sorbet with Kala Namak Air – A playful nod to Holi street flavors, guava, chili, and black salt balanced in a refreshing sorbet</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Entrée (Choice of One)</h4><p>Jackfruit & Morel Kofta with Kashmiri Chili Walnut Sauce <span class='text-sm text-gray-500'>(G)(N)(D)</span> – Crisp kofta stuffed with morel chunks & dust, served over silky chili walnut emulsion and beetroot crisps</p><p><strong>OR</strong></p><p>Seabass Moilee with Gunpowder Crumb – Pan-seared seabass glazed in Alleppey moilee, finished with curry leaf oil and crisp gunpowder crumbs</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Dessert</h4><p>Bhang Panna Cotta with Betel Leaf Dust & Fennel Meringue – A subtle and sophisticated twist on traditional Holi flavors</p><hr class='my-4'><p class='text-sm text-gray-500 italic'>D - Dairy | G - Gluten | N - Nuts</p></div>"
+          }
         }
       }
     },
@@ -91,6 +101,15 @@
           "menuNameColor": "hsl(90, 50%, 12%)",
           "menuImage": "chefs/pujan-sarkar/menu-image.jpg",
           "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Canapés</h4><p>Pani Puri - Passion Fruit Water, Mango, Yuzu gel, Micro flower</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course 1</h4><p><strong>PULLED JACKFRUIT TACO A LA PLANCHA</strong></p><p>Green Tomatillo Pachadi, Pickled Onion, Cheese, Lime</p><p><strong>OR</strong></p><p><strong>LAMB KEEMA</strong></p><p>Potato Textures, Peas, Masala Babka</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course 2</h4><p><strong>TANDOORI CHICKEN FARCHA</strong></p><p>Smoked Makhni Espuma, Murgh Malai Kofta, Baby Radish Achar</p><p><strong>OR</strong></p><p><strong>PANEER SANDWICH</strong></p><p>Korma Sauce, Bellpepper Jam, Ginger</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Accompaniments To Share</h4><p>Saffron Pulao</p><p>Black Dairy Dal / Garlic/Plain Naan</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course 3 - Dessert</h4><p><strong>CHOCOLATE MURMURA PAVE</strong></p><p>fudge caramel, black rice papad, milk ice cream</p></div>"
+        },
+        "seasonalMenus": {
+          "holi": {
+            "menuName": "HOLI Menu",
+            "menuPrice": "95",
+            "menuNameColor": "hsl(230, 55%, 25%)",
+            "menuImage": "chefs/pujan-sarkar/menu-image.jpg",
+            "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Amuse</h4><p>- Welcome Toast</p><p>- Pani Puri [Hawk Creek Farm]: Passion   fruit, mango, avocado, flowers</p><p>- Samosa Cornetto: Tamarind gel, raspberry dust</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course 2</h4><p>- Shiso Chaat: Potato tikki, ragda mousse, raspberry</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course 3: Small Plate (Choose One)</h4><p>- Paneer Bhurji Cannoli Crisp: Rhubarb chutney, black garlic gel</p><p>- Tandoori Avocado: Green chickpea hummus, dosa crisp</p><p>- Bhuna Chicken Taco: Green tomatillo chokha, cheddar</p><p class='font-bold'>Supplement Courses</p><p>- Pepper Fry Morel Farcha: Madras curry, nira garlic thecha (+18)</p><p>- Tandoori Lamb Chops: Smoked onion, hemp seed chutney (+20)</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course 4: Entrée (Choose one)</h4><p>- Organic Paneer Polichettu: Malabar curry, bell pepper jam, ginger, podi masala</p><p>- Roasted Squash and Poblano Dumpling: Green saag gravy, lotus crisp, carrot chutney</p><p>- Classic Butter Chicken: Makhni gravy, fenugreek powder, cilantro oil</p><p><strong>Accompaniments</strong></p><p>- Dal Maharani, Garlic or Plain Naan</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course 5: Dessert (Choose one)</h4><p>- Chocolate Murmura Pave: Fudge caramel, black rice papad, milk ice cream</p><p>- Tender Coconut Payasam: Coconut ice cream, coconut jelly, coconut mousse (V)</p><hr class='my-4'><p class='text-sm text-gray-500 italic'>V - Vegan</p></div>"
+            }
         }
       }
     },
@@ -169,14 +188,14 @@
         "restaurantTitleColor": "hsl(185, 50%, 15%)",
         "reserveTableShapeColor": "hsl(32, 81%, 52%)",
         "reservationLinkFillHover": "hsl(0, 61%, 55%)",
-        "menuPrice": "75 & 95",
+        "menuPrice": "75",
         "menuPriceColor": "hsl(185, 50%, 15%)",
         "chefBio": "Hailing from Kolkata, India, Chef Shibiraj is currently heading the culinary team at Amber India SF. He honed his talent by working at top hotel chains in different parts of India. In his long career he has received numerous culinary awards. We are excited to see what new directions Amber India SF will go toward under his leadership.",
         "menu": {
           "menuName": "Chef Curated Special Diwali Menu",
           "menuNameColor": "hsl(185, 50%, 15%)",
           "menuImage": "chefs/shibiraj-saha/menu-image.jpg",
-          "content": "<p>- 3 Course Menu = $75</p><p>- 4 Course Menu = $95</p>"
+          "content": "<p>3 Course Menu = $75</p>"
         }
       }
     },
@@ -220,6 +239,15 @@
           "menuNameColor": "hsl(5, 65%, 45%)",
           "menuImage": "chefs/ranjan-dey/menu-image.jpg",
           "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Appetizer</h4><p>Alu Chat Croustade</p><p>Harra Keebab</p><p>Bengali Piyaju</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Mains</h4><p><strong>Bengali Fish Curry</strong> - Salmon with potatoes, eggplant, seasoned with Bengali five-spice blend</p><p><strong>Bengali Kosha Mangsho</strong> - Lamb curry delicacy from Kolkata cooked in mustard oil with potatoes</p><p><strong>Alu Phulkopi</strong> - Cauliflower & Potatoes seasoned with onion seeds served with Basmati Saffron Rice and Luchi (Poori)</p><p>Tomato Chutney</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Dessert</h4><p>Bengali Roshogolla</p></div>"
+        },
+        "seasonalMenus": {
+          "holi": {
+            "menuName": "Dol Jatra – Festival of Colors",
+            "menuPrice": "75",
+            "menuNameColor": "hsl(5, 65%, 45%)",
+            "menuImage": "chefs/ranjan-dey/menu-image.jpg",
+            "content": "<div class='space-y-4'><p class='text-center italic text-gray-600 mb-4'>A Bengali Springtime Multi-Course Feast</p><h4 class='font-bold text-lg text-irw-red'>Welcome Drink</h4><p><strong>Doi with Mishti Jhol</strong> – Light sweet yogurt infused with cardamom</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Shubho Aarombho (Starters)</h4><p><strong>Basanti Pulao Arancini</strong> – Crisp saffron-scented rice balls with a hint of cashew and raisin</p><p><strong>Koraishutir Kochuri</strong> – Flaky stuffed breads with green peas and Bengali garam masala</p><p class='italic text-sm'>Served with Tetul-Khejur Chaatni – Tamarind and date chutney with dry roasted spices</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Mains</h4><p><strong>Basanti Pulao</strong> – Fragrant yellow rice with ghee, saffron, and nuts</p><p><strong>Koshaa Mangsho</strong> – Slow-cooked goat curry with caramelized onions and garam masala</p><p><strong>Chingri Malaikari</strong> – Prawns simmered in coconut milk with bay leaf and whole spices</p><p><strong>Dhokar Dalna</strong> – Pan-fried lentil cakes in a tomato-ginger gravy</p><p><strong>Begun Bhaja</strong> – Crisp fried eggplant, simple, nostalgic, essential</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Mishti Mukh (Desserts)</h4><p><strong>Malpua with Rabri</strong> – Soft fritters soaked in syrup, served with warm sweetened condensed milk</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>After-Meal Ritual</h4><p><strong>Gondhoraj Lebu Chaa</strong> – Tea scented with fragrant Bengali lime, cleansing and uplifting</p></div>"
+          }
         }
       }
     },

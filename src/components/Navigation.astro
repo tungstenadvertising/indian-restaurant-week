@@ -1,6 +1,7 @@
 ---
 // Navigation Component
 // Handles both desktop and mobile navigation
+import ContactPopup from './ContactPopup.astro';
 
 interface Restaurant {
     id: string;
@@ -14,12 +15,15 @@ interface Props {
 }
 
 const { restaurants = [] } = Astro.props;
+
+const currentPath = Astro.url.pathname;
+const isHome = currentPath === '/';
 ---
 
 <nav class="w-full bg-irw-amber">
     <div class="max-w-6xl mx-auto px-5 flex items-center min-h-12 relative">
         <!-- Logo Ribbon -->
-        <div class="absolute top-0 z-50 text-2xl font-bold text-irw-orange max-w-[212px] w-1/2 sm:w-1/3 md:w-full" id="ribbon-container">
+        <a href="/" class="absolute left-0  top-0 z-50 text-2xl font-bold text-irw-orange max-w-[212px] w-1/2 sm:w-1/3 md:w-full block" id="ribbon-container">
             <svg id="ribbon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 277 712" class="absolute inset-0 m-auto w-full" style="filter: drop-shadow(8px 24px 10px hsla(0, 0%, 0%, 0.2));">
                 <path fill="url(#a)" stroke="#FDDCB6" stroke-width="6" d="m7.338 194.175-.132-.43c-11.19-36.561-.06-77.131 33.519-105.994l97.775-83.8 97.775 83.8c33.574 28.858 44.594 69.43 33.516 106.003l-.129.425v323.27l.132.429c11.189 36.562.061 77.131-33.519 105.994l-97.775 83.8-97.775-83.8C7.15 595.014-3.868 554.443 7.209 517.87l.129-.426V194.175Z"/>
                 <defs>
@@ -32,49 +36,72 @@ const { restaurants = [] } = Astro.props;
             </svg>
 
             <div class="relative z-10">
-                <img src="/images/global/irw-logo.svg" alt="Logo" width="250" height="250" class="mt-2 mb-0 mx-auto max-w-[212px] w-8/12 md:w-10/12 lg:w-11/12" fetchpriority="high" decoding="async">
-                <div id="logo-text" class="mt-0 tracking-tight text-irw-red text-center">Feb. 22 – <br>March 1, 2026</div>
+                <img id="desktop-logo" src="/images/global/irw-logo.svg" alt="Indian Restaurant Week - Home" width="250" height="250" class="mt-2 mb-0 mx-auto" fetchpriority="high" decoding="async">
+                <div id="logo-text" class="mt-2.5 tracking-wide text-irw-red text-center">March <br> 1–7 <br> 2026</div>
             </div>
-        </div>
+        </a>
 
         <!-- Desktop Navigation -->
         <div class="hidden md:flex ml-auto space-x-8 font-bold py-4 bg-irw-amber" id="nav-menu">
-            <!-- Restaurants Dropdown -->
-            <div class="relative group" id="restaurants-dropdown">
-                <a href="#restaurants" class="text-white hover:text-amber-200 transition-colors duration-500 relative group flex items-center">
-                    Restaurants
-                    <svg class="ml-1 w-4 h-4 transition-transform duration-500 ease-smooth group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-500 group-hover:w-full"></span>
-                </a>
-                <!-- Dropdown Menu -->
-                <div class="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-xl backdrop-blur opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-500 ease-smooth -translate-y-2.5 border border-black/10 z-50" id="restaurants-dropdown-menu">
-                    <div class="py-2">
-                        <div class="px-4 py-2 text-sm font-semibold text-gray-500 border-b border-gray-200">Choose a Restaurant</div>
-                        <div id="restaurant-dropdown-links" class="py-1">
-                            {restaurants.map(restaurant => (
-                                <a href="#" class="relative block px-4 py-3 restaurant-dropdown-link" data-restaurant-id={restaurant.id}>
-                                    <div class="font-bold restaurant-dropdown-link-name transition-all duration-1000 ease-smooth origin-left">{restaurant.name}</div>
-                                    <div class="text-sm text-gray-500 restaurant-dropdown-link-chef transition-all duration-1000 ease-smooth origin-left">{restaurant.chef}</div>
-                                </a>
-                            ))}
+            <a href="/" class="text-white hover:text-amber-100 transition-colors duration-300 relative group">
+                Home
+                <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-full"></span>
+            </a>
+
+            {isHome && (
+                <>
+                    <!-- Restaurants Dropdown -->
+                    <div class="relative group" id="restaurants-dropdown">
+                        <a href="#restaurants" class="text-white hover:text-amber-200 transition-colors duration-500 relative group flex items-center">
+                            Restaurants
+                            <svg class="ml-1 w-4 h-4 transition-transform duration-500 ease-smooth group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-500 group-hover:w-full"></span>
+                        </a>
+                        <!-- Dropdown Menu -->
+                        <div class="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-xl backdrop-blur opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-500 ease-smooth -translate-y-2.5 border border-black/10 z-50" id="restaurants-dropdown-menu">
+                            <div class="py-2">
+                                <div class="px-4 py-2 text-sm font-semibold text-gray-500 border-b border-gray-200">Choose a Restaurant</div>
+                                <div id="restaurant-dropdown-links" class="py-1">
+                                    {restaurants.map(restaurant => (
+                                        <a href="#" class="relative block px-4 py-3 restaurant-dropdown-link" data-restaurant-id={restaurant.id}>
+                                            <div class="font-bold restaurant-dropdown-link-name transition-all duration-1000 ease-smooth origin-left">{restaurant.name}</div>
+                                            <div class="text-sm text-gray-500 restaurant-dropdown-link-chef transition-all duration-1000 ease-smooth origin-left">{restaurant.chef}</div>
+                                        </a>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <a href="#chefs" class="text-white hover:text-amber-100 transition-colors duration-300 relative group">
-                Chefs
+                    <a href="#chefs" class="text-white hover:text-amber-100 transition-colors duration-300 relative group">
+                        Chefs
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="#location" class="text-white hover:text-amber-100 transition-colors duration-300 relative group">
+                        Location
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                </>
+                )
+            }
+
+            <a href="/press-room" class="text-white hover:text-amber-100 transition-colors duration-300 relative group">
+                Press
                 <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-full"></span>
             </a>
-            <a href="#location" class="text-white hover:text-amber-100 transition-colors duration-300 relative group">
-                Location
+            <a href="/media" class="text-white hover:text-amber-100 transition-colors duration-300 relative group">
+                Media
                 <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-full"></span>
             </a>
-            <a href="mailto:mbakshi@tungstenadvertising.com" target="_blank" class="text-white hover:text-amber-100 transition-colors duration-300 relative group">
+
+
+
+
+            <button type="button" id="contact-nav-btn" class="text-white hover:text-amber-100 transition-colors duration-300 relative group cursor-pointer">
                 Contact
                 <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-current transition-all duration-300 group-hover:w-full"></span>
-            </a>
+            </button>
         </div>
 
         <!-- Mobile Menu Toggle -->
@@ -108,34 +135,78 @@ const { restaurants = [] } = Astro.props;
             </div>
 
             <div class="flex flex-col justify-center h-full space-y-8 pt-10 text-[25px]" id="mobile-nav-menu">
-                <!-- Mobile Restaurants Dropdown -->
-                <div class="mobile-restaurants-dropdown">
-                    <button class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group flex items-center justify-between w-full" id="mobile-restaurants-toggle">
-                        <span>Restaurants</span>
-                        <svg class="w-5 h-5 transition-transform duration-300 ease-smooth" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </button>
-                    <div class="mobile-restaurants-dropdown-menu hidden mt-4 ml-4 space-y-4" id="mobile-restaurants-dropdown-menu">
-                        {restaurants.map(restaurant => (
-                            <a href="#" class="block text-white hover:text-amber-200 mobile-restaurant-link" data-restaurant-id={restaurant.id}>
-                                <div class="font-semibold text-lg mobile-restaurant-link-name">{restaurant.name}</div>
-                                <div class="text-sm opacity-80 mobile-restaurant-link-chef">{restaurant.chef}</div>
-                            </a>
-                        ))}
-                    </div>
-                </div>
-                <a href="#chefs" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
-                    Chefs
+                <a href="/" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
+                    Home
                 </a>
-                <a href="#location" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
-                    Location
+
+                {isHome && (
+                    <>
+                        <!-- Mobile Restaurants Dropdown -->
+                        <div class="mobile-restaurants-dropdown">
+                            <button class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group flex items-center justify-between w-full" id="mobile-restaurants-toggle">
+                                <span>Restaurants</span>
+                                <svg class="w-5 h-5 transition-transform duration-300 ease-smooth" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div class="mobile-restaurants-dropdown-menu hidden mt-4 ml-4 space-y-4" id="mobile-restaurants-dropdown-menu">
+                                {restaurants.map(restaurant => (
+                                    <a href="#" class="block text-white hover:text-amber-200 mobile-restaurant-link" data-restaurant-id={restaurant.id}>
+                                        <div class="font-semibold text-lg mobile-restaurant-link-name">{restaurant.name}</div>
+                                        <div class="text-sm opacity-80 mobile-restaurant-link-chef">{restaurant.chef}</div>
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+                        <a href="#chefs" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
+                            Chefs
+                        </a>
+                        <a href="#location" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
+                            Location
+                        </a>
+                    </>
+                )}
+
+
+
+                <a href="/press-room" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
+                    Press
                 </a>
-                <a href="mailto:mbakshi@tungstenadvertising.com" target="_blank" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
+                <a href="/media" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
+                    Media
+                </a>
+                <button type="button" id="contact-mobile-btn" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group text-left cursor-pointer">
                     Contact
-                </a>
+                </button>
             </div>
         </div>
     </div>
 </nav>
 
+<!-- Contact Popup -->
+<ContactPopup />
+
+<script>
+    // Contact button click handlers
+    document.addEventListener('DOMContentLoaded', () => {
+        const contactNavBtn = document.getElementById('contact-nav-btn');
+        const contactMobileBtn = document.getElementById('contact-mobile-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        const openContact = () => {
+            // Close mobile menu if open
+            if (mobileMenu?.classList.contains('translate-x-0')) {
+                mobileMenu.classList.remove('translate-x-0');
+                mobileMenu.classList.add('-translate-x-full');
+            }
+            // Open contact popup
+            if ((window as any).openContactPopup) {
+                (window as any).openContactPopup();
+            }
+        };
+
+        contactNavBtn?.addEventListener('click', openContact);
+        contactMobileBtn?.addEventListener('click', openContact);
+    });
+
+</script>

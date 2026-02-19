@@ -1,0 +1,14 @@
+# Netlify Configuration
+
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[functions]
+  directory = "netlify/functions"
+
+# Redirect for SPA-style routing (if needed)
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/:splat"
+  status = 200

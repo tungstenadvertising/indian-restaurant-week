@@ -1,0 +1,97 @@
+---
+/**
+ * Admin Comments Page (Placeholder)
+ * Comment moderation - Coming Soon
+ */
+import AdminLayout from '../../components/admin/AdminLayout.astro';
+---
+
+<AdminLayout title="Comments" activeSection="comments">
+  <div class="coming-soon">
+    <div class="coming-soon-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+      </svg>
+    </div>
+    <h2>Comments Moderation</h2>
+    <p>This feature is coming soon. You'll be able to:</p>
+    <ul>
+      <li>Review and approve public comments</li>
+      <li>Reject inappropriate content</li>
+      <li>Manage comment display on the website</li>
+    </ul>
+    <a href="/admin" class="btn-back">← Back to Dashboard</a>
+  </div>
+</AdminLayout>
+
+<style>
+  .coming-soon {
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .coming-soon-icon {
+    width: 80px;
+    height: 80px;
+    background: #fef3c7;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+
+  .coming-soon-icon svg {
+    width: 40px;
+    height: 40px;
+    color: #d97706;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: #64748b;
+    margin-bottom: 1rem;
+  }
+
+  ul {
+    text-align: left;
+    max-width: 300px;
+    margin: 0 auto 2rem;
+    color: #64748b;
+  }
+
+  li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  li:last-child {
+    border-bottom: none;
+  }
+
+  .btn-back {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: #f1f5f9;
+    color: #64748b;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .btn-back:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+  }
+</style>

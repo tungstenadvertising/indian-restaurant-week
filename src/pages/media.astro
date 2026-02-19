@@ -1,0 +1,271 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import HeroSection from '../components/HeroSection.astro';
+import WaveDivider from '../components/WaveDivider.astro';
+import restaurantsJson from '../../public/data/restaurants.json';
+
+const restaurants = restaurantsJson.restaurants;
+const apiUrl = import.meta.env.PUBLIC_API_URL || '';
+---
+
+<Layout title="Media - Indian Restaurant Week">
+    <Navigation restaurants={restaurants} />
+
+    <!-- Hero Section -->
+    <HeroSection minHeight="min-h-[60vh]" class="pb-24" patternColor="hsla(29, 27%, 59%, 0.2)" bgColor="linear-gradient(to right, hsla(245, 40%, 51%, 1), hsla(245, 60%, 44%, 1), hsla(245, 40%, 51%, 1))">
+        <div class="relative z-20 max-w-4xl mx-auto">
+            <h1 class="irw-title text-white font-bold mb-4">Media</h1>
+            <p class="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto text-pretty">
+                Discover the latest news, stories, and moments from Indian Restaurant Week
+            </p>
+        </div>
+    </HeroSection>
+
+    <!-- News Articles Section -->
+    <section id="news-articles" class="relative z-10 bg-irw-sand">
+        <div class="max-w-7xl mx-auto px-6 md:px-8 lg:px-16 py-16 lg:py-24">
+            <!-- Section Title -->
+            <div class="text-center mb-14 xl:mb-20">
+                <div class="flex items-center justify-center gap-6 mb-4">
+                    <!-- <div class="flex-1 max-w-[200px] overflow-hidden relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="320" height="19" fill="currentColor" viewBox="0 0 320 19" class="text-irw-red w-full">
+                            <path fill="currentColor" d="m.214 9.39 8.66 8.66 8.66-8.66L8.875.73.215 9.39Zm8.66 0v1.5h320.001v-3h-320v1.5Z"/>
+                        </svg>
+                    </div> -->
+                    <h2 class="irw-title text-irw-red font-bold whitespace-nowrap">News & Press</h2>
+                    <!-- <div class="flex-1 max-w-[200px] overflow-hidden relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="320" height="19" fill="currentColor" viewBox="0 0 320 19" class="text-irw-red w-full" style="transform: scaleX(-1)">
+                            <path fill="currentColor" d="m.214 9.39 8.66 8.66 8.66-8.66L8.875.73.215 9.39Zm8.66 0v1.5h320.001v-3h-320v1.5Z"/>
+                        </svg>
+                    </div> -->
+                </div>
+                <p class="text-xl md:text-2xl text-irw-red max-w-2xl mx-auto">
+                    The latest coverage and stories about Indian Restaurant Week
+                </p>
+            </div>
+
+            <!-- News Articles Grid -->
+            <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                <!-- Loading skeleton -->
+                <div class="loading-skeleton animate-pulse">
+                    <div class="bg-gray-200 h-48 rounded-t-2xl"></div>
+                    <div class="bg-white p-6 rounded-b-2xl">
+                        <div class="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                        <div class="h-6 bg-gray-200 rounded mb-3"></div>
+                        <div class="h-4 bg-gray-200 rounded mb-2"></div>
+                        <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                </div>
+                <div class="loading-skeleton animate-pulse hidden md:block">
+                    <div class="bg-gray-200 h-48 rounded-t-2xl"></div>
+                    <div class="bg-white p-6 rounded-b-2xl">
+                        <div class="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                        <div class="h-6 bg-gray-200 rounded mb-3"></div>
+                        <div class="h-4 bg-gray-200 rounded mb-2"></div>
+                        <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                </div>
+                <div class="loading-skeleton animate-pulse hidden lg:block">
+                    <div class="bg-gray-200 h-48 rounded-t-2xl"></div>
+                    <div class="bg-white p-6 rounded-b-2xl">
+                        <div class="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                        <div class="h-6 bg-gray-200 rounded mb-3"></div>
+                        <div class="h-4 bg-gray-200 rounded mb-2"></div>
+                        <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Load More Button (for future pagination) -->
+            <div class="text-center mt-12">
+                <button
+                    id="load-more-news"
+                    class="inline-flex items-center px-8 py-4 bg-irw-red text-white font-bold rounded-full hover:bg-irw-orange transition-all duration-300 ease-smooth transform hover:scale-105 shadow-lg hover:shadow-xl"
+                >
+                    <span>Load More Articles</span>
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Placeholder sections for future implementation -->
+    <!-- <section id="instagram-reels" class="relative z-10 bg-irw-amber py-16 lg:py-24">
+        <div class="max-w-7xl mx-auto px-6 md:px-8 lg:px-16">
+            <div class="text-center">
+                <h2 class="irw-title text-white font-bold mb-4">Instagram Reels</h2>
+                <p class="text-xl text-white/80">Coming Soon</p>
+            </div>
+        </div>
+    </section> -->
+
+    <!-- <section id="public-comments" class="relative z-10 bg-irw-sand py-16 lg:py-24">
+        <div class="max-w-7xl mx-auto px-6 md:px-8 lg:px-16">
+            <div class="text-center">
+                <h2 class="irw-title text-irw-red font-bold mb-4">Public Comments</h2>
+                <p class="text-xl text-gray-600">Coming Soon</p>
+            </div>
+        </div>
+    </section> -->
+
+    <!-- Footer Wave
+    <section class="relative z-10 bg-irw-amber">
+        <WaveDivider flip class="top-1" />
+        <div class="py-16 text-center">
+            <a href="/" class="inline-block">
+                <img src="/images/global/irw-logo-white.svg" alt="Indian Restaurant Week" class="w-24 h-24 mx-auto" loading="lazy">
+            </a>
+            <p class="text-white mt-4">© 2025 Indian Restaurant Week. All rights reserved.</p>
+        </div>
+    </section> -->
+</Layout>
+
+<style>
+    /* Line clamp utilities */
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* News card animations */
+    .news-card {
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .news-card:nth-child(1) { animation-delay: 0.1s; }
+    .news-card:nth-child(2) { animation-delay: 0.2s; }
+    .news-card:nth-child(3) { animation-delay: 0.3s; }
+    .news-card:nth-child(4) { animation-delay: 0.4s; }
+    .news-card:nth-child(5) { animation-delay: 0.5s; }
+    .news-card:nth-child(6) { animation-delay: 0.6s; }
+
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<script define:vars={{ apiUrl }}>
+    const API_URL = apiUrl;
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
+    function createArticleCard(article, index) {
+        const category = article.category || 'News';
+        const source = article.source || 'IRW';
+        const date = article.publishedAt || article.date || article.createdAt || article.created_at;
+        const readTime = article.readTime || '3 min read';
+        const sourceUrl = article.sourceUrl || '#';
+        const featuredImage = article.featuredImage || article.featured_image;
+
+        return `
+            <article
+                class="news-card group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 ease-smooth transform hover:-translate-y-2"
+                data-article-id="${article.id}"
+                style="animation-delay: ${(index + 1) * 0.1}s"
+            >
+                <div class="relative h-48 overflow-hidden bg-gradient-to-br from-irw-amber to-irw-orange">
+                    ${featuredImage ? `<img src="${featuredImage}" alt="${article.title}" class="absolute inset-0 w-full h-full object-cover z-0">` : ''}
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10"></div>
+                    <div class="absolute inset-0 opacity-20">
+                        <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <defs>
+                                <pattern id="pattern-${article.id}" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                                    <circle cx="10" cy="10" r="2" fill="white"/>
+                                </pattern>
+                            </defs>
+                            <rect width="100" height="100" fill="url(#pattern-${article.id})"/>
+                        </svg>
+                    </div>
+                    <span class="absolute top-4 left-4 z-20 bg-irw-red text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                        ${category}
+                    </span>
+
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center justify-between text-base text-gray-400 mb-4">
+                        <span class="font-semibold text-irw-red">${source}</span>
+                        <span>${formatDate(date)}</span>
+                    </div>
+                    <h3 class="text-3xl font-bold text-irw-black mb-3 group-hover:text-irw-red transition-colors duration-300 line-clamp-2">
+                        ${article.title}
+                    </h3>
+                    <p class="text-gray-600 mb-4 line-clamp-3">
+                        ${article.excerpt || ''}
+                    </p>
+                    <div class="flex items-center justify-between">
+                        <a
+                            href="${sourceUrl}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center text-irw-red font-bold hover:text-irw-orange transition-colors duration-300 group/link"
+                        >
+                            Read Article
+                            <svg class="w-4 h-4 ml-2 transform group-hover/link:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                            </svg>
+                        </a>
+                        <span class="text-sm text-gray-400">${readTime}</span>
+                    </div>
+                </div>
+            </article>
+        `;
+    }
+
+    async function loadArticles() {
+        const grid = document.getElementById('news-grid');
+
+        try {
+            const response = await fetch(`${API_URL}/articles?status=published`);
+            if (!response.ok) throw new Error('Failed to fetch');
+
+            const data = await response.json();
+            const articles = data.articles || [];
+
+            if (articles.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <p class="text-gray-500 text-lg">No articles yet. Check back soon!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = articles.map((article, index) => createArticleCard(article, index)).join('');
+        } catch (error) {
+            console.error('Error loading articles:', error);
+            grid.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <p class="text-gray-500 text-lg">Unable to load articles. Please try again later.</p>
+                </div>
+            `;
+        }
+    }
+
+    // Load articles when page is ready
+    document.addEventListener('DOMContentLoaded', loadArticles);
+</script>
+

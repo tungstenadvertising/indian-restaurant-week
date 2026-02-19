@@ -1,22 +1,40 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
+import HeroSection from '../components/HeroSection.astro';
 import PopupWrapper from '../components/PopupWrapper.astro';
 import WaveDivider from '../components/WaveDivider.astro';
 import { Image } from 'astro:assets';
-import candlesImg from '../images/global/candles.png';
+import roundImage from '../images/global/holi-round-image.png';
 import coursesImg from '../images/global/courses.png';
-import footerImg from '../images/global/footer.jpg';
+import footerImg from '../images/global/footer-2.png';
+import holiExplosion from '../images/global/holi-explosion.png';
 import restaurantsJson from '../../public/data/restaurants.json';
 
 const restaurants = restaurantsJson.restaurants;
+
+// Derive first restaurant's chef folder for hero image preload
+const firstDishPath = restaurants[0]?.images?.dish;
+const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
 ---
 
 <Layout>
+    {/* Preload first carousel dish image so it starts downloading immediately */}
+    {firstChefFolder && (
+        <Fragment slot="head">
+            <link
+                rel="preload"
+                as="image"
+                type="image/webp"
+                imagesrcset={`/images/chefs/${firstChefFolder}/dish-105w.webp 105w, /images/chefs/${firstChefFolder}/dish-140w.webp 140w, /images/chefs/${firstChefFolder}/dish-160w.webp 160w, /images/chefs/${firstChefFolder}/dish-180w.webp 180w, /images/chefs/${firstChefFolder}/dish-220w.webp 220w, /images/chefs/${firstChefFolder}/dish-280w.webp 280w, /images/chefs/${firstChefFolder}/dish-350w.webp 350w, /images/chefs/${firstChefFolder}/dish-440w.webp 440w`}
+                imagesizes="(max-width: 420px) 105px, (max-width: 580px) 140px, (max-width: 768px) 160px, (max-width: 1024px) 180px, 220px"
+            />
+            <link rel="preload" as="image" type="image/svg+xml" href="/images/global/hero-texture.svg" />
+        </Fragment>
+    )}
     <Navigation restaurants={restaurants} />
     <!-- Hero Section -->
-    <section id="restaurants" class="min-h-screen flex flex-col justify-center items-center text-center text-white relative z-0 py-16 px-5 overflow-hidden">
-
+    <HeroSection id="restaurants" class="hero-section" overlayClass="hero-shade" waveClass="hero-bottom" patternColor="hsla(29, 27%, 59%, 0.2)" bgColor="linear-gradient(to right, hsla(245, 40%, 51%, 1), hsla(245, 60%, 44%, 1), hsla(245, 40%, 51%, 1))">
         <!-- Restaurant Carousel -->
         <div id="restaurant-carousel" class="relative w-full max-w-4xl mx-auto mb-8 z-30">
             <!-- Central Logo Display -->
@@ -31,7 +49,7 @@ const restaurants = restaurantsJson.restaurants;
                                 class="logo-element"
                                 src={`${logoBasePath}/logo-176.webp`}
                                 srcset={`${logoBasePath}/logo-176.webp 176w, ${logoBasePath}/logo.webp 256w`}
-                                sizes="(max-width: 420px) 84px, (max-width: 580px) 112px, (max-width: 768px) 128px, (max-width: 1024px) 144px, 200px"
+                                sizes="(max-width: 420px) 84px, (max-width: 580px) 112px, (max-width: 768px) 128px, (max-width: 1024px) 144px, 176px"
                                 alt={`${restaurant.name} logo`}
                                 width="176"
                                 height="176"
@@ -46,68 +64,61 @@ const restaurants = restaurantsJson.restaurants;
             </div>
 
             <!-- Restaurant Images Container -->
-            <div id="carousel-container" class="relative w-full h-full transform-3d transition-transform duration-[800ms] ease-smooth">
+            <div id="carousel-container" class="relative z-15 w-full h-full transform-3d transition-transform duration-[800ms] ease-smooth">
                 <!-- Restaurant images will be dynamically inserted here -->
             </div>
         </div>
-
-        <!-- Gradient Overlay -->
-        <div class="absolute flex flex-col inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10  hero-shade">
-        </div>
-        <div class="hero-texture bg-repeat bg-center absolute z-0 w-full h-full inset-0"></div>
-        <div class="mt-auto px-6 md:px-10 hero-bottom absolute z-50 grid place-items-center w-full bottom-0 translate-y-1">
-            <svg xmlns="http://www.w3.org/2000/svg"  fill="none" viewBox="0 0 1049 118" class="w-full max-w-6xl">
-                <path fill="#FDEFDA" d="M524.135.78c91.48 85.165 274.074 49.854 410.928 42.791 96.277-4.836 112.097 44.633 113.157 74.21H.48c1.044-29.708 17.12-78.933 113.091-74.21C250.426 50.634 432.655 85.945 524.135.781Z"/>
-            </svg>
-            <div
-                class="pointer-events-none absolute top-2/3 translate-y-1"
-                style="
-                    width: 50%;
-                    height: 60px;
-                    z-index: 0;
-                    filter: blur(15px);
-                    opacity: 0.5;
-                    background: radial-gradient(circle at 50% 50%, #A4865B, #FDEFDA);
-                ">
-            </div>
-
-
-        </div>
-
-    </section>
+        <!-- Holi Explosion Background -->
+        <Image
+            src={holiExplosion}
+            alt=""
+            aria-hidden="true"
+            id="holi-explosion-large"
+            class="holi-explosion pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 max-w-none object-contain select-none"
+            widths={[480, 720, 1024]}
+            sizes="(max-width: 480px) 480px, (max-width: 768px) 720px, 1024px"
+            format="webp"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+        />
+        <Image
+            src={holiExplosion}
+            id="holi-explosion-small"
+            alt=""
+            aria-hidden="true"
+            class="holi-explosion pointer-events-none absolute z-10 object-contain select-none"
+            widths={[480, 720, 1024]}
+            sizes="(max-width: 480px) 480px, (max-width: 768px) 720px, 1024px"
+            format="webp"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+        />
+    </HeroSection>
     <!-- Hero Section End -->
-    <!-- Content Section -->
-    <section id="content-section" class="relative z-10 overflow-x-hidden pt-2" >
+
+
+    <section id="content-section" class="relative z-10 overflow-x-hidden pt-2">
         <div class="max-w-7xl mx-auto px-6 md:px-8 lg:px-16 py-10 lg:py-18 -mt-2 content-wrapper bg-irw-sand rounded-t-4xl relative z-20 " style="padding-bottom: calc(100vw / 1440 * 164 + 4vw);">
-            <div class="">
-                <!-- First section with candles image -->
-                <div class="flex flex-col md:flex-row items-center gap-8 mb-8">
-                    <div class="flex-1 order-1 md:order-1">
-                        <h2 class="text-irw-red font-bold mb-4 text-balance irw-title">6 Chefs. 6 Stories. 1 Week of  Unforgettable Menus.</h2>
-                        <p class="mt-4 xl:mt-6 text-lg sm:text-xl lg:text-2xl xl:text-[28px] text-pretty">This Holi, discover Indian fine dining like you've never tasted before.</p>
-                    </div>
-                    <div class="md:w-1/3 order-2 md:order-2">
-                        <Image id="candles-img" src={candlesImg} alt="Candles" class="w-full h-auto max-w-xs" loading="lazy" fetchpriority="low" decoding="async" width={615} height={615} format="webp" />
-                    </div>
+            <!-- First section with candles image -->
+            <div class="flex flex-col sm:flow-root mb-8">
+                <div id="round-image-container" class="aspect-square bg-irw-yellow rounded-full">
+                    <Image id="round-image" src={roundImage} alt="Candles" class="w-full h-full rounded-full  border-irw-amber object-cover" loading="lazy" fetchpriority="low" decoding="async" widths={[200, 300, 420, 518]} sizes="(max-width: 639px) 60vw, (max-width: 799px) 50vw, (max-width: 1023px) 40vw, (max-width: 1279px) 45vw, 518px" format="webp" width={518} height={518} />
                 </div>
+                <h2 class="text-irw-red -order-1 sm:order-none text-center sm:text-left font-bold mb-4 text-balance irw-title">6 Chefs. 6 Stories. 1 Week of  Unforgettable Menus.</h2>
+
+
+                <p class="mt-4 xl:mt-6 text-lg sm:text-xl lg:text-2xl xl:text-[28px] text-pretty">This Holi, discover Indian fine dining like you've never tasted before.</p>
+
 
                 <!-- Second section with courses image -->
-                <div class="flex flex-col md:flex-row items-center gap-8">
-                    <div class="order-2 md:order-1 md:w-1/3">
-                        <Image id="courses-img" src={coursesImg} alt="Courses" class="w-full h-auto" loading="lazy" fetchpriority="low" decoding="async" width={772} height={500} format="webp" />
-                    </div>
-                    <div class="flex-1 order-1 md:order-2">
-                        <p class="mt-4 xl:mt-6 text-lg sm:text-xl lg:text-2xl xl:text-[28px] text-pretty">San Francisco's top Indian restaurants come together for a weeklong celebration of flavor, memory, and the art of Indian cuisine. Food is how we remember - moments, people,
-                        places. That's why each menu in Indian Restaurant Week is more than just a meal. It's a personal reflection from each chef,
-                        rooted in childhood memories, regional heritage, and the spirit of Holi. And because food connects us so deeply to memory, this week isn't just a one-time celebration.</p>
-                    </div>
-                </div>
+                <p class="mt-4 xl:mt-6 text-lg sm:text-xl lg:text-2xl xl:text-[28px] text-pretty">San Francisco's top Indian restaurants come together for a weeklong celebration of flavor, memory, and the art of Indian cuisine. Food is how we remember - moments, people, places. That's why each menu in Indian Restaurant Week is more than just a meal. It's a personal reflection from each chef rooted in childhood memories, regional heritage, and the spirit of Holi. And because food connects us so deeply to memory, this week isn't just a one-time celebration.</p>
+                <Image id="courses-img" src={coursesImg} alt="Courses" class="w-full h-auto" loading="lazy" fetchpriority="low" decoding="async" widths={[280, 400, 560, 772]} sizes="(max-width: 479px) 70vw, (max-width: 1279px) 60vw, 772px" format="webp"/>
 
                 <!-- Third section with centered content -->
-                <div class="text-center">
-                    <h3 class="text-irw-red font-bold mb-4 irw-title mt-10 text-balance">What Is Indian Restaurant Week?</h3>
-                    <p class="text-lg sm:text-xl lg:text-2xl xl:text-[28px] text-pretty">A biannual culinary event where tradition meets innovation.Six chefs. Six stories. Six menus created just for this week. Rooted in the spirit of Holi, each dish is a personal tribute to home, heritage, and the joy of gathering.</p>
-                </div>
+                <h3 class="text-irw-red font-bold mb-4 irw-title mt-10 sm:mt-16 md:mt-20 lg:mt-30  text-balance text-center sm:text-right">What Is Indian Restaurant Week?</h3>
+                <p class="text-lg sm:text-xl lg:text-2xl xl:text-[28px] text-pretty text-center sm:text-right">A biannual culinary event where tradition meets innovation.Six chefs. Six stories. Six menus created just for this week. Rooted in the spirit of Holi, each dish is a personal tribute to home, heritage, and the joy of gathering.</p>
             </div>
 
             <div id="chefs">
@@ -169,18 +180,16 @@ const restaurants = restaurantsJson.restaurants;
         <WaveDivider class="-top-1" />
 
     </section>
-    <footer id="footer" class="relative">
+    <footer id="footer" class="relative aspect-video w-full overflow-hidden">
         <Image
             src={footerImg}
             alt="Footer Background"
-            class="w-full h-screen object-cover object-bottom -z-10"
-            style="will-change: transform; backface-visibility: hidden; transform-style: preserve-3d;"
+            class="absolute inset-0 w-full h-full object-cover object-bottom -z-10"
             loading="lazy"
             fetchpriority="low"
             decoding="async"
             width={1920}
             height={1080}
-
             format="webp"
             sizes="100vw"
             layout="constrained"
@@ -315,3 +324,256 @@ const restaurants = restaurantsJson.restaurants;
     </PopupWrapper>
 
 </Layout>
+
+<script>
+    import '../scripts/index-page.js';
+</script>
+
+<style>
+    .holi-explosion {
+        opacity: 0;
+    }
+    #holi-explosion-large {
+        width: 140%;
+        height: auto;
+        rotate: 10deg;
+        @media (width >= 640px) {
+            width: 110%;
+        }
+        @media (width >= 800px) {
+            width: 100%;
+        }
+        @media (width >= 1024px) {
+            width: 90%;
+        }
+        @media (width >= 1280px) {
+            width: 80%;
+        }
+
+    }
+    #holi-explosion-small {
+        width: 30%;
+        left: -13%;
+        bottom: -10%;
+        rotate: -123deg;
+    }
+
+
+    #round-image-container {
+
+        max-width: 400px;
+        width: 90%;
+        margin: 20px auto;
+        @media (width >= 640px) {
+            width: 60%;
+
+            float: right;
+            max-width: 600px;
+            shape-outside: circle(50%);
+            shape-margin: 20px;
+            margin: 0 -25% 20px 20px;
+        }
+        @media (width >= 800px) {
+            margin: 0 -20% 20px 20px;
+            width: 50%;
+        }
+        @media (width >= 900px) {
+            margin: 0 -8% 20px 20px;
+            width: 45%;
+        }
+        @media (width >= 1024px) {
+            margin: 0 -20% 20px 20px;
+            width: 40%;
+        }
+       #round-image {
+            --border-size: 7px;
+            border: var(--border-size) solid var(--color-irw-amber);
+            translate: 0 calc(var(--border-size) * -1.15);
+
+            filter: drop-shadow(0 2px 2px #fff);
+
+            @media (width >= 550px) {
+                --border-size: 8px;
+            }
+            @media (width >= 768px) {
+                --border-size: 10px;
+            }
+            @media (width >= 1024px) {
+                --border-size: 12px;
+            }
+            @media (width >= 1280px) {
+                --border-size: 14px;
+            }
+        }
+    }
+
+    #courses-img {
+        filter: drop-shadow(-41px 54px 30.8px #00000011) drop-shadow(-12px 11px 16.3px #000000ee);
+        width: 90%;
+        margin: 20px auto;
+        max-width: 400px;
+        @media (width >= 640px) {
+            max-width: 772px;
+            shape-outside: ellipse(70% 40% at 50% 50%); shape-margin: 20px;
+            float: left;
+            width: 60%;
+            margin: 20px 20px 20px -16%;
+        }
+        @media (width >= 800px) {
+            width: 60%;
+            margin: 20px 20px 20px -16%;
+        }
+    }
+
+    /* location section */
+    #location {
+        margin-top: calc(-1 * (100vw / 1440 * 164));
+        filter: drop-shadow(0 60px 30px #00000077);
+    }
+
+    :global(.location-list-item) {
+        line-height: 1.337;
+        @media (max-width: 768px) {
+            line-height: 1.2;
+        }
+        cursor: pointer;
+        transition: all 0.5s ease-in-out;
+        transform-origin: left center;
+        &:global(.hover), &:global(.active) {
+            scale: 1.15;
+            opacity: 1;
+        }
+    }
+
+    :global(.location-list-item-name) {
+        font-size: clamp(19px, 3.5vw, 25px);
+        transition: all 0.4s ease-out;
+    }
+
+    :global(.location-list-item-address) {
+        font-size: clamp(14px, 2.5vw, 18px);
+        transition: all 0.4s ease-out;
+    }
+
+    #restaurant-list {
+        padding-inline: 10px;
+        @media (width > 420px) {
+            padding-inline: 20px;
+        }
+        &:has(:global(.location-list-item.active), :global(.location-list-item.hover)) {
+            :global(.location-list-item:not(.active, .hover)) {
+                opacity: 0.7;
+            }
+        }
+    }
+
+    #map :global(.mapboxgl-canvas-container) {
+        height: 100% !important;
+    }
+
+    #map :global(.mapboxgl-canvas) {
+        height: 100% !important;
+        width: 100% !important;
+    }
+
+    :global(.restaurant-marker) {
+        color: var(--color-irw-red);
+        transition: transform 0.3s ease-out;
+        :global(.restaurant-marker-svg) {
+            transition: all 0.3s ease-in-out;
+            filter: brightness(1);
+            transform-origin: center bottom;
+        }
+    }
+
+    :global(.restaurant-marker.hover),
+    :global(.restaurant-marker:hover),
+    :global(.restaurant-marker.active) {
+        z-index: 1000;
+        svg {
+            filter: brightness(1.1) saturate(1.1);
+            scale: 1.5;
+        }
+    }
+
+    :global(.mapboxgl-canvas-container:has(.restaurant-marker.active, .restaurant-marker.hover, .restaurant-marker:hover) .restaurant-marker:not(.active, .hover, :hover)) {
+        transform: scale(1.5);
+        svg {
+            filter: saturate(0.5);
+            opacity: 0.9;
+        }
+    }
+
+
+    #footer {
+        height: clamp(200px, 100vw, 1000px);
+        margin-top: calc(-1 * (100vw / 1440 * 164));
+        z-index: -1;
+        img {
+            filter: saturate(0.7) contrast(0.7);
+        }
+    }
+</style>
+
+<script>
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+gsap.registerPlugin(ScrollTrigger);
+
+if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+
+
+    gsap.fromTo('.holi-explosion', {
+        opacity: 0,
+        scale: 0,
+    }, {
+        opacity: 1,
+        duration: 5,
+        scale: 1,
+        ease: "power4.out",
+        stagger: 0.5,
+        scrollTrigger: {
+            trigger: '.holi-explosion',
+        }
+    });
+
+    // Animate content images: sepia/desaturated to saturated
+    document.querySelectorAll('#round-image-container, #courses-img').forEach(el => {
+        gsap.set(el, { filter: 'sepia(1)', y:10, scale:0.95 });
+        gsap.to(el, {
+            filter: 'sepia(0)',
+            y:0,
+            scale:1,
+            duration: 1.2, ease: "none",
+            scrollTrigger: {
+                trigger: el,
+                end: "bottom 80%",
+                scrub: 3,
+            }
+        });
+    });
+
+
+    const footer = document.getElementById('footer');
+    if (footer) {
+        const footerImg = footer.querySelector('img');
+        if (footerImg) {
+            gsap.set(footerImg, { scale: 1.15, willChange: 'transform' });
+            gsap.fromTo(footerImg,
+                { yPercent: -30, filter: 'saturate(0.7) contrast(0.7)' },
+                {
+                    yPercent: 11,
+                    filter: 'saturate(1.1) contrast(1.05)',
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: footer,
+
+                        end: "bottom bottom",
+                        scrub: true,
+                    }
+                }
+            );
+        }
+    }
+}
+</script>

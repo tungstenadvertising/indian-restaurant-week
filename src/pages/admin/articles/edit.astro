@@ -1,0 +1,689 @@
+---
+/**
+ * Edit Article Page
+ * Form for editing an existing press mention/article
+ * URL: /admin/articles/edit?id=xxx
+ */
+import AdminLayout from '../../../components/admin/AdminLayout.astro';
+import { ARTICLE_CATEGORIES } from '../../../lib/config.js';
+
+const apiUrl = import.meta.env.PUBLIC_API_URL || '';
+const apiKey = import.meta.env.PUBLIC_ADMIN_API_KEY || 'irw-admin-secret-2024';
+---
+
+<AdminLayout title="Edit Article" activeSection="articles">
+  <div class="form-page">
+    <div class="form-header">
+      <a href="/admin/articles" class="back-link">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Back to Articles
+      </a>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading article...</p>
+    </div>
+
+    <form id="article-form" class="article-form" style="display: none;">
+      <input type="hidden" id="article-id" value="">
+
+      <div class="form-grid">
+        <!-- Main Content -->
+        <div class="form-main">
+          <div class="form-card">
+            <h2 class="card-title">Article Details</h2>
+
+            <div class="form-group">
+              <label for="title" class="form-label">Title *</label>
+              <input
+                type="text"
+                id="title"
+                name="title"
+                class="form-input"
+                placeholder="Enter article title"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="excerpt" class="form-label">Excerpt *</label>
+              <textarea
+                id="excerpt"
+                name="excerpt"
+                class="form-textarea"
+                rows="3"
+                placeholder="Brief description of the article (shown on cards)"
+                required
+              ></textarea>
+              <div class="form-hint">Keep it concise - this appears on the news card.</div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="source" class="form-label">Source / Publication *</label>
+                <input
+                  type="text"
+                  id="source"
+                  name="source"
+                  class="form-input"
+                  placeholder="e.g., SF Chronicle, Eater SF"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="sourceUrl" class="form-label">Source URL *</label>
+                <input
+                  type="url"
+                  id="sourceUrl"
+                  name="sourceUrl"
+                  class="form-input"
+                  placeholder="https://example.com/article"
+                  required
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Featured Image -->
+          <div class="form-card">
+            <h2 class="card-title">Featured Image</h2>
+
+            <div class="image-upload-area" id="image-upload-area">
+              <input type="file" id="image-input" accept="image/*" style="display: none;">
+              <input type="hidden" id="featured_image" name="featured_image">
+
+              <div class="upload-placeholder" id="upload-placeholder">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <span>Click or drag to upload image</span>
+                <span class="upload-hint">JPG, PNG, WebP (max 5MB)</span>
+              </div>
+
+              <div class="upload-preview" id="upload-preview" style="display: none;">
+                <img id="preview-image" src="" alt="Preview">
+                <button type="button" class="btn-remove-image" id="remove-image">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="upload-progress" id="upload-progress" style="display: none;">
+                <div class="progress-bar">
+                  <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <span>Uploading...</span>
+              </div>
+            </div>
+
+            <div class="form-hint">Optional. If no image is uploaded, a placeholder will be shown.</div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="form-sidebar">
+          <div class="form-card">
+            <h2 class="card-title">Publish</h2>
+
+            <div class="form-group">
+              <label for="status" class="form-label">Status</label>
+              <select id="status" name="status" class="form-select">
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="date" class="form-label">Date</label>
+              <input
+                type="date"
+                id="date"
+                name="date"
+                class="form-input"
+              >
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn-secondary" id="save-draft">Save Draft</button>
+              <button type="submit" class="btn-primary">Update</button>
+            </div>
+          </div>
+
+          <div class="form-card">
+            <h2 class="card-title">Organization</h2>
+
+            <div class="form-group">
+              <label for="category" class="form-label">Category</label>
+              <select id="category" name="category" class="form-select">
+                {ARTICLE_CATEGORIES.map(cat => (
+                  <option value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div class="form-card danger-zone">
+            <h2 class="card-title">Danger Zone</h2>
+            <button type="button" class="btn-danger" id="delete-btn">
+              Delete Article
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay" id="delete-modal" style="display: none;">
+    <div class="modal">
+      <h3>Delete Article</h3>
+      <p>Are you sure you want to delete this article? This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="cancel-delete">Cancel</button>
+        <button class="btn-danger" id="confirm-delete">Delete</button>
+      </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .form-page { max-width: 1100px; }
+  .form-header { margin-bottom: 1.5rem; }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #64748b;
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: #1e293b; }
+  .back-link svg { width: 18px; height: 18px; }
+  .loading-state { text-align: center; padding: 4rem; }
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e5e7eb;
+    border-top-color: #f59e0b;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 1rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 1.5rem;
+  }
+  @media (max-width: 900px) { .form-grid { grid-template-columns: 1fr; } }
+  .form-card {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .form-group { margin-bottom: 1.25rem; }
+  .form-group:last-child { margin-bottom: 0; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+  .form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.5rem;
+  }
+  .form-input, .form-textarea, .form-select {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0.625rem 0.875rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .form-input:focus, .form-textarea:focus, .form-select:focus {
+    outline: none;
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+  }
+  .form-textarea { resize: vertical; min-height: 80px; }
+  .form-hint { font-size: 0.75rem; color: #9ca3af; margin-top: 0.375rem; }
+  .image-upload-area {
+    border: 2px dashed #e5e7eb;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .image-upload-area:hover { border-color: #f59e0b; }
+  .upload-placeholder { padding: 2rem; text-align: center; color: #9ca3af; }
+  .upload-placeholder svg { width: 48px; height: 48px; margin-bottom: 0.75rem; }
+  .upload-placeholder span { display: block; }
+  .upload-hint { font-size: 0.75rem; margin-top: 0.25rem; }
+  .upload-preview { position: relative; }
+  .upload-preview img { width: 100%; height: 200px; object-fit: cover; }
+  .btn-remove-image {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 32px;
+    height: 32px;
+    background: rgba(0,0,0,0.5);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .btn-remove-image:hover { background: rgba(0,0,0,0.7); }
+  .btn-remove-image svg { width: 18px; height: 18px; }
+  .upload-progress { padding: 1rem; text-align: center; }
+  .progress-bar {
+    height: 4px;
+    background: #e5e7eb;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+  }
+  .progress-fill { height: 100%; background: #f59e0b; width: 0%; transition: width 0.3s; }
+  .form-actions { display: flex; gap: 0.75rem; margin-top: 1rem; }
+  .btn-primary, .btn-secondary {
+    flex: 1;
+    padding: 0.625rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    border: none;
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+  }
+  .btn-secondary {
+    background: white;
+    color: #64748b;
+    border: 2px solid #e5e7eb;
+  }
+  .btn-secondary:hover { border-color: #d1d5db; color: #1e293b; }
+  .danger-zone { border: 1px solid #fecaca; }
+  .danger-zone .card-title { color: #dc2626; }
+  .btn-danger {
+    width: 100%;
+    padding: 0.625rem 1rem;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-danger:hover { background: #b91c1c; }
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+  .modal {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    max-width: 400px;
+    width: 90%;
+  }
+  .modal h3 { font-size: 1.125rem; margin-bottom: 0.5rem; }
+  .modal p { color: #64748b; font-size: 0.875rem; margin-bottom: 1.5rem; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 0.75rem; }
+  .btn-cancel {
+    padding: 0.5rem 1rem;
+    background: #f1f5f9;
+    border: none;
+    border-radius: 0.5rem;
+    color: #64748b;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 1rem 1.5rem;
+    background: #1e293b;
+    color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 100;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { background: #059669; }
+  .toast.error { background: #dc2626; }
+</style>
+
+<script define:vars={{ apiUrl, apiKey }}>
+  const API_URL = apiUrl;
+  const API_KEY = apiKey;
+  const USE_MOCK = !API_URL;
+
+  // Get article ID from URL query params
+  const urlParams = new URLSearchParams(window.location.search);
+  const articleId = urlParams.get('id');
+
+  if (!articleId) {
+    alert('No article ID provided');
+    window.location.href = '/admin/articles';
+  }
+
+  document.getElementById('article-id').value = articleId;
+
+  async function fetchArticleById(id) {
+    const response = await fetch(`${API_URL}/admin/articles/${id}`, {
+      headers: { 'X-Api-Key': API_KEY }
+    });
+    if (!response.ok) throw new Error('Failed to fetch article');
+    return response.json();
+  }
+
+  async function updateArticleApi(id, data) {
+    const response = await fetch(`${API_URL}/admin/articles/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Api-Key': API_KEY
+      },
+      body: JSON.stringify(data)
+    });
+    if (!response.ok) throw new Error('Failed to update article');
+    return response.json();
+  }
+
+  async function deleteArticleApi(id) {
+    const response = await fetch(`${API_URL}/admin/articles/${id}`, {
+      method: 'DELETE',
+      headers: { 'X-Api-Key': API_KEY }
+    });
+    if (!response.ok) throw new Error('Failed to delete article');
+    return response.json();
+  }
+
+  async function uploadFileApi(file) {
+    const presignRes = await fetch(`${API_URL}/admin/upload`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Api-Key': API_KEY
+      },
+      body: JSON.stringify({
+        contentType: file.type,
+        fileName: file.name
+      })
+    });
+    if (!presignRes.ok) throw new Error('Failed to get upload URL');
+    const { uploadUrl, publicUrl } = await presignRes.json();
+
+    await fetch(uploadUrl, {
+      method: 'PUT',
+      body: file,
+      headers: { 'Content-Type': file.type }
+    });
+
+    return publicUrl;
+  }
+
+  // Load article data
+  async function loadArticle() {
+    try {
+      let article;
+
+      if (USE_MOCK) {
+        article = { id: articleId, title: 'Sample', excerpt: '', source: '', sourceUrl: '', category: 'News', status: 'draft', date: new Date().toISOString().split('T')[0] };
+      } else {
+        const response = await fetchArticleById(articleId);
+        article = response.article;
+      }
+
+      if (!article) {
+        showToast('Article not found', 'error');
+        setTimeout(() => window.location.href = '/admin/articles', 1000);
+        return;
+      }
+
+      // Populate form
+      document.getElementById('title').value = article.title || '';
+      document.getElementById('excerpt').value = article.excerpt || '';
+      document.getElementById('source').value = article.source || '';
+      document.getElementById('sourceUrl').value = article.sourceUrl || '';
+      document.getElementById('category').value = article.category || 'News';
+      document.getElementById('status').value = article.status || 'draft';
+
+      const dateValue = article.publishedAt || article.date || article.createdAt;
+      document.getElementById('date').value = dateValue ? new Date(dateValue).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+
+      if (article.featuredImage || article.featured_image) {
+        const imgUrl = article.featuredImage || article.featured_image;
+        document.getElementById('featured_image').value = imgUrl;
+        document.getElementById('preview-image').src = imgUrl;
+        document.getElementById('upload-placeholder').style.display = 'none';
+        document.getElementById('upload-preview').style.display = 'block';
+      }
+
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('article-form').style.display = 'block';
+
+    } catch (error) {
+      console.error('Failed to load article:', error);
+      showToast('Failed to load article: ' + error.message, 'error');
+    }
+  }
+
+  loadArticle();
+
+  // Image upload handling
+  const uploadArea = document.getElementById('image-upload-area');
+  const imageInput = document.getElementById('image-input');
+  const placeholder = document.getElementById('upload-placeholder');
+  const preview = document.getElementById('upload-preview');
+  const previewImage = document.getElementById('preview-image');
+  const progressEl = document.getElementById('upload-progress');
+  const progressFill = document.getElementById('progress-fill');
+  const featuredImageInput = document.getElementById('featured_image');
+
+  uploadArea.addEventListener('click', () => imageInput.click());
+
+  uploadArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadArea.classList.add('dragover');
+  });
+
+  uploadArea.addEventListener('dragleave', () => {
+    uploadArea.classList.remove('dragover');
+  });
+
+  uploadArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      handleImageUpload(file);
+    }
+  });
+
+  imageInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) handleImageUpload(file);
+  });
+
+  document.getElementById('remove-image').addEventListener('click', (e) => {
+    e.stopPropagation();
+    featuredImageInput.value = '';
+    preview.style.display = 'none';
+    placeholder.style.display = 'block';
+  });
+
+  async function handleImageUpload(file) {
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Image must be less than 5MB', 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      previewImage.src = e.target.result;
+      placeholder.style.display = 'none';
+      preview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+
+    if (!USE_MOCK) {
+      try {
+        placeholder.style.display = 'none';
+        preview.style.display = 'none';
+        progressEl.style.display = 'block';
+        progressFill.style.width = '30%';
+
+        const publicUrl = await uploadFileApi(file);
+
+        // Set the value IMMEDIATELY when upload completes
+        featuredImageInput.value = publicUrl;
+        previewImage.src = publicUrl;
+
+        progressFill.style.width = '100%';
+        setTimeout(() => {
+          progressEl.style.display = 'none';
+          preview.style.display = 'block';
+        }, 300);
+
+        showToast('Image uploaded!', 'success');
+      } catch (error) {
+        console.error('Upload failed:', error);
+        showToast('Failed to upload image', 'error');
+        progressEl.style.display = 'none';
+        placeholder.style.display = 'block';
+      }
+    } else {
+      featuredImageInput.value = previewImage.src;
+    }
+  }
+
+  // Form submission
+  const form = document.getElementById('article-form');
+  const saveDraftBtn = document.getElementById('save-draft');
+
+  saveDraftBtn.addEventListener('click', () => {
+    document.getElementById('status').value = 'draft';
+    form.requestSubmit();
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const featuredImg = formData.get('featured_image') || featuredImageInput.value || null;
+
+    const data = {
+      title: formData.get('title'),
+      excerpt: formData.get('excerpt'),
+      source: formData.get('source'),
+      sourceUrl: formData.get('sourceUrl'),
+      category: formData.get('category'),
+      date: formData.get('date'),
+      status: formData.get('status'),
+      featured_image: featuredImg,
+    };
+
+    console.log('Submitting data:', data);
+    console.log('Featured image value:', featuredImg);
+
+    try {
+      if (USE_MOCK) {
+        console.log('Would update:', data);
+        showToast('Article updated (dev mode)', 'success');
+        setTimeout(() => window.location.href = '/admin/articles', 1000);
+        return;
+      }
+
+      await updateArticleApi(articleId, data);
+      showToast('Article updated successfully!', 'success');
+      setTimeout(() => window.location.href = '/admin/articles', 1000);
+    } catch (error) {
+      console.error('Failed to update:', error);
+      showToast('Failed to update article: ' + error.message, 'error');
+    }
+  });
+
+  // Delete handling
+  document.getElementById('delete-btn').addEventListener('click', () => {
+    document.getElementById('delete-modal').style.display = 'flex';
+  });
+
+  document.getElementById('cancel-delete').addEventListener('click', () => {
+    document.getElementById('delete-modal').style.display = 'none';
+  });
+
+  document.getElementById('confirm-delete').addEventListener('click', async () => {
+    try {
+      if (!USE_MOCK) {
+        await deleteArticleApi(articleId);
+      }
+      showToast('Article deleted', 'success');
+      setTimeout(() => window.location.href = '/admin/articles', 1000);
+    } catch (error) {
+      console.error('Failed to delete:', error);
+      showToast('Failed to delete article', 'error');
+    }
+  });
+
+  document.getElementById('delete-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'delete-modal') {
+      document.getElementById('delete-modal').style.display = 'none';
+    }
+  });
+
+  // Toast notification
+  function showToast(message, type = 'success') {
+    document.querySelector('.toast')?.remove();
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+</script>

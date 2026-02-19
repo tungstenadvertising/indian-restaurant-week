@@ -27,17 +27,61 @@
 }
 
 #logo-text {
-  font-size: clamp(30px, 5vw, 56px);
+  font-size: 27px;
   line-height: 0.8;
-}
-#ribbon {
-  max-width: 180px;
-  translate: 0 -13%;
   @media (width > 400px) {
-    translate: 0 -10%;
+    font-size: 30px;
+  }
+  @media (width > 640px) {
+    font-size: 32px;
   }
   @media (width > 768px) {
-    translate: 0 -9%;
+    font-size: 35px;
+  }
+  @media (width > 920px) {
+    font-size: 40px;
+  }
+  @media (width > 1024px) {
+    font-size: 45px;
+  }
+  @media (width > 1280px) {
+    font-size: 49px;
+  }
+}
+#desktop-logo {
+  width: 90px;
+  @media (width > 400px) {
+    width: 100px;
+  }
+  @media (width > 640px) {
+    width: 110px;
+  }
+  @media (width > 768px) {
+    width: 120px;
+  }
+  @media (width > 920px) {
+    width: 130px;
+  }
+  @media (width > 1024px) {
+    width: 140px;
+  }
+  @media (width > 1280px) {
+    width: 150px;
+  }
+}
+#ribbon {
+  max-width: 120px;
+  translate: 0 -10%;
+
+  @media (width > 400px) {
+    max-width: 130px;
+    translate: 0 -6%;
+  }
+  @media (width > 640px) {
+    scale: 1;
+    translate: 0 -6%;
+  }
+  @media (width > 768px) {
     scale: 1.17;
   }
   @media (width > 920px) {
@@ -47,6 +91,10 @@
   @media (width > 1024px) {
     translate: 0 -12%;
     scale: 1.4;
+  }
+  @media (width > 1280px) {
+    translate: 0 -12%;
+    scale: 1.6;
   }
 }
 
@@ -59,20 +107,58 @@
 }
 
 .hero-texture {
-  background-color: #341818;
-  /* Tiny 20x28 base64 placeholder - loads instantly */
-  background-image: url('data:image/webp;base64,UklGRkIAAABXRUJQVlA4IDYAAAAQAwCdASoUABwAPtFgqU+oJSOiKAgBABoJZQDH5BanFAAA/u+9PDPVpNIqAQm9Mv4XhxfgAAA=');
-  background-size: 125px 172px;
-  background-repeat: repeat;
-  image-rendering: auto;
-  filter: blur(2px);
-  transition: filter 0.4s ease-out;
+  background: var(--hero-bg-color, #fab2b2);
 }
 
-.hero-texture.loaded {
-  background-image: url('/images/global/hero-texture.webp');
-  filter: blur(0);
+.hero-texture::before {
+  content: '';
+  --pattern-size: 125px;
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background-color: var(--hero-pattern-color, #3c0024);
+  -webkit-mask-image: url('/images/global/hero-texture.svg');
+  -webkit-mask-size: var(--pattern-size);
+  -webkit-mask-repeat: repeat;
+  -webkit-mask-position: top;
+  mask-image: url('/images/global/hero-texture.svg');
+  mask-size: var(--pattern-size);
+  mask-repeat: repeat;
+  mask-position: top;
+
+  /* @media (width > 1024px) {
+    --pattern-size: 125px;
+  }
+  @media (width < 768px) {
+    --pattern-size: 100px;
+  }
+  @media (width < 480px) {
+    --pattern-size: 70px;
+  } */
 }
+
+/* === SPRING EVENT HERO OVERLAY ===
+   Comment out this entire block to revert to default hero background */
+.hero-texture::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse 50vw 50vh at 50% 50%,
+      hsla(325, 70%, 82%, 0.9) 0%,
+      hsla(335, 55%, 45%, 0.75) 35%,
+      hsla(340, 45%, 38%, 0.35) 55%,
+      transparent 85%
+    ),
+    hsla(30, 82%, 52%,1);
+  pointer-events: none;
+  opacity: .7;
+  /* background-blend-mode: hue; */
+  mix-blend-mode: overlay;
+}
+/* === END SPRING EVENT HERO OVERLAY === */
 
 .page-texture {
     background-image: none;
@@ -85,141 +171,11 @@
     }
 }
 
-#candles-img {
-  /* width: min(50vw, 515px); */
-  shape-outside: circle(50%);
-  margin-right: -25%;
-  margin-top: 0px;
-  shape-margin: 20px;
-  /* @media (width >= 480px) {
-    margin-right: -25%;
-    margin-top: -40px;
-  }
-  @media (width >= 600px) {
-    margin-right: -25%;
-    margin-top: -80px;
-  }
-  @media (width >= 768px) {
-    margin-right: -25%;
-    margin-top: -140px;
-  }
-  @media (width >= 900px) {
-    margin-right: -17%;
-    margin-top: -160px;
-  } */
-
-}
-
-#courses-img {
-  /* margin-left: -15%; */
-  /* margin-top: 0px; */
-  /* shape-margin: 20px; */
-  /* width: clamp(250px, 70vw, 772px); */
-  /* shape-outside: ellipse(70% 40% at 50% 50%); */
-  filter: drop-shadow(-41px 54px 30.8px #00000022) drop-shadow(-12px 11px 16.3px #000000dd);
-}
-
-/* location section */
-#location {
-  margin-top: calc(-1 * (100vw / 1440 * 164));
-}
-.location-list-item {
-  line-height: 1.337;
-  @media (max-width: 768px) {
-    line-height: 1.2;
-  }
-  cursor: pointer;
-  transition: all 0.5s ease-in-out;
-  transform-origin: left center;
-  &.hover, &.active {
-    scale: 1.15;
-    opacity: 1;
-  }
-}
-.location-list-item-name {
-  font-size: clamp(19px, 3.5vw, 25px);
-  transition: all 0.4s ease-out;
-}
-
-.location-list-item-address {
-    font-size: clamp(14px, 2.5vw, 18px);
-    transition: all 0.4s ease-out;
-}
-#restaurant-list {
-  padding-inline: 10px;
-  @media (width > 420px) {
-    padding-inline: 20px;
-
-  }
-  &:has(.location-list-item.active, .location-list-item.hover) {
-    .location-list-item:not(.active,.hover) {
-      opacity: 0.7;
-    }
-  }
-}
-
-
-
-#map .mapboxgl-canvas-container {
-  height: 100% !important;
-}
-
-#map .mapboxgl-canvas {
-  height: 100% !important;
-  width: 100% !important;
-}
-
-/* Interactive Restaurant List Styles */
-
-
-/* Map marker active state */
-
-/* GSAP Animation Initial States */
-.restaurant-marker {
-  color:var(--color-irw-red);
-  transition: transform 0.3s ease-out;
-  .restaurant-marker-svg {
-    transition: all 0.3s ease-in-out;
-    filter: brightness(1);
-    transform-origin: center bottom;
-  }
-}
-.restaurant-marker.hover,
-.restaurant-marker:hover,
-.restaurant-marker.active {
-  z-index: 1000;
-  svg {
-    filter: brightness(1.1) saturate(1.1);
-    scale: 1.5;
-  }
-}
-.mapboxgl-canvas-container:has(.restaurant-marker.active, .restaurant-marker.hover, .restaurant-marker:hover) .restaurant-marker:not(.active, .hover, :hover) {
-  transform: scale(1.5);
-  svg {
-    filter: saturate(0.5);
-    opacity: 0.9;
-  }
-}
 
 
 
 
 /* Ensure footer overlaps with location-bottom */
-#footer {
-    height: clamp(200px, 100vw, 1000px);
-    margin-top: calc(-1 * (100vw / 1440 * 164));
-    z-index: -1;
-}
-
-/* Fix white gap at bottom */
-#footer img {
-
-    min-height: 100vh;
-    transform: scale(1.05) translate(0, 300px);
-    transform-origin: center bottom;
-    filter: brightness(0) saturate(0) blur(10px);
-}
-
 
 
 

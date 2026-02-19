@@ -1,0 +1,341 @@
+---
+/**
+ * Admin Layout Component
+ * Provides the sidebar navigation and header for admin pages
+ */
+
+interface Props {
+  title: string;
+  activeSection?: 'dashboard' | 'articles' | 'press-kit' | 'inquiries' | 'comments' | 'subscribers' | 'settings';
+}
+
+const { title, activeSection = 'dashboard' } = Astro.props;
+
+const navItems = [
+  { id: 'dashboard', label: 'Dashboard', href: '/admin', icon: 'dashboard' },
+  { id: 'articles', label: 'Articles', href: '/admin/articles', icon: 'article' },
+  { id: 'press-kit', label: 'Press Kit', href: '/admin/press-kit', icon: 'folder' },
+  { id: 'inquiries', label: 'Inquiries', href: '/admin/inquiries', icon: 'inbox' },
+  { id: 'comments', label: 'Comments', href: '/admin/comments', icon: 'comment', badge: 'Coming Soon' },
+  { id: 'subscribers', label: 'Subscribers', href: '/admin/subscribers', icon: 'email', badge: 'Coming Soon' },
+];
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{title} | IRW Admin</title>
+  <link rel="icon" type="image/svg+xml" href="/images/global/irw-logo.svg">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      min-height: 100vh;
+    }
+
+    .admin-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+      color: white;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      z-index: 50;
+    }
+
+    .sidebar-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .sidebar-logo {
+      width: 40px;
+      height: 40px;
+    }
+
+    .sidebar-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+    }
+
+    .sidebar-subtitle {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .sidebar-nav {
+      padding: 1rem 0;
+      flex: 1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.875rem 1.5rem;
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .nav-item:hover {
+      color: white;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .nav-item.active {
+      color: white;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #f59e0b;
+    }
+
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      opacity: 0.8;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      font-size: 0.625rem;
+      padding: 0.125rem 0.5rem;
+      background: rgba(255,255,255,0.1);
+      border-radius: 9999px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .sidebar-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      background: #f59e0b;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .user-name {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .user-role {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 260px;
+      min-height: 100vh;
+    }
+
+    .main-header {
+      background: white;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-logout {
+      padding: 0.5rem 1rem;
+      background: transparent;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      color: #64748b;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover {
+      background: #fee2e2;
+      border-color: #fecaca;
+      color: #dc2626;
+    }
+
+    .main-body {
+      padding: 2rem;
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <img src="/images/global/irw-logo.svg" alt="IRW" class="sidebar-logo">
+        <div>
+          <div class="sidebar-title">IRW Admin</div>
+          <div class="sidebar-subtitle">Content Management</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        {navItems.map((item) => (
+          <a
+            href={item.href}
+            class={`nav-item ${activeSection === item.id ? 'active' : ''}`}
+          >
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {item.icon === 'dashboard' && (
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+              )}
+              {item.icon === 'article' && (
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+              )}
+              {item.icon === 'folder' && (
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+              )}
+              {item.icon === 'inbox' && (
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+              )}
+              {item.icon === 'comment' && (
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+              )}
+              {item.icon === 'email' && (
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              )}
+            </svg>
+            <span>{item.label}</span>
+            {item.badge && <span class="nav-badge">{item.badge}</span>}
+          </a>
+        ))}
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="user-avatar">A</div>
+          <div>
+            <div class="user-name" id="user-name">Admin</div>
+            <div class="user-role">Administrator</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="main-header">
+        <h1 class="page-title">{title}</h1>
+        <div class="header-actions">
+          <a href="/" target="_blank" style="color: #64748b; text-decoration: none; font-size: 0.875rem;">
+            View Site →
+          </a>
+          <button class="btn-logout" id="logout-btn">Sign Out</button>
+        </div>
+      </header>
+
+      <div class="main-body">
+        <slot />
+      </div>
+    </main>
+  </div>
+
+  <script>
+    import { isAuthenticated, getCurrentUser, signOut } from '../../lib/auth.js';
+
+    // Check authentication
+    if (!isAuthenticated()) {
+      window.location.href = '/admin/login';
+    }
+
+    // Update user info
+    const user = getCurrentUser();
+    if (user) {
+      const avatarEl = document.getElementById('user-avatar');
+      const nameEl = document.getElementById('user-name');
+      if (avatarEl && user.email) {
+        avatarEl.textContent = user.email.charAt(0).toUpperCase();
+      }
+      if (nameEl && user.name) {
+        nameEl.textContent = user.name;
+      }
+    }
+
+    // Logout handler
+    document.getElementById('logout-btn')?.addEventListener('click', () => {
+      signOut();
+      window.location.href = '/admin/login';
+    });
+  </script>
+</body>
+</html>
