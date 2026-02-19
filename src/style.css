@@ -31,13 +31,17 @@
   line-height: 0.8;
 }
 #ribbon {
-  max-width: 180px;
-  translate: 0 -13%;
+  max-width: 140px;
+  translate: 0 -9%;
   @media (width > 400px) {
-    translate: 0 -10%;
+    max-width: 160px;
+    translate: 0 -6%;
+  }
+  @media (width > 640px) {
+    scale: 1;
+    translate: 0 -6%;
   }
   @media (width > 768px) {
-    translate: 0 -9%;
     scale: 1.17;
   }
   @media (width > 920px) {
@@ -64,7 +68,7 @@
 
 .hero-texture::before {
   content: '';
-  --pattern-size: 70px;
+  --pattern-size: 125px;
   position: absolute;
   z-index: 0;
   inset: 0;

@@ -101,6 +101,15 @@
           "menuNameColor": "hsl(90, 50%, 12%)",
           "menuImage": "chefs/pujan-sarkar/menu-image.jpg",
           "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Canapés</h4><p>Pani Puri - Passion Fruit Water, Mango, Yuzu gel, Micro flower</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course 1</h4><p><strong>PULLED JACKFRUIT TACO A LA PLANCHA</strong></p><p>Green Tomatillo Pachadi, Pickled Onion, Cheese, Lime</p><p><strong>OR</strong></p><p><strong>LAMB KEEMA</strong></p><p>Potato Textures, Peas, Masala Babka</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course 2</h4><p><strong>TANDOORI CHICKEN FARCHA</strong></p><p>Smoked Makhni Espuma, Murgh Malai Kofta, Baby Radish Achar</p><p><strong>OR</strong></p><p><strong>PANEER SANDWICH</strong></p><p>Korma Sauce, Bellpepper Jam, Ginger</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Accompaniments To Share</h4><p>Saffron Pulao</p><p>Black Dairy Dal / Garlic/Plain Naan</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course 3 - Dessert</h4><p><strong>CHOCOLATE MURMURA PAVE</strong></p><p>fudge caramel, black rice papad, milk ice cream</p></div>"
+        },
+        "seasonalMenus": {
+          "holi": {
+            "menuName": "HOLI Menu",
+            "menuPrice": "85",
+            "menuNameColor": "hsl(230, 55%, 25%)",
+            "menuImage": "chefs/ashish-tiwari/menu-image.jpg",
+            "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Amuse</h4><p>- Welcome Toast</p><p>- Pani Puri [Hawk Creek Farm]: Passion   fruit, mango, avocado, flowers</p><p>- Samosa Cornetto: Tamarind gel, raspberry dust</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course 2</h4><p>- Shiso Chaat: Potato tikki, ragda mousse, raspberry</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course 3: Small Plate (Choose One)</h4><p>- Paneer Bhurji Cannoli Crisp: Rhubarb chutney, black garlic gel</p><p>- Tandoori Avocado: Green chickpea hummus, dosa crisp</p><p>- Bhuna Chicken Taco: Green tomatillo chokha, cheddar</p><hr class='my-4'><p class='font-bold'>Supplement Courses</p><p>- Pepper Fry Morel Farcha: Madras curry, nira garlic thecha (+18)</p><p>- Tandoori Lamb Chops: Smoked onion, hemp seed chutney (+20)</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course 4: Entrée (Choose one)</h4><p>- Organic Paneer Polichettu: Malabar curry, bell pepper jam, ginger, podi masala</p><p>- Roasted Squash and Poblano Dumpling: Green saag gravy, lotus crisp, carrot chutney</p><p>- Classic Butter Chicken: Makhni gravy, fenugreek powder, cilantro oil</p><p><strong>Accompaniments</strong></p><p>- Dal Maharani, Garlic or Plain Naan</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course 5: Dessert (Choose one)</h4><p>- Chocolate Murmura Pave: Fudge caramel, black rice papad, milk ice cream</p><p>- Tender Coconut Payasam: Coconut ice cream, coconut jelly, coconut mousse (V)</p><hr class='my-4'><p class='text-sm text-gray-500 italic'>D - Dairy | G - Gluten | N - Nuts</p></div>"
+            }
         }
       }
     },
