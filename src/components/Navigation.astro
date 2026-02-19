@@ -138,29 +138,37 @@ const isHome = currentPath === '/';
                 <a href="/" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
                     Home
                 </a>
-                <!-- Mobile Restaurants Dropdown -->
-                <div class="mobile-restaurants-dropdown">
-                    <button class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group flex items-center justify-between w-full" id="mobile-restaurants-toggle">
-                        <span>Restaurants</span>
-                        <svg class="w-5 h-5 transition-transform duration-300 ease-smooth" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </button>
-                    <div class="mobile-restaurants-dropdown-menu hidden mt-4 ml-4 space-y-4" id="mobile-restaurants-dropdown-menu">
-                        {restaurants.map(restaurant => (
-                            <a href="#" class="block text-white hover:text-amber-200 mobile-restaurant-link" data-restaurant-id={restaurant.id}>
-                                <div class="font-semibold text-lg mobile-restaurant-link-name">{restaurant.name}</div>
-                                <div class="text-sm opacity-80 mobile-restaurant-link-chef">{restaurant.chef}</div>
-                            </a>
-                        ))}
-                    </div>
-                </div>
-                <a href="#chefs" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
-                    Chefs
-                </a>
-                <a href="#location" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
-                    Location
-                </a>
+
+                {isHome && (
+                    <>
+                        <!-- Mobile Restaurants Dropdown -->
+                        <div class="mobile-restaurants-dropdown">
+                            <button class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group flex items-center justify-between w-full" id="mobile-restaurants-toggle">
+                                <span>Restaurants</span>
+                                <svg class="w-5 h-5 transition-transform duration-300 ease-smooth" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div class="mobile-restaurants-dropdown-menu hidden mt-4 ml-4 space-y-4" id="mobile-restaurants-dropdown-menu">
+                                {restaurants.map(restaurant => (
+                                    <a href="#" class="block text-white hover:text-amber-200 mobile-restaurant-link" data-restaurant-id={restaurant.id}>
+                                        <div class="font-semibold text-lg mobile-restaurant-link-name">{restaurant.name}</div>
+                                        <div class="text-sm opacity-80 mobile-restaurant-link-chef">{restaurant.chef}</div>
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+                        <a href="#chefs" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
+                            Chefs
+                        </a>
+                        <a href="#location" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
+                            Location
+                        </a>
+                    </>
+                )}
+
+
+
                 <a href="/press-room" class="text-white hover:text-amber-200 font-bold transition-colors duration-300 mobile-nav-link relative group">
                     Press
                 </a>

@@ -102,11 +102,12 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
     <section id="content-section" class="relative z-10 overflow-x-hidden pt-2">
         <div class="max-w-7xl mx-auto px-6 md:px-8 lg:px-16 py-10 lg:py-18 -mt-2 content-wrapper bg-irw-sand rounded-t-4xl relative z-20 " style="padding-bottom: calc(100vw / 1440 * 164 + 4vw);">
             <!-- First section with candles image -->
-            <div class="flow-root mb-8">
-                <h2 class="text-irw-red font-bold mb-4 text-balance irw-title">6 Chefs. 6 Stories. 1 Week of  Unforgettable Menus.</h2>
-                <div id="round-image-container" class="aspect-square bg-irw-yellow rounded-full" style="shape-outside: circle(50%); shape-margin: 20px;">
-                    <Image id="round-image" src={roundImage} alt="Candles" class="w-full h-full rounded-full  border-irw-amber object-cover" loading="lazy" fetchpriority="low" decoding="async" widths={[200, 300, 420, 518]} sizes="(max-width: 639px) 60vw, (max-width: 799px) 50vw, (max-width: 1023px) 40vw, (max-width: 1279px) 45vw, 518px" format="webp" />
+            <div class="flex flex-col sm:flow-root mb-8">
+                <div id="round-image-container" class="aspect-square bg-irw-yellow rounded-full">
+                    <Image id="round-image" src={roundImage} alt="Candles" class="w-full h-full rounded-full  border-irw-amber object-cover" loading="lazy" fetchpriority="low" decoding="async" widths={[200, 300, 420, 518]} sizes="(max-width: 639px) 60vw, (max-width: 799px) 50vw, (max-width: 1023px) 40vw, (max-width: 1279px) 45vw, 518px" format="webp" width={518} height={518} />
                 </div>
+                <h2 class="text-irw-red -order-1 sm:order-none text-center sm:text-left font-bold mb-4 text-balance irw-title">6 Chefs. 6 Stories. 1 Week of  Unforgettable Menus.</h2>
+
 
                 <p class="mt-4 xl:mt-6 text-lg sm:text-xl lg:text-2xl xl:text-[28px] text-pretty">This Holi, discover Indian fine dining like you've never tasted before.</p>
 
@@ -116,8 +117,8 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
                 <Image id="courses-img" src={coursesImg} alt="Courses" class="w-full h-auto" loading="lazy" fetchpriority="low" decoding="async" widths={[280, 400, 560, 772]} sizes="(max-width: 479px) 70vw, (max-width: 1279px) 60vw, 772px" format="webp"/>
 
                 <!-- Third section with centered content -->
-                <h3 class="text-irw-red font-bold mb-4 irw-title mt-10 sm:mt-12 md:mt-16 lg:mt-30  text-balance text-right">What Is Indian Restaurant Week?</h3>
-                <p class="text-lg sm:text-xl lg:text-2xl xl:text-[28px] text-pretty text-right">A biannual culinary event where tradition meets innovation.Six chefs. Six stories. Six menus created just for this week. Rooted in the spirit of Holi, each dish is a personal tribute to home, heritage, and the joy of gathering.</p>
+                <h3 class="text-irw-red font-bold mb-4 irw-title mt-10 sm:mt-16 md:mt-20 lg:mt-30  text-balance text-center sm:text-right">What Is Indian Restaurant Week?</h3>
+                <p class="text-lg sm:text-xl lg:text-2xl xl:text-[28px] text-pretty text-center sm:text-right">A biannual culinary event where tradition meets innovation.Six chefs. Six stories. Six menus created just for this week. Rooted in the spirit of Holi, each dish is a personal tribute to home, heritage, and the joy of gathering.</p>
             </div>
 
             <div id="chefs">
@@ -359,27 +360,30 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
 
 
     #round-image-container {
-        float: right;
-        max-width: 600px;
-        shape-outside: circle(50%);
-        shape-margin: 20px;
-        width: 60%;
-        margin: 10px -25% 10px 10px;
 
+        max-width: 400px;
+        width: 90%;
+        margin: 20px auto;
         @media (width >= 640px) {
-            margin: -20px -15% 20px 20px;
-            width: 50%;
+            width: 60%;
+
+            float: right;
+            max-width: 600px;
+            shape-outside: circle(50%);
+            shape-margin: 20px;
+            margin: 0 -25% 20px 20px;
         }
         @media (width >= 800px) {
-            margin: -70px -8% 20px 20px;
-            width: 40%;
+            margin: 0 -20% 20px 20px;
+            width: 50%;
         }
         @media (width >= 900px) {
-            margin: -100px -8% 20px 20px;
+            margin: 0 -8% 20px 20px;
+            width: 45%;
         }
         @media (width >= 1024px) {
-            margin: -160px -20% 20px 20px;
-            width: 45%;
+            margin: 0 -20% 20px 20px;
+            width: 40%;
         }
        #round-image {
             --border-size: 7px;
@@ -405,16 +409,13 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
 
     #courses-img {
         filter: drop-shadow(-41px 54px 30.8px #00000011) drop-shadow(-12px 11px 16.3px #000000ee);
-        shape-outside: ellipse(70% 40% at 50% 50%); shape-margin: 20px;
-        float: left;
-        margin: 10px 10px 10px -46%;
-        width: 70%;
-        max-width: 772px;
-        @media (width >= 480px) {
-            width: 60%;
-            margin: 20px 20px 20px -26%;
-        }
+        width: 90%;
+        margin: 20px auto;
+        max-width: 400px;
         @media (width >= 640px) {
+            max-width: 772px;
+            shape-outside: ellipse(70% 40% at 50% 50%); shape-margin: 20px;
+            float: left;
             width: 60%;
             margin: 20px 20px 20px -16%;
         }
