@@ -192,7 +192,7 @@
         "menuPriceColor": "hsl(185, 50%, 15%)",
         "chefBio": "Hailing from Kolkata, India, Chef Shibiraj is currently heading the culinary team at Amber India SF. He honed his talent by working at top hotel chains in different parts of India. In his long career he has received numerous culinary awards. We are excited to see what new directions Amber India SF will go toward under his leadership.",
         "menu": {
-          "menuName": "Chef Curated Special Diwali Menu",
+          "menuName": "Chef Curated Special Holi Menu",
           "menuNameColor": "hsl(185, 50%, 15%)",
           "menuImage": "chefs/shibiraj-saha/menu-image.jpg",
           "content": "<p>3 Course Menu = $75</p>"
@@ -287,7 +287,7 @@
         "menuPriceColor": "hsl(135, 40%, 20%)",
         "chefBio": "Chef Srijith Gopinathan is a celebrated figure in the culinary world, particularly noted for his innovative approach to Indian cuisine. He earned two Michelin stars during his tenure at Campton Place in San Francisco, where he served as executive chef for 15 years. Originally from Kerala, India, Chef Gopinathan Gopinathan brings a personal touch to his cooking, drawing on family recipes and childhood memories. His other ventures include co-owning Ettan in Palo Alto and Little Blue Door in Los Altos, showcasing his diverse experience in the food industry.",
         "menu": {
-          "menuName": "Diwali at Copra",
+          "menuName": "Holi at Copra",
           "menuNameColor": "hsl(135, 40%, 20%)",
           "menuImage": "chefs/srijith-gopinathan/menu-image.jpg",
           "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Course One</h4><p>Green grape thayir vada, madras mix and mint</p><p>Brussel sprout sixty five with yoghurt, kothamalli chutney</p><p>Escarole, jicama, apple salad, masala sambaram vinaigrette and kara sev crumbs</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course Two</h4><p>Gongura palkatti korma, coconut and curry leaves with idiyappam</p><p>Kundapur lamb loin chop bydegi roast with mangalore lamb gravy and kal dosa</p><p>Travancore Valiya chemmeen curry, baby shallots, tamarind & steamed basmati rice</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Course Three</h4><p>Tropical halwa, candied citrus zest, mango crystals</p></div>"
