@@ -12,16 +12,10 @@ import footerImg from '../images/global/footer-2.png';
 import holiExplosion from '../images/global/holi-explosion.png';
 import restaurantsJson from '../../public/data/restaurants.json';
 
+import { isHoli, seasonName, heroBgColor, heroPatternColor } from '../seasonConfig';
+
 const restaurants = restaurantsJson.restaurants;
-const seasonName = restaurantsJson.activeSeason === 'holi' ? 'Holi' : 'Diwali';
-const roundImage = restaurantsJson.activeSeason === 'holi' ? holiRoundImage : candlesImage;
-const isHoli = restaurantsJson.activeSeason === 'holi';
-const heroBgColor = isHoli
-  ? 'linear-gradient(to right, hsla(245, 40%, 51%, 1), hsla(245, 60%, 44%, 1), hsla(245, 40%, 51%, 1))'
-  : 'hsla(0, 37%, 17%, 1)';
-const heroPatternColor = isHoli
-  ? 'hsla(29, 27%, 59%, 0.2)'
-  : 'hsla(1, 44%, 27%, .45)';
+const roundImage = isHoli ? holiRoundImage : candlesImage;
 
 // Derive first restaurant's chef folder for hero image preload
 const firstDishPath = restaurants[0]?.images?.dish;
@@ -44,7 +38,7 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
     )}
     <Navigation restaurants={restaurants} />
     <!-- Hero Section -->
-    <HeroSection id="restaurants" class={`hero-section season-${restaurantsJson.activeSeason}`} overlayClass="hero-shade" waveClass="hero-bottom" patternColor={heroPatternColor} bgColor={heroBgColor}>
+    <HeroSection id="restaurants" class="hero-section" overlayClass="hero-shade" waveClass="hero-bottom" patternColor={heroPatternColor} bgColor={heroBgColor}>
         <!-- Restaurant Carousel -->
         <div id="restaurant-carousel" class="relative w-full max-w-4xl mx-auto mb-8 z-30">
             <!-- Central Logo Display -->

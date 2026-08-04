@@ -55,7 +55,7 @@ const activeSeason = restaurantsJson.activeSeason || null;
         window.__ACTIVE_SEASON__ = activeSeason;
     </script>
 </head>
-<body class="text-gray-800 text-lg leading-relaxed overflow-x-hidden scroll-smooth">
+<body data-season={activeSeason} class="text-gray-800 text-lg leading-relaxed overflow-x-hidden scroll-smooth">
     <slot />
     <script>
         import '../scripts/shared.js';

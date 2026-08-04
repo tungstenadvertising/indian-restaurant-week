@@ -27,6 +27,7 @@
 }
 
 #logo-text {
+  scale: 0.82;
   font-size: 27px;
   line-height: 0.8;
   @media (width > 400px) {

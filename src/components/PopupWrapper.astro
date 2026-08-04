@@ -1,4 +1,6 @@
 ---
+import { isHoli } from '../seasonConfig';
+
 interface Props {
   id: string;
   containerClass?: string;
@@ -14,9 +16,13 @@ const {
   closeIconSize = 18,
   closeLabelSize = 'text-xs'
 } = Astro.props;
+
+const dishOverlayBg = isHoli
+  ? 'bg-[hsl(245_50_21)]/95'
+  : 'bg-[#341818]/95';
 ---
 
-<div id={id} class:list={["fixed inset-0 z-50 hidden", wrapperClass]}>
+<div id={id} class:list={["fixed inset-0 z-70 hidden", wrapperClass]}>
   <div class:list={[`${id}-container`, containerClass, "z-10 relative"]}>
     <!-- Close Button -->
     <div class="absolute z-10 top-2 right-2 flex flex-col items-center" id={`${id}-close-container`}>
@@ -34,6 +40,6 @@ const {
 
     <slot />
   </div>
-  <div class:list={[`${id}-overlay`, "fixed inset-0 z-0 backdrop-blur", id === 'chef-popup' ? 'bg-[#77200F]/95' : 'bg-[hsl(245_50_21)]/95']}></div>
+  <div class:list={[`${id}-overlay`, "fixed inset-0 z-0 backdrop-blur", id === 'chef-popup' ? 'bg-[#77200F]/95' : dishOverlayBg]}></div>
 </div>
 
