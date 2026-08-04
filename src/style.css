@@ -138,8 +138,8 @@
 }
 
 /* === SPRING EVENT HERO OVERLAY ===
-   Comment out this entire block to revert to default hero background */
-.hero-texture::after {
+   Only applies during Holi season */
+.season-holi .hero-texture::after {
   content: '';
   position: absolute;
   z-index: 1;
@@ -159,6 +159,8 @@
   mix-blend-mode: overlay;
 }
 /* === END SPRING EVENT HERO OVERLAY === */
+
+/* === DIWALI HERO: no overlay, just base gradient + texture === */
 
 .page-texture {
     background-image: none;

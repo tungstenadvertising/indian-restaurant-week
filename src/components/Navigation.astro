@@ -20,7 +20,7 @@ const currentPath = Astro.url.pathname;
 const isHome = currentPath === '/';
 ---
 
-<nav class="w-full bg-irw-amber">
+<nav class="w-full bg-irw-amber sticky top-0 z-60">
     <div class="max-w-6xl mx-auto px-5 flex items-center min-h-12 relative">
         <!-- Logo Ribbon -->
         <a href="/" class="absolute left-0  top-0 z-50 text-2xl font-bold text-irw-orange max-w-[212px] w-1/2 sm:w-1/3 md:w-full block" id="ribbon-container">
@@ -37,7 +37,7 @@ const isHome = currentPath === '/';
 
             <div class="relative z-10">
                 <img id="desktop-logo" src="/images/global/irw-logo.svg" alt="Indian Restaurant Week - Home" width="250" height="250" class="mt-2 mb-0 mx-auto" fetchpriority="high" decoding="async">
-                <div id="logo-text" class="mt-2.5 tracking-wide text-irw-red text-center">March <br> 1–7 <br> 2026</div>
+                <div id="logo-text" class="mt-2.5 tracking-wide text-irw-red text-center">November <br> 1-14 <br> 2026</div>
             </div>
         </a>
 

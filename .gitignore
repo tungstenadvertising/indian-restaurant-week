@@ -17,6 +17,7 @@ dist/
 
 # IDE and editor files
 .vscode/
+.code-workspace
 .idea/
 *.swp
 *.swo

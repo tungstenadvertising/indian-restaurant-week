@@ -115,12 +115,38 @@ The development server will open at `http://localhost:3000` with hot module repl
 
 ## 🎨 Customization
 
+### Seasonal Switching (Holi / Diwali)
+
+The site supports biannual seasonal themes controlled by a single field in `public/data/restaurants.json`:
+
+```json
+"activeSeason": "holi"   // or "diwali"
+```
+
+Changing this value and rebuilding switches the following automatically:
+
+| Element | Holi | Diwali |
+|---------|------|--------|
+| **Body text** | "This Holi..." / "spirit of Holi" | "This Diwali..." / "spirit of Diwali" |
+| **Hero background** | Purple gradient with spring overlay | Dark maroon/burgundy gradient |
+| **Round image** | `holi-round-image.png` (color powders) | `candles.png` (Diwali diyas) |
+| **Explosion animation** | GSAP scroll-triggered burst + pin | Disabled (static hero) |
+| **Restaurant menus** | `seasonalMenus.holi` entries | Default `menu` entries |
+
+**How it works:**
+- `activeSeason` is read at build time in the Astro frontmatter and injected client-side as `window.__ACTIVE_SEASON__`
+- The homepage derives `seasonName`, `roundImage`, `heroBgColor`, and `heroPatternColor` from the active season
+- A `season-{name}` CSS class on the hero section toggles the spring overlay in `style.css`
+- The GSAP explosion animation checks `window.__ACTIVE_SEASON__` at runtime
+- Restaurant menus use `getActiveMenu()` from `src/scripts/shared.js` to select seasonal or default menus
+
 ### Restaurant Data
 Edit `public/data/restaurants.json` to update:
 - Chef profiles and bios
 - Restaurant information
 - Menu items and prices
 - Images and reservation links
+- Seasonal menus (add entries under `popup.seasonalMenus.holi` or `popup.seasonalMenus.diwali`)
 
 ### Styling
 The project uses Tailwind CSS v4 with custom design tokens in `src/style.css`:
