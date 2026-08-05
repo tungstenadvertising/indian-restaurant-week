@@ -6,8 +6,6 @@ import WaveDivider from '../components/WaveDivider.astro';
 import ContactForm from '../components/ContactForm.astro';
 import restaurantsJson from '../../public/data/restaurants.json';
 
-import { heroBgColor, heroPatternColor } from '../seasonConfig';
-
 const restaurants = restaurantsJson.restaurants;
 
 // API config for press kit downloads
@@ -20,7 +18,7 @@ const s3Bucket = import.meta.env.PUBLIC_S3_BUCKET || 'irw-media-uploads';
     <Navigation restaurants={restaurants} />
 
     <!-- Hero Section -->
-    <HeroSection minHeight="min-h-[60vh]" class="pb-24" patternColor={heroPatternColor} bgColor={heroBgColor}>
+    <HeroSection minHeight="min-h-[60vh]" class="pb-24">
         <div class="relative z-20 max-w-4xl mx-auto">
             <h1 class="irw-title text-white font-bold mb-4">Press Room</h1>
             <p class="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto text-pretty">

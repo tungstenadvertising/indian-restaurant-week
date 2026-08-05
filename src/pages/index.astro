@@ -12,7 +12,7 @@ import footerImg from '../images/global/footer-2.png';
 import holiExplosion from '../images/global/holi-explosion.png';
 import restaurantsJson from '../../public/data/restaurants.json';
 
-import { isHoli, seasonName, heroBgColor, heroPatternColor } from '../seasonConfig';
+import { isHoli, seasonName } from '../seasonConfig';
 
 const restaurants = restaurantsJson.restaurants;
 const roundImage = isHoli ? holiRoundImage : candlesImage;
@@ -38,7 +38,7 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
     )}
     <Navigation restaurants={restaurants} />
     <!-- Hero Section -->
-    <HeroSection id="restaurants" class="hero-section" overlayClass="hero-shade" waveClass="hero-bottom" patternColor={heroPatternColor} bgColor={heroBgColor}>
+    <HeroSection id="restaurants" class="hero-section" overlayClass="hero-shade" waveClass="hero-bottom">
         <!-- Restaurant Carousel -->
         <div id="restaurant-carousel" class="relative w-full max-w-4xl mx-auto mb-8 z-30">
             <!-- Central Logo Display -->

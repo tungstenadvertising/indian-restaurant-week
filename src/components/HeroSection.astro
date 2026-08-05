@@ -1,4 +1,6 @@
 ---
+import { heroBgColor, heroPatternColor } from '../seasonConfig';
+
 interface Props {
     id?: string;
     minHeight?: string;
@@ -15,8 +17,8 @@ const {
     class: className = '',
     overlayClass = '',
     waveClass = '',
-    patternColor,
-    bgColor,
+    patternColor = heroPatternColor,
+    bgColor = heroBgColor,
 } = Astro.props;
 ---
 
