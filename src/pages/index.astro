@@ -73,7 +73,7 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
             </div>
         </div>
         <!-- Holi Explosion Background -->
-        <Image
+        {isHoli && <Image
             src={holiExplosion}
             alt=""
             aria-hidden="true"
@@ -85,8 +85,8 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
             loading="eager"
             fetchpriority="high"
             decoding="async"
-        />
-        <Image
+        />}
+        {isHoli && <Image
             src={holiExplosion}
             id="holi-explosion-small"
             alt=""
@@ -98,7 +98,7 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
             loading="eager"
             fetchpriority="high"
             decoding="async"
-        />
+        />}
     </HeroSection>
     <!-- Hero Section End -->
 
