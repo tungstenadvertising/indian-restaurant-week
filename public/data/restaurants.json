@@ -204,14 +204,23 @@
         "restaurantTitleColor": "hsl(185, 50%, 15%)",
         "reserveTableShapeColor": "hsl(32, 81%, 52%)",
         "reservationLinkFillHover": "hsl(0, 61%, 55%)",
-        "menuPrice": "75",
+        "menuPrice": "85",
         "menuPriceColor": "hsl(185, 50%, 15%)",
         "chefBio": "Hailing from Kolkata, India, Chef Shibiraj is currently heading the culinary team at Amber India SF. He honed his talent by working at top hotel chains in different parts of India. In his long career he has received numerous culinary awards. We are excited to see what new directions Amber India SF will go toward under his leadership.",
         "menu": {
-          "menuName": "Chef Curated Special Holi Menu",
+          "menuName": "Special Diwali Menu",
           "menuNameColor": "hsl(185, 50%, 15%)",
           "menuImage": "chefs/shibiraj-saha/menu-image.jpg",
-          "content": "<p>3 Course Menu = $75</p>"
+          "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Amuse-Bouche</h4><p>Dahi Bhalla, Corn Burrata Chaat & Dhokla Sandwich</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Appetizers</h4><p>Paneer Gilafi Tikki & Chettinad Mushroom Seekh</p><p><strong>OR</strong></p><p>Mangalorean Prawn Ghee Roast & Gongura Lamb Chop</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Entrée</h4><p>Spinach, Cottage Cheese Kofta served with Malabari Paratha*</p><p><strong>OR</strong></p><p>Lobster Balchao with Malabari Paratha*</p><p><strong>OR</strong></p><p>Noorjahani Chicken Kofta Curry with Malabari Paratha*</p><p><strong>&</strong></p><p>Edamame & Asparagus Biryani with Dahi Ka Salan</p><p class='italic text-sm'>(All Entrées served with Dal Amber)</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Dessert</h4><p>Coconut Jaggery Payasam Panna Cotta & Mango Phirni Tart</p><hr class='my-4'><p class='text-sm text-gray-500 italic'>*All Breads Contain Gluten<br>Some dishes may contain nuts or dairy products. Please inform your server if you are allergic to these ingredients.</p></div>"
+        },
+        "seasonalMenus": {
+          "diwali": {
+            "menuName": "Special Diwali Menu",
+            "menuPrice": "85",
+            "menuNameColor": "hsl(185, 50%, 15%)",
+            "menuImage": "chefs/shibiraj-saha/menu-image.jpg",
+            "content": "<div class='space-y-4'><h4 class='font-bold text-lg text-irw-red'>Amuse-Bouche</h4><p>Dahi Bhalla, Corn Burrata Chaat & Dhokla Sandwich</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Appetizers</h4><p>Paneer Gilafi Tikki & Chettinad Mushroom Seekh</p><p><strong>OR</strong></p><p>Mangalorean Prawn Ghee Roast & Gongura Lamb Chop</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Entrée</h4><p>Spinach, Cottage Cheese Kofta served with Malabari Paratha*</p><p><strong>OR</strong></p><p>Lobster Balchao with Malabari Paratha*</p><p><strong>OR</strong></p><p>Noorjahani Chicken Kofta Curry with Malabari Paratha*</p><p><strong>&</strong></p><p>Edamame & Asparagus Biryani with Dahi Ka Salan</p><p class='italic text-sm'>(All Entrées served with Dal Amber)</p><hr class='my-4'><h4 class='font-bold text-lg text-irw-red'>Dessert</h4><p>Coconut Jaggery Payasam Panna Cotta & Mango Phirni Tart</p><hr class='my-4'><p class='text-sm text-gray-500 italic'>*All Breads Contain Gluten<br>Some dishes may contain nuts or dairy products. Please inform your server if you are allergic to these ingredients.</p></div>"
+          }
         }
       }
     },
