@@ -4,6 +4,8 @@ import tailwindcss from '@tailwindcss/vite';
 // https://astro.build/config
 export default defineConfig({
   output: 'static',
+  // Preserve Astro 5/6 HTML-aware whitespace (v7 default is JSX-style stripping)
+  compressHTML: true,
   integrations: [],
   vite: {
     plugins: [
@@ -19,18 +21,28 @@ export default defineConfig({
       allowedHosts: ["devserver-main--indianrestaurantweeksf.netlify.app"],
     },
     build: {
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            'vendor-gsap': ['gsap'],
-            'vendor-swiper': ['swiper'],
-            'vendor-mapbox': ['mapbox-gl']
-          },
-        },
-      },
       sourcemap: true,
       minify: 'terser',
       target: 'es2020',
+    },
+    // Astro 6+ scopes client bundling to the Vite client environment
+    environments: {
+      client: {
+        build: {
+          minify: 'terser',
+          rolldownOptions: {
+            output: {
+              codeSplitting: {
+                groups: [
+                  { name: 'vendor-gsap', test: /[\\/]node_modules[\\/]gsap(?:[\\/]|$)/ },
+                  { name: 'vendor-swiper', test: /[\\/]node_modules[\\/]swiper(?:[\\/]|$)/ },
+                  { name: 'vendor-mapbox', test: /[\\/]node_modules[\\/]mapbox-gl(?:[\\/]|$)/ },
+                ],
+              },
+            },
+          },
+        },
+      },
     },
     optimizeDeps: {
       include: []

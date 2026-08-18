@@ -285,7 +285,7 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
                 </div>
 
                 <div id="dish-popup-header-image" class="absolute top-0 inset-0 z-0 w-full h-full">
-                    <img class="w-full  h-full object-cover" src="" alt="Dish Popup Header Image" loading="lazy" fetchpriority="low" decoding="async"></img>
+                    <img class="w-full  h-full object-cover" src="" alt="Dish Popup Header Image" loading="lazy" fetchpriority="low" decoding="async">
                 </div>
             </div>
 
@@ -462,11 +462,10 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
         @media (width > 420px) {
             padding-inline: 20px;
         }
-        &:has(:global(.location-list-item.active), :global(.location-list-item.hover)) {
-            :global(.location-list-item:not(.active, .hover)) {
-                opacity: 0.7;
-            }
-        }
+    }
+
+    :global(#restaurant-list:has(.location-list-item.active, .location-list-item.hover) .location-list-item:not(.active, .hover)) {
+        opacity: 0.7;
     }
 
     #map :global(.mapboxgl-canvas-container) {
