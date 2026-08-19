@@ -1,6 +1,6 @@
 # Indian Restaurant Week
 
-A beautiful, responsive landing page for Indian Restaurant Week, built with **Astro**, **Tailwind CSS v4**, and modern web technologies.
+A beautiful, responsive landing page for Indian Restaurant Week, built with **Astro 7**, **Tailwind CSS v4**, and modern web technologies.
 
 ## ✨ Features
 
@@ -26,18 +26,18 @@ A beautiful, responsive landing page for Indian Restaurant Week, built with **As
 - **Smooth Animations**: GSAP-powered transitions
 
 ### 🚀 **Modern Stack**
-- **Astro 5**: Static site generation with component islands
+- **Astro 7**: Static site generation with a Rust compiler and Vite 8 / Rolldown
 - **Tailwind CSS v4**: Utility-first CSS with custom design tokens
-- **Vite**: Lightning-fast HMR and optimized builds
+- **Vite 8**: HMR in development; Rolldown for production bundling
 - **Image Optimization**: Automatic WebP conversion and responsive images
 
 ## 🛠️ Tech Stack
 
 | Technology | Purpose |
 |------------|---------|
-| **Astro 5** | Static site framework |
+| **Astro 7.2** | Static site framework (Rust compiler) |
 | **Tailwind CSS v4** | Styling |
-| **Vite** | Build tool & dev server |
+| **Vite 8 / Rolldown** | Dev server and production bundler |
 | **GSAP** | Animations |
 | **Swiper.js** | Touch sliders |
 | **Mapbox GL** | Interactive maps |
@@ -47,8 +47,8 @@ A beautiful, responsive landing page for Indian Restaurant Week, built with **As
 
 ```
 IndianRestaurantWeek/
-├── astro.config.mjs        # Astro configuration
-├── vite.config.ts          # Vite configuration
+├── astro.config.mjs        # Astro + Vite/Rolldown build config
+├── netlify.toml            # Netlify build command, dist/, Node 24
 ├── tsconfig.json           # TypeScript config
 ├── package.json            # Dependencies & scripts
 ├── public/
@@ -84,8 +84,8 @@ IndianRestaurantWeek/
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+
-- npm or yarn
+- **Node.js 22.12+** (Astro 7). Local and Netlify are on **Node 24**.
+- npm 9.6.5+
 
 ### Installation
 
@@ -102,6 +102,25 @@ npm run dev
 ```
 
 The development server will open at `http://localhost:3000` with hot module replacement.
+
+## ⚙️ Build system
+
+Production builds run through **Astro 7** on **Vite 8** (Rolldown), not the older Vite 7 / Rollup pipeline.
+
+| Piece | Where |
+|-------|--------|
+| Framework & HTML compiler | `astro.config.mjs` (`output: 'static'`) |
+| Tailwind | `@tailwindcss/vite` plugin in `astro.config.mjs` |
+| Vendor chunks (GSAP, Swiper, Mapbox) | `vite.environments.client.build.rolldownOptions` |
+| Minify | Terser (`minify: 'terser'`) |
+| HTML whitespace | `compressHTML: true` (same as Astro 5/6, not the v7 JSX default) |
+| Host Node version | `netlify.toml` → `NODE_VERSION = "24"` |
+
+```bash
+npm run build    # astro build, then WebP conversion
+```
+
+Output is `dist/`. The Rust compiler requires valid HTML (void elements like `<img>` must not have a closing `</img>`).
 
 ## 📜 Available Scripts
 
@@ -199,6 +218,7 @@ npm run build
 Build settings:
 - **Build command**: `npm run build`
 - **Publish directory**: `dist`
+- **Node.js**: `24` (set in `netlify.toml` and the Netlify UI)
 
 ### Other Static Hosts
 Upload the `dist/` folder contents to any static hosting service.
@@ -217,7 +237,7 @@ Popups support shareable URLs:
 4. Astro's `<Image>` component for build-time optimization
 
 ### Performance Optimizations
-- **Code Splitting**: Vendor chunks for GSAP, Swiper, Mapbox
+- **Code Splitting**: Rolldown vendor chunks for GSAP, Swiper, Mapbox
 - **Font Loading**: Preloaded with `font-display: swap`
 - **Image Loading**: Lazy loading with LQIP blur-up
 - **Static Generation**: Pre-rendered HTML at build time
@@ -237,6 +257,8 @@ npm install
 npm run build
 ```
 
+If the Astro compiler errors on unexpected tokens or closing tags, check for invalid HTML (for example `</img>` on a void element).
+
 ### Image Issues
 - Ensure images are valid JPG/PNG/WebP
 - Check file permissions
@@ -248,4 +270,4 @@ This project is licensed under the ISC License.
 
 ---
 
-**Built with ❤️ using Astro, Tailwind CSS v4, and Vite**
+**Built with ❤️ using Astro 7, Tailwind CSS v4, and Vite 8**
