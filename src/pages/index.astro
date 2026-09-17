@@ -6,7 +6,7 @@ import PopupWrapper from '../components/PopupWrapper.astro';
 import WaveDivider from '../components/WaveDivider.astro';
 import { Image } from 'astro:assets';
 import holiRoundImage from '../images/global/holi-round-image.png';
-import candlesImage from '../images/global/candles.png';
+import diwaliRoundImage from '../images/global/diwali-round-image.png';
 import coursesImg from '../images/global/courses.png';
 import footerImg from '../images/global/footer-2.png';
 import holiExplosion from '../images/global/holi-explosion.png';
@@ -15,7 +15,7 @@ import restaurantsJson from '../../public/data/restaurants.json';
 import { isHoli, seasonName } from '../seasonConfig';
 
 const restaurants = restaurantsJson.restaurants;
-const roundImage = isHoli ? holiRoundImage : candlesImage;
+const roundImage = isHoli ? holiRoundImage : diwaliRoundImage;
 
 // Derive first restaurant's chef folder for hero image preload
 const firstDishPath = restaurants[0]?.images?.dish;
