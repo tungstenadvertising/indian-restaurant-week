@@ -4,19 +4,22 @@ import Navigation from '../components/Navigation.astro';
 import HeroSection from '../components/HeroSection.astro';
 import PopupWrapper from '../components/PopupWrapper.astro';
 import WaveDivider from '../components/WaveDivider.astro';
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import holiRoundImage from '../images/global/holi-round-image.png';
 import diwaliRoundImage from '../images/global/diwali-round-image.png';
 import coursesImg from '../images/global/courses.png';
 import footerImg from '../images/global/footer-2.png';
 import holiExplosion from '../images/global/holi-explosion.png';
-import diwali26Bg from '../images/global/diwali26-home-bg.jpg';
+import diwali26HomeBg from '../images/global/diwali26-home-bg.jpg';
+import diwali26Bg from '../images/global/diwali26-bg.jpg';
 import restaurantsJson from '../../public/data/restaurants.json';
 
 import { isHoli, seasonName } from '../seasonConfig';
 
 const restaurants = restaurantsJson.restaurants;
 const roundImage = isHoli ? holiRoundImage : diwaliRoundImage;
+
+const diwali26BgUrl = await getImage({ src: diwali26Bg, format: 'webp', quality: 80, width: 1920 });
 
 // Derive first restaurant's chef folder for hero image preload
 const firstDishPath = restaurants[0]?.images?.dish;
@@ -39,7 +42,7 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
     )}
     <Navigation restaurants={restaurants} />
     <!-- Hero Section -->
-    <HeroSection id="restaurants" class="hero-section" overlayClass="hero-shade" waveClass="hero-bottom" bgImage={diwali26Bg}>
+    <HeroSection id="restaurants" class="hero-section" overlayClass="hero-shade" waveClass="hero-bottom" bgImage={diwali26HomeBg}>
         <!-- Restaurant Carousel -->
         <div id="restaurant-carousel" class="relative w-full max-w-4xl mx-auto mb-8 z-30">
             <!-- Central Logo Display -->
@@ -159,7 +162,9 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
 
         </div>
         <div class="absolute z-10 flex flex-col inset-0 bg-gradient-to-b from-transparent via-black to-black" style="background: linear-gradient(to top, transparent, black);"></div>
-        <div class="page-texture bg-center bg-repeat absolute inset-0 w-full h-full z-0"></div>
+        <!-- Previous page-texture background (kept for future use) -->
+        <!-- <div class="page-texture bg-center bg-repeat absolute inset-0 w-full h-full z-0"></div> -->
+        <div class="content-section-bg absolute inset-0 w-full h-full z-0 bg-cover bg-center bg-fixed" style={`background-image: url(${diwali26BgUrl.src});`}></div>
     </section>
     <section id="location" class="relative z-10">
         <WaveDivider flip class="top-1" />
