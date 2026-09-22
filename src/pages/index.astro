@@ -10,6 +10,7 @@ import diwaliRoundImage from '../images/global/diwali-round-image.png';
 import coursesImg from '../images/global/courses.png';
 import footerImg from '../images/global/footer-2.png';
 import holiExplosion from '../images/global/holi-explosion.png';
+import diwali26Bg from '../images/global/diwali26-home-bg.jpg';
 import restaurantsJson from '../../public/data/restaurants.json';
 
 import { isHoli, seasonName } from '../seasonConfig';
@@ -38,7 +39,7 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
     )}
     <Navigation restaurants={restaurants} />
     <!-- Hero Section -->
-    <HeroSection id="restaurants" class="hero-section" overlayClass="hero-shade" waveClass="hero-bottom">
+    <HeroSection id="restaurants" class="hero-section" overlayClass="hero-shade" waveClass="hero-bottom" bgImage={diwali26Bg}>
         <!-- Restaurant Carousel -->
         <div id="restaurant-carousel" class="relative w-full max-w-4xl mx-auto mb-8 z-30">
             <!-- Central Logo Display -->
