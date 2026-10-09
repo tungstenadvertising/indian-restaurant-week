@@ -4,18 +4,21 @@ import Navigation from '../components/Navigation.astro';
 import HeroSection from '../components/HeroSection.astro';
 import PopupWrapper from '../components/PopupWrapper.astro';
 import WaveDivider from '../components/WaveDivider.astro';
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import holiRoundImage from '../images/global/holi-round-image.png';
-import candlesImage from '../images/global/candles.png';
+import diwaliRoundImage from '../images/global/diwali-round-image.png';
 import coursesImg from '../images/global/courses.png';
 import footerImg from '../images/global/footer-2.png';
 import holiExplosion from '../images/global/holi-explosion.png';
+import diwali26Bg from '../images/global/diwali26-bg.jpg';
 import restaurantsJson from '../../public/data/restaurants.json';
 
 import { isHoli, seasonName } from '../seasonConfig';
 
 const restaurants = restaurantsJson.restaurants;
-const roundImage = isHoli ? holiRoundImage : candlesImage;
+const roundImage = isHoli ? holiRoundImage : diwaliRoundImage;
+
+const diwali26BgUrl = await getImage({ src: diwali26Bg, format: 'webp', quality: 80, width: 1920 });
 
 // Derive first restaurant's chef folder for hero image preload
 const firstDishPath = restaurants[0]?.images?.dish;
@@ -38,7 +41,7 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
     )}
     <Navigation restaurants={restaurants} />
     <!-- Hero Section -->
-    <HeroSection id="restaurants" class="hero-section" overlayClass="hero-shade" waveClass="hero-bottom">
+    <HeroSection id="restaurants" class="hero-section" overlayClass="hero-shade" waveClass="hero-bottom" bgImage={diwali26Bg}>
         <!-- Restaurant Carousel -->
         <div id="restaurant-carousel" class="relative w-full max-w-4xl mx-auto mb-8 z-30">
             <!-- Central Logo Display -->
@@ -72,6 +75,33 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
                 <!-- Restaurant images will be dynamically inserted here -->
             </div>
         </div>
+        <!-- Diwali Decorative Elements -->
+        {!isHoli && <div id="hero-decor" class="absolute inset-0 w-full max-w-7xl mx-auto pointer-events-none select-none z-20">
+            <img
+                src="/images/global/arabesque.svg"
+                alt=""
+                aria-hidden="true"
+                id="hero-arabesque"
+                class="absolute"
+                width="464"
+                height="422"
+                loading="eager"
+                fetchpriority="low"
+                decoding="async"
+            />
+            <img
+                src="/images/global/candles.svg"
+                alt=""
+                aria-hidden="true"
+                id="hero-candles"
+                class="absolute"
+                width="327"
+                height="267"
+                loading="eager"
+                fetchpriority="low"
+                decoding="async"
+            />
+        </div>}
         <!-- Holi Explosion Background -->
         {isHoli && <Image
             src={holiExplosion}
@@ -110,14 +140,14 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
                 <div id="round-image-container" class="aspect-square bg-irw-yellow rounded-full">
                     <Image id="round-image" src={roundImage} alt="Candles" class="w-full h-full rounded-full  border-irw-amber object-cover" loading="lazy" fetchpriority="low" decoding="async" widths={[200, 300, 420, 518]} sizes="(max-width: 639px) 60vw, (max-width: 799px) 50vw, (max-width: 1023px) 40vw, (max-width: 1279px) 45vw, 518px" format="webp" width={518} height={518} />
                 </div>
-                <h2 class="text-irw-red -order-1 sm:order-none text-center sm:text-left font-bold mb-4 text-balance irw-title">6 Chefs. 6 Stories. 1 Week of  Unforgettable Menus.</h2>
+                <h2 class="text-irw-red -order-1 sm:order-none text-center sm:text-left font-bold mb-4 text-balance irw-title">6 Chefs. 6 Stories. Unforgettable Menus.</h2>
 
 
                 <p class="mt-4 xl:mt-6 text-lg sm:text-xl lg:text-2xl xl:text-[28px] text-pretty">This {seasonName}, discover Indian fine dining like you've never tasted before.</p>
 
 
                 <!-- Second section with courses image -->
-                <p class="mt-4 xl:mt-6 text-lg sm:text-xl lg:text-2xl xl:text-[28px] text-pretty">San Francisco's top Indian restaurants come together for a weeklong celebration of flavor, memory, and the art of Indian cuisine. Food is how we remember - moments, people, places. That's why each menu in Indian Restaurant Week is more than just a meal. It's a personal reflection from each chef rooted in childhood memories, regional heritage, and the spirit of {seasonName}. And because food connects us so deeply to memory, this week isn't just a one-time celebration.</p>
+                <p class="mt-4 xl:mt-6 text-lg sm:text-xl lg:text-2xl xl:text-[28px] text-pretty">After two successful events, Indian Restaurant Week returns to San Francisco, bringing together the city's top Indian restaurants for another celebration of flavor, culture, and the art of Indian cuisine. Food is how we remember - moments, people, places. That's why each menu in Indian Restaurant Week is more than just a meal. It's a personal reflection from each chef rooted in childhood memories, regional heritage, and the spirit of Diwali. And because food connects us so deeply to memory, this celebration is more than a one-time event - it's becoming a San Francisco tradition.</p>
                 <Image id="courses-img" src={coursesImg} alt="Courses" class="w-full h-auto" loading="lazy" fetchpriority="low" decoding="async" widths={[280, 400, 560, 772]} sizes="(max-width: 479px) 70vw, (max-width: 1279px) 60vw, 772px" format="webp"/>
 
                 <!-- Third section with centered content -->
@@ -158,7 +188,9 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
 
         </div>
         <div class="absolute z-10 flex flex-col inset-0 bg-gradient-to-b from-transparent via-black to-black" style="background: linear-gradient(to top, transparent, black);"></div>
-        <div class="page-texture bg-center bg-repeat absolute inset-0 w-full h-full z-0"></div>
+        <!-- Previous page-texture background (kept for future use) -->
+        <!-- <div class="page-texture bg-center bg-repeat absolute inset-0 w-full h-full z-0"></div> -->
+        <div class="content-section-bg absolute inset-0 w-full h-full z-0 bg-cover bg-center bg-fixed" style={`background-image: url(${diwali26BgUrl.src});`}></div>
     </section>
     <section id="location" class="relative z-10">
         <WaveDivider flip class="top-1" />
@@ -334,6 +366,30 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
 </script>
 
 <style>
+    /* Diwali decorative elements — inside max-w-7xl container */
+    #hero-decor {
+        left: 0;
+        right: 0;
+        scale: 1.2;
+    }
+    #hero-arabesque {
+        width: clamp(300px, 45vw, 550px);
+        height: auto;
+        left: 0;
+        bottom: 25%;
+        opacity: 0.75;
+        scale: 1.2;
+    }
+    #hero-candles {
+        width: clamp(200px, 26vw, 370px);
+        height: auto;
+        left: 5%;
+        bottom: 15%;
+        opacity: 0.9;
+    }
+
+
+
     .holi-explosion {
         opacity: 0;
     }

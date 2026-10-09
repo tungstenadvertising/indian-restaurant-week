@@ -1,5 +1,7 @@
 ---
-import { heroBgColor, heroPatternColor } from '../seasonConfig';
+import { Image } from 'astro:assets';
+import { heroBgColor, heroPatternColor, isHoli } from '../seasonConfig';
+import defaultBgImage from '../images/global/diwali26-bg.jpg';
 
 interface Props {
     id?: string;
@@ -9,6 +11,7 @@ interface Props {
     waveClass?: string;
     patternColor?: string;
     bgColor?: string;
+    bgImage?: ImageMetadata;
 }
 
 const {
@@ -19,6 +22,7 @@ const {
     waveClass = '',
     patternColor = heroPatternColor,
     bgColor = heroBgColor,
+    bgImage = defaultBgImage,
 } = Astro.props;
 ---
 
@@ -38,8 +42,23 @@ const {
         overlayClass,
     ]}></div>
 
-    <!-- Background Texture -->
-    <div class="hero-texture bg-repeat bg-center absolute z-0 w-full h-full inset-0" style={[bgColor && `--hero-bg-color: ${bgColor}`, patternColor && `--hero-pattern-color: ${patternColor}`].filter(Boolean).join('; ') || undefined}></div>
+    <!-- Background Texture (CSS pattern — currently unused, kept for future use) -->
+    <!-- <div class="hero-texture bg-repeat bg-center absolute z-0 w-full h-full inset-0" style={[bgColor && `--hero-bg-color: ${bgColor}`, patternColor && `--hero-pattern-color: ${patternColor}`].filter(Boolean).join('; ') || undefined}></div> -->
+
+    <!-- Background Image -->
+    {!isHoli && <Image
+        src={bgImage}
+        alt=""
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-0 w-full h-full object-cover select-none z-0"
+        widths={[640, 1024, 1440, 1920]}
+        sizes="100vw"
+        format="webp"
+        quality={80}
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+    />}
 
     <!-- Bottom Wave -->
     <div class:list={[
