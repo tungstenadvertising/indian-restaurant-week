@@ -11,6 +11,7 @@ import coursesImg from '../images/global/courses.png';
 import footerImg from '../images/global/footer-2.png';
 import holiExplosion from '../images/global/holi-explosion.png';
 import diwali26Bg from '../images/global/diwali26-bg.jpg';
+import heroCandlesImg from '../images/global/hero-candles@3x.png';
 import restaurantsJson from '../../public/data/restaurants.json';
 
 import { isHoli, seasonName } from '../seasonConfig';
@@ -89,14 +90,16 @@ const firstChefFolder = firstDishPath ? firstDishPath.split('/')[1] : null;
                 fetchpriority="low"
                 decoding="async"
             />
-            <img
-                src="/images/global/candles.svg"
+            <Image
+                src={heroCandlesImg}
                 alt=""
                 aria-hidden="true"
                 id="hero-candles"
                 class="absolute"
-                width="327"
-                height="267"
+                widths={[200, 300, 400]}
+                sizes="(max-width: 480px) 38vw, (max-width: 768px) 30vw, clamp(200px, 26vw, 370px)"
+                format="webp"
+                quality={80}
                 loading="eager"
                 fetchpriority="low"
                 decoding="async"
