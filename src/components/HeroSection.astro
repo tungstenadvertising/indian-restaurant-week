@@ -24,6 +24,10 @@ const {
     bgColor = heroBgColor,
     bgImage = defaultBgImage,
 } = Astro.props;
+
+// Approximates diwali26-bg.jpg so the section isn't blank while the image loads
+const imagePlaceholderBg = 'radial-gradient(circle at 50% 50%, #9c1e08 0%, #731004 35%, #4a0201 70%, #3d0000 100%)';
+const sectionBg = isHoli ? bgColor : imagePlaceholderBg;
 ---
 
 <section
@@ -33,6 +37,7 @@ const {
         'flex flex-col justify-center items-center text-center text-white relative z-0 py-16 px-5 overflow-hidden',
         className,
     ]}
+    style={sectionBg && `background: ${sectionBg}`}
 >
     <slot />
 
