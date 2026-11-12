@@ -20,6 +20,11 @@
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Dark red Diwali gradient (approximates diwali26-bg.jpg). Used by the hero and the media reels section. */
+@utility bg-irw-hero {
+  background: radial-gradient(circle at 50% 50%, #9c1e08 0%, #731004 35%, #4a0201 70%, #3d0000 100%);
+}
+
 /* Font Smoothing */
 * {
   -webkit-font-smoothing: antialiased;

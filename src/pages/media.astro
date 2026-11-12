@@ -5,8 +5,15 @@ import HeroSection from '../components/HeroSection.astro';
 import WaveDivider from '../components/WaveDivider.astro';
 import restaurantsJson from '../../public/data/restaurants.json';
 import reelsJson from '../data/reels.json';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 
 const restaurants = restaurantsJson.restaurants;
+
+// Thumbnails are optional: src/images/reels/<shortcode>.(jpg|png|webp). Reels without one show the plain card.
+const reelThumbs = import.meta.glob<{ default: ImageMetadata }>('../images/reels/*.{jpg,jpeg,png,webp}', { eager: true });
+const thumbFor = (shortcode: string) =>
+    Object.entries(reelThumbs).find(([path]) => path.split('/').pop()?.replace(/\.\w+$/, '') === shortcode)?.[1].default;
 
 // reels.json holds { url, handle }. The embed URL is derived from the pasted URL, keeping its
 // type (/reel/ or /p/) and ignoring ?igsh= tracking params. Malformed entries are dropped.
@@ -14,7 +21,11 @@ const reels = reelsJson.flatMap((reel) => {
     const match = reel.url.match(/instagram\.com\/(reels?|p)\/([\w-]+)/);
     if (!match) return [];
     const [, type, shortcode] = match;
-    return [{ ...reel, embedUrl: `https://www.instagram.com/${type === 'reels' ? 'reel' : type}/${shortcode}/embed` }];
+    return [{
+        ...reel,
+        thumb: thumbFor(shortcode),
+        embedUrl: `https://www.instagram.com/${type === 'reels' ? 'reel' : type}/${shortcode}/embed`,
+    }];
 });
 const apiUrl = import.meta.env.PUBLIC_API_URL || '';
 
@@ -116,7 +127,7 @@ const apiUrl = import.meta.env.PUBLIC_API_URL || '';
 
                 <!-- Mobile: swipeable row. Desktop: grid. -->
                 <ul id="reels-grid" class="flex gap-6 overflow-x-auto snap-x snap-mandatory pb-4 md:grid md:grid-cols-3 xl:grid-cols-4 md:overflow-visible">
-                    {reels.map(({ url, handle, embedUrl }) => (
+                    {reels.map(({ url, handle, embedUrl, thumb }) => (
                         <li class="shrink-0 w-[70vw] sm:w-[45vw] md:w-auto snap-center">
                             <div class="relative aspect-[9/16] rounded-2xl overflow-hidden shadow-lg bg-black/30">
                                 <button
@@ -125,22 +136,49 @@ const apiUrl = import.meta.env.PUBLIC_API_URL || '';
                                     data-embed-url={embedUrl}
                                     data-title={`Instagram video by @${handle}`}
                                     aria-label={`Play Instagram video by @${handle}`}
-                                    class="group absolute inset-0 w-full h-full flex flex-col items-center justify-center gap-6 p-6 text-white text-center bg-gradient-to-br from-black/80 to-black/50 cursor-pointer"
+                                    class="group absolute inset-0 w-full h-full flex flex-col items-center justify-center gap-6 p-6 text-white text-center cursor-pointer"
                                 >
-                                    <span class="flex items-center justify-center w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm transition-transform duration-300 ease-smooth group-hover:scale-110">
+                                    {thumb && (
+                                        <Image
+                                            src={thumb}
+                                            alt=""
+                                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-smooth group-hover:scale-105"
+                                            widths={[270, 360, 540, 720]}
+                                            sizes="(max-width: 639px) 70vw, (max-width: 767px) 45vw, (max-width: 1279px) 30vw, 300px"
+                                            format="webp"
+                                            loading="lazy"
+                                            decoding="async"
+                                        />
+                                    )}
+                                    <span
+                                        class:list={[
+                                            'absolute inset-0',
+                                            thumb
+                                                ? 'bg-gradient-to-t from-black/70 via-black/20 to-black/10'
+                                                : 'bg-gradient-to-br from-black/80 to-black/50',
+                                        ]}
+                                        aria-hidden="true"
+                                    ></span>
+                                    <span class="relative flex items-center justify-center w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm transition-transform duration-300 ease-smooth group-hover:scale-110">
+                                        <span class="ig-ring" aria-hidden="true"></span>
                                         <svg class="w-10 h-10 ml-1" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                             <path d="M8 5v14l11-7z" />
                                         </svg>
                                     </span>
-                                    <span class="block text-2xl font-bold break-all">@{handle}</span>
+                                    <span class="relative block text-2xl font-bold break-all">@{handle}</span>
                                 </button>
                             </div>
                             <a
                                 href={url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="inline-block mt-3 text-white font-bold hover:underline"
+                                class="inline-flex items-center gap-2 mt-3 text-white font-bold hover:underline"
                             >
+                                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="2" y="2" width="20" height="20" rx="5" />
+                                    <circle cx="12" cy="12" r="4.5" />
+                                    <circle cx="17.5" cy="6.5" r="1.25" fill="currentColor" stroke="none" />
+                                </svg>
                                 Watch on Instagram &rarr;
                             </a>
                         </li>
@@ -185,6 +223,15 @@ const apiUrl = import.meta.env.PUBLIC_API_URL || '';
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
+    }
+
+    /* Instagram story-style ring around the reel play button */
+    .ig-ring {
+        position: absolute;
+        inset: -5px;
+        border-radius: 9999px;
+        background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
+        mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 4px));
     }
 
     /* News card animations */
