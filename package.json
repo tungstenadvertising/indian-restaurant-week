@@ -4,7 +4,7 @@
   "description": "A beautiful, responsive landing page for Indian Restaurant Week, built with vanilla HTML, CSS, and JavaScript.",
   "main": "src/script.js",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "astro dev --host",
     "build": "astro build && node scripts/convert-images-to-webp.js",
     "preview": "astro preview",
     "build:prod": "astro build && node scripts/convert-images-to-webp.js",
